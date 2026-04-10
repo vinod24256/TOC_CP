@@ -1390,11 +1390,10 @@ function initD3(){
   const el=document.getElementById('state-svg');if(!el)return;
   const W=el.clientWidth||600,H=420;
   d3.select('#state-svg').selectAll('*').remove();
-  d3svg=d3.select('#state-svg').attr('width',W).attr('height',H);
-  d3zoom=d3.zoom().scaleExtent([.25,4]).on('zoom',e=>g.attr('transform',e.transform));
-  d3svg.call(d3zoom);
-  const g=d3svg.append('g');
-  const defs=d3svg.append('defs');
+  const svg=d3.select('#state-svg').attr('width',W).attr('height',H);
+  const g=svg.append('g'), d3nm={};
+  svg.call(d3.zoom().scaleExtent([.25,4]).on('zoom',e=>g.attr('transform',e.transform)));
+  const defs=svg.append('defs');
   ['norm','act'].forEach(t=>{
     defs.append('marker').attr('id','arr-'+t).attr('viewBox','0 -5 10 10').attr('refX',30)
       .attr('refY',0).attr('markerWidth',6).attr('markerHeight',6).attr('orient','auto')
@@ -1404,37 +1403,40 @@ function initD3(){
     q_skip:{x:W*.44,y:H*.5},q_accept:{x:W*.78,y:H*.33},q_reject:{x:W*.78,y:H*.72}};
   const nodes=TM_STATES.map(s=>({...s,...pos[s.id]}));
   nodes.forEach(n=>{d3nm[n.id]=n;});
-  const lg=g.append('g'),llg=g.append('g');
-  TM_LINKS.filter(l=>!l.self).forEach(l=>{
-    const sn=d3nm[l.s],tn=d3nm[l.t];if(!sn||!tn)return;
-    const dx=tn.x-sn.x,dy=tn.y-sn.y;
-    const cx=(sn.x+tn.x)/2+dy*.22,cy=(sn.y+tn.y)/2-dx*.22;
-    lg.append('path').attr('id','lnk-'+l.s+'-'+l.t)
-      .attr('d',`M${sn.x},${sn.y}Q${cx},${cy}${tn.x},${tn.y}`)
-      .attr('fill','none').attr('stroke','#3a4555').attr('stroke-width',1.5).attr('marker-end','url(#arr-norm)');
-    llg.append('text').attr('x',cx).attr('y',cy-6).attr('text-anchor','middle').attr('font-size','8')
-      .attr('font-family','JetBrains Mono,monospace').attr('fill','#5a6475').text(l.label.split('/')[0]);
+  const links=[];
+  Object.entries(encTM.tr).forEach(([k,v])=>{
+    const[st,sym]=k.split('|||');
+    if(!TT_STATES.includes(st)||!/[A-Za-z0-9]/.test(sym))return;
+    const existing=links.find(l=>l.s===st&&l.t===v.newState);
+    if(existing){if(existing.label.length<15&&!existing.label.includes(sym))existing.label+=','+sym;}
+    else links.push({s:st,t:v.newState,label:sym});
   });
-  TM_LINKS.filter(l=>l.self).forEach(l=>{
-    const n=d3nm[l.s];if(!n)return;
-    lg.append('path').attr('id','lnk-'+l.s+'-self')
-      .attr('d',`M${n.x-12},${n.y-24}C${n.x-38},${n.y-68}${n.x+38},${n.y-68}${n.x+12},${n.y-24}`)
-      .attr('fill','none').attr('stroke','#3a4555').attr('stroke-width',1.5).attr('marker-end','url(#arr-norm)');
-    llg.append('text').attr('x',n.x).attr('y',n.y-65).attr('text-anchor','middle').attr('font-size','8')
-      .attr('font-family','JetBrains Mono,monospace').attr('fill','#5a6475').text(l.label.split(',')[0]);
+  const lg=g.append('g'),llg=g.append('g');
+  links.forEach(l=>{
+    if(l.s===l.t){
+      const n=d3nm[l.s];if(!n)return;
+      lg.append('path').attr('id','lnk-'+l.s+'-self')
+        .attr('d',`M${n.x-10},${n.y-25}C${n.x-30},${n.y-60} ${n.x+30},${n.y-60} ${n.x+10},${n.y-25}`)
+        .attr('fill','none').attr('stroke','#3a4555').attr('stroke-width',1.5).attr('marker-end','url(#arr-norm)');
+      llg.append('text').attr('x',n.x).attr('y',n.y-65).attr('text-anchor','middle').attr('font-size','7').attr('fill','#5a6475').text(l.label);
+    } else {
+      const sn=d3nm[l.s],tn=d3nm[l.t];if(!sn||!tn)return;
+      const dx=tn.x-sn.x,dy=tn.y-sn.y,dr=Math.sqrt(dx*dx+dy*dy)*1.2;
+      lg.append('path').attr('id','lnk-'+l.s+'-'+l.t)
+        .attr('d',`M${sn.x},${sn.y}A${dr},${dr} 0 0,1 ${tn.x},${tn.y}`)
+        .attr('fill','none').attr('stroke','#3a4555').attr('stroke-width',1.5).attr('marker-end','url(#arr-norm)');
+      const mx=(sn.x+tn.x)/2+dy*.15, my=(sn.y+tn.y)/2-dx*.15;
+      llg.append('text').attr('x',mx).attr('y',my).attr('text-anchor','middle').attr('font-size','7').attr('fill','#5a6475').text(l.label);
+    }
   });
   const ng=g.append('g');
   nodes.forEach(n=>{
     const grp=ng.append('g').attr('id','ng-'+n.id).attr('transform',`translate(${n.x},${n.y})`).attr('cursor','grab')
       .call(d3.drag().on('drag',(e)=>{n.x=e.x;n.y=e.y;d3.select('#ng-'+n.id).attr('transform',`translate(${n.x},${n.y})`);}));
     grp.append('circle').attr('r',28).attr('id','nc-'+n.id)
-      .attr('fill',n.type==='accept'?'rgba(63,185,80,.15)':n.type==='reject'?'rgba(248,81,73,.15)':'#161b22')
-      .attr('stroke',n.type==='accept'?'#3fb950':n.type==='reject'?'#f85149':'#58a6ff')
-      .attr('stroke-width',n.type==='start'?3:2);
-    if(n.type==='start')grp.append('circle').attr('r',21).attr('fill','none').attr('stroke','#58a6ff').attr('stroke-width',1).attr('stroke-dasharray','3,2');
-    grp.append('text').attr('text-anchor','middle').attr('dominant-baseline','central')
-      .attr('font-family','JetBrains Mono,monospace').attr('font-size',n.label.length>7?8:11)
-      .attr('fill',n.type==='accept'?'#3fb950':n.type==='reject'?'#f85149':'#e6edf3').text(n.label);
+      .attr('fill',n.type==='accept'?'rgba(63,185,80,.12)':'rgba(22,27,34,0.9)')
+      .attr('stroke',n.type==='accept'?'#3fb950':n.type==='reject'?'#f85149':'#58a6ff').attr('stroke-width',2);
+    grp.append('text').attr('text-anchor','middle').attr('dominant-baseline','central').attr('font-size',11).attr('fill','#e6edf3').text(n.label);
   });
   hlState('q0');
 }
@@ -1511,21 +1513,22 @@ function showTRDet(st,sym,ns,w,d){
 }
 
 function exportTR(fmt){
-  const obj=encTM.tr;
+  const obj=encTM.tr,a=document.createElement('a');
+  let blob;
   if(fmt==='json'){
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));
-    a.download='TM_Transitions.json';a.click();
+    blob=new Blob([JSON.stringify(obj,null,2)],{type:'application/json'});
+    a.download=`TM_Transitions_k${curShiftVal}.json`;
   } else {
     let csv='State,Read,NewState,Write,Dir\n';
     Object.entries(obj).forEach(([k,v])=>{
       const[st,sy]=k.split('|||');
       csv+=`"${st}","${sy===' '?'space':sy}","${v.newState}","${v.write===' '?'space':v.write}","${v.dir}"\n`;
     });
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
-    a.download='TM_Transitions.csv';a.click();
+    blob=new Blob([csv],{type:'text/csv'});
+    a.download=`TM_Transitions_k${curShiftVal}.csv`;
   }
+  a.href=URL.createObjectURL(blob);document.body.appendChild(a);a.click();
+  setTimeout(()=>document.body.removeChild(a),100);
   showToast(`Exported Transitions as ${fmt.toUpperCase()} ✓`);
 }
 
@@ -1795,7 +1798,9 @@ function updShift(v){
   decTM=mkCaesar(-curShiftVal);
   curTM=eMode==='decrypt'?decTM:encTM;
   if(curInput)curTM.loadInput(curInput);
-  updateTapeUI();updateSB();buildTT();
+  updateTapeUI();updateSB();
+  if(document.getElementById('tab-transitions').classList.contains('active'))buildTT();
+  if(document.getElementById('tab-states').classList.contains('active'))initD3();
   showToast(`TM regenerated for Caesar k=${v}`);
 }
 
