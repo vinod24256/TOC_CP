@@ -1123,9 +1123,7 @@ function getTime(){
   return `${h%12||12}:${m} ${h>=12?'PM':'AM'}`;
 }
 
-// =============================================================
-// SEND MESSAGE
-// =============================================================
+let tmPhase=1; // 1: Encrypt, 2: Decrypt (for both mode)
 function sendMsg(){
   const inp=document.getElementById('msg-input');if(!inp)return;
   const text=inp.value.trim();if(!text)return;
@@ -1133,13 +1131,17 @@ function sendMsg(){
   const idx=chatStore[activeId].length;
   chatStore[activeId].push({s:'me',text,time:getTime(),tmEncrypted:false,processing:true,cipher:false,cipherText:''});
   renderMsgs();
-  showToast('🔐 Encrypting with Turing Machine...');
-  setBadge('encrypting');
+  tmPhase=1;
+  const msg=eMode==='decrypt'?'🔓 Decrypting with TM...':'🔐 Encrypting with TM...';
+  showToast(msg);
+  setBadge(eMode==='decrypt'?'decrypting':'encrypting');
   showTyping(true);
-  const hdrI=document.getElementById('hdr-info');
-  if(hdrI)hdrI.textContent=`Encrypting: "${text}"`;
+  const hdrI=document.getElementById('hdr-info'), tmsg=document.getElementById('tape-info-msg');
+  if(hdrI)hdrI.textContent=(eMode==='decrypt'?'Decrypting: ':'Encrypting: ')+`"${text}"`;
+  if(tmsg)tmsg.textContent=eMode==='decrypt'?'Phase: Decryption':'Phase: Encryption';
   curInput=text;
-  encTM=mkCaesar(3);decTM=mkCaesar(-3);
+  encTM=mkCaesar(curShiftVal);
+  decTM=mkCaesar(-curShiftVal);
   curTM=eMode==='decrypt'?decTM:encTM;
   curTM.loadInput(text);
   allIDs=[];
@@ -1210,14 +1212,31 @@ function updPlayBtn(){
 // =============================================================
 function completeTM(idx){
   const ms=chatStore[activeId];if(idx>=ms.length)return;
-  const enc=curTM.tape.join('').replace(/□/g,'').trim();
-  if(!enc){ms[idx].processing=false;ms[idx].tmEncrypted=true;renderMsgs();return;}
-  ms[idx].processing=false;ms[idx].cipher=true;ms[idx].cipherText=enc;
-  renderMsgs();showToast('📡 Transmitted! Decrypting at receiver...');setBadge('decrypting');
+  const res=curTM.tape.join('').replace(/□/g,'').trim();
+  
+  if(eMode==='both'&&tmPhase===1){
+    tmPhase=2;
+    ms[idx].cipher=true; ms[idx].cipherText=res; renderMsgs();
+    showToast('📡 Phase 1 Complete! Starting Phase 2 (Auto-Decrypt)...');
+    const tmsg=document.getElementById('tape-info-msg');if(tmsg)tmsg.textContent='Phase 2: Decryption (Round Trip Verification)';
+    setBadge('decrypting');
+    setTimeout(()=>{
+      curTM=decTM; curTM.loadInput(res);
+      updateTapeUI(); pushID(); updateSB(); startAnim();
+    },1500);
+    return;
+  }
+
+  if(!res){ms[idx].processing=false;ms[idx].tmEncrypted=true;renderMsgs();return;}
+  ms[idx].processing=false;ms[idx].cipher=true;ms[idx].cipherText=res;
+  renderMsgs();showToast('📡 Transmitted! Decrypting at receiver...');
+  if(eMode!=='both')setBadge('decrypting');
+  
   setTimeout(()=>{
     ms[idx].cipher=false;ms[idx].tmEncrypted=true;
     renderMsgs();showToast('✅ Delivered — end-to-end encrypted with TM ✓');setBadge('idle');
-    const hi=document.getElementById('hdr-info');if(hi)hi.textContent=`"${curInput}" → "${enc}"`;
+    const hi=document.getElementById('hdr-info');if(hi)hi.textContent=`"${curInput}" → "${res}"`;
+    const tmsg=document.getElementById('tape-info-msg');if(tmsg)tmsg.textContent='Simulation Complete';
     updStats();if(chartsOk)updCharts();
   },2200);
 }
@@ -1438,7 +1457,7 @@ function initD3(){
       .attr('stroke',n.type==='accept'?'#3fb950':n.type==='reject'?'#f85149':'#58a6ff').attr('stroke-width',2);
     grp.append('text').attr('text-anchor','middle').attr('dominant-baseline','central').attr('font-size',11).attr('fill','#e6edf3').text(n.label);
   });
-  hlState('q0');
+  hlState(curTM.state||'q0');
 }
 
 function hlState(id){
@@ -1750,10 +1769,10 @@ function updStats(){
 // TOOLTIPS
 // =============================================================
 const TIPS={
-  tape:'The Turing Machine tape is an infinite sequence of cells. The read/write head moves left/right, reads the current symbol, writes a new symbol. The amber cell is the current head position.',
-  state:"Each TM state represents a 'mode' of computation — what the machine is currently 'thinking'. q0=start, q_upper=just encrypted uppercase, q_lower=just encrypted lowercase, q_skip=passed non-alpha, q_accept=done, q_reject=error.",
-  transition:"A transition δ(state, symbol) = (new_state, write_symbol, direction) tells the TM: given current state and symbol being read, what to write, which way to move, and what state to enter. This IS the program.",
-  id:"An Instantaneous Description (ID) captures the COMPLETE configuration of a TM at any instant: tape content, current state, and head position. Two identical IDs mean the TM is in the exact same situation.",
+  tape:'The Turing Machine tape is an infinite sequence of cells. The head moves left/right, reads the symbol, writes a new one. The high-fidelity physics ensures 1:1 simulation of the Caesar Cipher algorithm.',
+  state:"States are the 'brain' of the TM. q0=Start. q_upper/q_lower=Working states that remember the shift context. q_accept=Formal Accepting State. Our TM is a 'Total Decider' (Recursive), so it always hits q_accept for valid input.",
+  transition:"δ(q, σ) → (q', σ', D). This function IS the program. It maps current state and symbol to a new state, a write symbol, and a direction. This is the bedrock of the Church-Turing Thesis.",
+  id:"An Instantaneous Description (ID) captures the COMPLETE configuration of a TM. L q R means tape contents L, current state q, and tape contents R. For your TOC project, this serves as a trace-level proof of correctness.",
 };
 document.querySelectorAll('.help-btn').forEach(btn=>{
   const tip=btn.getAttribute('data-tip');if(!tip)return;
@@ -1794,6 +1813,7 @@ let curShiftVal=3;
 function updShift(v){
   curShiftVal=parseInt(v);
   document.getElementById('shift-num').textContent=v;
+  const sl=document.getElementById('shift-slider');if(sl)sl.value=v;
   encTM=mkCaesar(curShiftVal);
   decTM=mkCaesar(-curShiftVal);
   curTM=eMode==='decrypt'?decTM:encTM;
