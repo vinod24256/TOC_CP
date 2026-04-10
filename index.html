@@ -162,6 +162,8 @@ button{font-family:inherit;cursor:pointer}input,select{font-family:inherit}
 .tab-pane::-webkit-scrollbar{width:3px}
 .tab-pane::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
 .tab-pane.active{display:flex;animation:fadeIn .15s ease}
+/* A11y / Aria Labels style */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
 /* Components */
 .panel{background:var(--bg-panel);border:1px solid var(--border);border-radius:8px;padding:11px}
 .sec-hdr{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:7px;display:flex;align-items:center;gap:5px}
@@ -349,14 +351,14 @@ select.tf{padding:4px 8px;background:var(--bg-panel);border:1px solid var(--bord
   </div>
   <div class="hdr-right">
     <span class="spd-lbl">Speed:</span>
-    <span class="text-xs text-muted">🐢</span>
-    <input type="range" class="range-sl" id="global-speed" min="1" max="10" value="5">
-    <span class="text-xs text-muted">⚡</span>
-    <button class="cbtn" id="hdr-reset">⏮ Reset</button>
-    <button class="cbtn" id="hdr-back">⏪ Back</button>
-    <button class="cbtn playbtn" id="hdr-play">▶ Play</button>
-    <button class="cbtn" id="hdr-step">Step ⏩</button>
-    <button class="cbtn" id="hdr-run">⏭ Run All</button>
+    <span class="text-xs text-muted" aria-hidden="true">🐢</span>
+    <input type="range" class="range-sl" id="global-speed" min="1" max="10" value="5" aria-label="Global Simulation Speed">
+    <span class="text-xs text-muted" aria-hidden="true">⚡</span>
+    <button class="cbtn" id="hdr-reset" aria-label="Reset Simulation">⏮ Reset</button>
+    <button class="cbtn" id="hdr-back" aria-label="Step Backward">⏪ Back</button>
+    <button class="cbtn playbtn" id="hdr-play" aria-label="Toggle Play/Pause">▶ Play</button>
+    <button class="cbtn" id="hdr-step" aria-label="Step Forward">Step ⏩</button>
+    <button class="cbtn" id="hdr-run" aria-label="Run Simulation to Completion">⏭ Run All</button>
   </div>
 </header>
 <!-- MAIN -->
@@ -400,9 +402,14 @@ select.tf{padding:4px 8px;background:var(--bg-panel);border:1px solid var(--bord
     <div class="tab-pane active" id="tab-tape">
       <div class="flexr">
         <div class="mode-pills">
-          <button class="mpill active" onclick="setEMode('encrypt',this)">🔒 Encrypt</button>
-          <button class="mpill" onclick="setEMode('decrypt',this)">🔓 Decrypt</button>
-          <button class="mpill" onclick="setEMode('both',this)">↔ Both</button>
+          <button class="mpill active" id="pill-enc" onclick="setEMode('encrypt',this)">🔒 Encrypt</button>
+          <button class="mpill" id="pill-dec" onclick="setEMode('decrypt',this)">🔓 Decrypt</button>
+          <button class="mpill" id="pill-both" onclick="setEMode('both',this)">↔ Both</button>
+        </div>
+        <div class="flexr" style="background:var(--bg-panel);border:1px solid var(--border);border-radius:7px;padding:3px 8px;gap:10px">
+          <span class="text-xs text-muted">Shift:</span>
+          <input type="range" id="shift-val" min="1" max="25" value="3" style="width:50px;height:3px" oninput="updShift(this.value)">
+          <span id="shift-num" class="text-xs text-amber" style="font-family:var(--font-mono);font-weight:700">3</span>
         </div>
         <button class="help-btn" data-tip="tape">?</button>
         <span class="text-xs text-muted" id="tape-info-msg"></span>
@@ -497,7 +504,8 @@ select.tf{padding:4px 8px;background:var(--bg-panel);border:1px solid var(--bord
             <option value="q_lower">q_lower</option>
             <option value="q_skip">q_skip</option>
           </select>
-          <button class="exp-btn" onclick="exportTR()">⬇ JSON</button>
+          <button class="exp-btn" onclick="exportTR('json')">⬇ JSON</button>
+          <button class="exp-btn" onclick="exportTR('csv')">⬇ CSV</button>
         </div>
       </div>
       <div class="tt-wrap"><table class="tt" id="tt"></table></div>
@@ -640,6 +648,17 @@ select.tf{padding:4px 8px;background:var(--bg-panel);border:1px solid var(--bord
         <div class="cx-row"><span class="cx-key">TM Type</span><span class="cx-val">Total Decider (guaranteed halt)</span></div>
         <div class="cx-row"><span class="cx-key">States required</span><span class="cx-val">6 states (q0, q_upper, q_lower, q_skip, q_accept, q_reject)</span></div>
         <div class="cx-row"><span class="cx-key">Alphabet size |Σ|</span><span class="cx-val">95 printable ASCII + blank symbol</span></div>
+      </div>
+      <div class="cxcard" style="margin-top:10px">
+        <div class="sec-hdr" style="margin-bottom:8px;justify-content:space-between">
+          Formal Grammar (Type 0)
+          <button class="exp-btn" onclick="genGrammar()">Generate Productions</button>
+        </div>
+        <div class="text-xs text-muted" style="margin-bottom:8px">Unrestricted Grammar G = (V, Σ, R, S) equivalent to this TM.</div>
+        <div id="gram-box" style="background:#0a0d13;border:1px solid var(--border);border-radius:6px;padding:10px;height:120px;overflow-y:auto;font-family:var(--font-mono);font-size:10px;color:var(--accent-purple)">
+          <div style="opacity:0.4;text-align:center;padding-top:40px">Click generate to view productions...</div>
+        </div>
+      </div>
       </div>
     </div>
   </div>
@@ -1491,14 +1510,23 @@ function showTRDet(st,sym,ns,w,d){
   det.style.display='block';
 }
 
-function exportTR(){
-  const obj={};
-  Object.entries(encTM.tr).forEach(([key,val])=>{
-    const[st,sym]=key.split('|||');if(!obj[st])obj[st]={};obj[st][sym]=val;
-  });
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));
-  a.download='CaesarTM_Transitions.json';a.click();
+function exportTR(fmt){
+  const obj=encTM.tr;
+  if(fmt==='json'){
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'}));
+    a.download='TM_Transitions.json';a.click();
+  } else {
+    let csv='State,Read,NewState,Write,Dir\n';
+    Object.entries(obj).forEach(([k,v])=>{
+      const[st,sy]=k.split('|||');
+      csv+=`"${st}","${sy===' '?'space':sy}","${v.newState}","${v.write===' '?'space':v.write}","${v.dir}"\n`;
+    });
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+    a.download='TM_Transitions.csv';a.click();
+  }
+  showToast(`Exported Transitions as ${fmt.toUpperCase()} ✓`);
 }
 
 // =============================================================
@@ -1755,6 +1783,43 @@ document.getElementById('hdr-back').onclick=doBack;
 document.getElementById('hdr-play').onclick=doPlay;
 document.getElementById('hdr-step').onclick=doStep;
 document.getElementById('hdr-run').onclick=doRunAll;
+
+// =============================================================
+// ULTIMATE Polishes
+// =============================================================
+let curShiftVal=3;
+function updShift(v){
+  curShiftVal=parseInt(v);
+  document.getElementById('shift-num').textContent=v;
+  encTM=mkCaesar(curShiftVal);
+  decTM=mkCaesar(-curShiftVal);
+  curTM=eMode==='decrypt'?decTM:encTM;
+  if(curInput)curTM.loadInput(curInput);
+  updateTapeUI();updateSB();buildTT();
+  showToast(`TM regenerated for Caesar k=${v}`);
+}
+
+function genGrammar(){
+  const box=document.getElementById('gram-box');
+  box.innerHTML='';
+  let h=`<span style="color:#8b949e"># Unrestricted Grammar G for TM Crypt (k=${curShiftVal})</span>\n`;
+  h+=`S → [q0]□\n`;
+  TT_STATES.forEach(st=>{
+    TT_SYMS.forEach(sym=>{
+      if(!sym.s)return;
+      const k=st+'|||'+sym.s, tr=encTM.tr[k];
+      if(tr){
+        const w=tr.write===' '?'_':tr.write;
+        const s=sym.l==='spc'?'_':sym.l;
+        if(tr.dir==='R') h+=`[${st}]${s} → ${w}[${tr.newState}]\n`;
+        else h+=`X[${st}]${s} → [${tr.newState}]X${w}  <span style="opacity:0.5">(for all X in Σ)</span>\n`;
+      }
+    });
+  });
+  h+=`[q_accept] → ε\n`;
+  box.innerHTML=`<pre style="white-space:pre-wrap">${h}</pre>`;
+  showToast('Type 0 Grammar Generated ✓');
+}
 
 // =============================================================
 // INIT
