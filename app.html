@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TM Crypt — Simulator Workspace</title>
+  
+  <link rel="stylesheet" href="assets/style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+  
+  <style>
+    body { overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+    
+    /* TOP BAR */
+    .top-bar {
+      height: 48px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      justify-content: space-between;
+      z-index: 10;
+    }
+    
+    .top-left { display: flex; align-items: center; gap: 16px; }
+    .top-center { flex: 1; display: flex; justify-content: center; align-items: center; gap: 20px; }
+    .top-right { display: flex; align-items: center; gap: 8px; }
+    
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #71717a; }
+    .status-dot.active { background: var(--amber); animation: dotPulse 1.5s infinite; }
+    .status-dot.done { background: var(--accent); }
+    
+    /* APP LAYOUT */
+    .app-main { flex: 1; display: flex; overflow: hidden; background: #0d0d0f; }
+    
+    /* SIDEBAR */
+    .sidebar { width: 260px; background: #111113; border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; }
+    .sidebar-search { padding: 12px 16px; }
+    .contact-list { flex: 1; overflow-y: auto; }
+    
+    .contact-item {
+      height: 64px;
+      padding: 0 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: background 0.15s;
+    }
+    .contact-item:hover { background: var(--surface); }
+    .contact-item.active { background: var(--surface); border-left-color: var(--accent); }
+    
+    .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 500; font-size: 14px; flex-shrink: 0; }
+    .contact-info { flex: 1; min-width: 0; }
+    .contact-name { font-size: 14px; font-weight: 500; color: var(--text); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .contact-preview { font-size: 12px; color: var(--text-dim); display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .contact-meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .contact-time { font-size: 11px; color: var(--text-dim); }
+    .unread-badge { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); color: #000; font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+    
+    /* CHAT PANEL */
+    .chat-panel { 
+       flex: 1; display: flex; flex-direction: column; position: relative; 
+       background-color: #0b141a;
+       background-image: radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+       background-size: 20px 20px;
+    }
+    .chat-header { height: 60px; background: rgba(32, 44, 51, 0.9); backdrop-filter: blur(8px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; padding: 0 16px; gap: 12px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.2);}
+    .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+    .chat-input-row { height: 56px; background: rgba(17, 17, 19, 0.85); backdrop-filter: blur(8px); border-top: 1px solid var(--border-subtle); display: flex; align-items: center; padding: 0 16px; gap: 12px; z-index: 10; }
+    
+    .msg-bubble { max-width: 65%; padding: 12px 16px; position: relative; font-size: 14px; line-height: 1.5; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    .msg-sent { align-self: flex-end; background: linear-gradient(135deg, #0a5741 0%, #06402e 100%); color: var(--text); border-radius: 14px 14px 0 14px; border: 1px solid rgba(34, 197, 94, 0.2); }
+    .msg-sent::after { content: ""; position: absolute; bottom: -1px; right: -8px; width: 0; height: 0; border: 4px solid transparent; border-bottom-color: #06402e; border-left-color: #06402e; }
+    .msg-recv { align-self: flex-start; background: linear-gradient(135deg, #27272a 0%, #18181b 100%); color: var(--text); border-radius: 14px 14px 14px 0; border: 1px solid rgba(255, 255, 255, 0.05); }
+    .msg-recv::after { content: ""; position: absolute; bottom: -1px; left: -8px; width: 0; height: 0; border: 4px solid transparent; border-bottom-color: #18181b; border-right-color: #18181b; }
+    
+    .msg-meta { display: flex; align-items: center; justify-content: flex-end; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 4px; }
+    .msg-tm-badge { font-size: 10px; color: var(--accent); margin-top: 4px; display: block; opacity: 0.8; }
+    
+    /* TM PANEL */
+    .tm-panel { width: 680px; background: #111113; border-left: 1px solid var(--border-subtle); display: flex; flex-direction: column; }
+    .tm-tabs { height: 40px; background: #0d0d0f; border-bottom: 1px solid var(--border-subtle); display: flex; padding: 0 16px; gap: 4px; }
+    .tm-content { flex: 1; overflow-y: auto; padding: 20px; }
+    
+    /* TAPE STYLES */
+    .tape-viz { background: #0d0d0f; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 20px; margin-bottom: 20px; overflow: hidden; position: relative; }
+    .tape-row { display: flex; gap: 4px; }
+    .cell { width: 44px; height: 44px; border: 1px solid var(--border-subtle); border-radius: 4px; background: var(--surface); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 18px; flex-shrink: 0; transition: transform 0.2s; }
+    .cell.head { border: 2px solid var(--amber); background: rgba(245, 158, 11, 0.1); color: var(--amber); }
+    .cell.written { border-color: var(--accent); color: var(--accent); animation: cellWrite 0.4s; }
+    
+    /* LOGS */
+    .log-box { height: 160px; background: #0d0d0f; border: 1px solid var(--border-subtle); border-radius: 6px; overflow-y: auto; padding: 12px; font-family: var(--font-mono); font-size: 12px; color: var(--text-dim); }
+    .log-entry { padding: 2px 0; border-bottom: 1px solid rgba(255,255,255,0.02); }
+    .log-entry.active { color: var(--text); background: rgba(34, 197, 94, 0.05); border-left: 2px solid var(--accent); padding-left: 8px; }
+    
+    /* STATUS BAR */
+    .status-bar { height: 32px; background: #09090b; border-top: 1px solid var(--border-subtle); display: flex; align-items: center; padding: 0 16px; font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); }
+    .sb-section { padding: 0 12px; border-right: 1px solid var(--border-subtle); height: 16px; display: flex; align-items: center; }
+    .sb-section:last-child { border-right: none; }
+    
+    /* TABS CONTENT */
+    .tab-pane { display: none; flex-direction: column; gap: 20px; height: 100%; }
+    .tab-pane.active { display: flex; }
+    
+    /* TABLES */
+    .tm-table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; }
+    .tm-table th { padding: 10px; text-align: left; background: var(--surface); color: var(--text-dim); font-size: 10px; text-transform: uppercase; border-bottom: 1px solid var(--border-subtle); }
+    .tm-table td { padding: 10px; border-bottom: 1px solid var(--border-subtle); color: var(--text-muted); }
+    .tm-table tr.firing { background: rgba(245, 158, 11, 0.05); border-left: 3px solid var(--amber); }
+    
+    /* HALTING PROOF */
+    .proof-card { background: var(--surface); border: 1px solid var(--border-subtle); border-radius: 8px; padding: 24px; display: none; flex-direction: column; gap: 12px; animation: slideDown 0.3s; }
+    .proof-card.active { display: flex; }
+
+    /* MODALS */
+    .saas-modal-backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; opacity: 0; transition: opacity 0.2s; }
+    .saas-modal-backdrop.active { display: flex; opacity: 1; }
+    .saas-modal { background: #111113; border: 1px solid var(--border-subtle); border-radius: 12px; padding: 32px 24px; min-width: 280px; box-shadow: 0 20px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05); transform: translateY(20px); transition: transform 0.2s; display: flex; flex-direction: column; gap: 16px; align-items: center; text-align: center; }
+    .saas-modal-backdrop.active .saas-modal { transform: translateY(0); }
+    .modal-pulse { width: 64px; height: 64px; border-radius: 50%; background: rgba(34, 197, 94, 0.1); border: 1px solid rgba(34, 197, 94, 0.2); display: flex; align-items: center; justify-content: center; color: var(--accent); margin-bottom: 8px; animation: statePulse 2s infinite; }
+    .modal-title { font-size: 16px; font-weight: 600; color: #fafafa; }
+    .modal-desc { font-size: 13px; color: var(--text-muted); }
+
+    /* CHARTS */
+    .chart-container { background: linear-gradient(180deg, #18181b 0%, #0d0d0f 100%); border: 1px solid var(--border-subtle); box-shadow: inset 0 1px 0 rgba(255,255,255,0.02); border-radius: 8px; padding: 20px; height: 260px; display: flex; flex-direction: column; }
+    .chart-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <header class="top-bar">
+    <div class="top-left">
+      <a href="index.html" class="btn btn-ghost" style="height: 28px; font-size: 12px;">← Home</a>
+      <div style="width: 1px; height: 16px; background: var(--border-subtle);"></div>
+      <span class="nav-title" style="font-size: 14px;">TM Crypt / <span class="text-dim">app</span></span>
+    </div>
+    <div class="top-center">
+      <div id="central-status" style="display: flex; align-items: center; gap: 8px;">
+        <div class="status-dot" id="status-dot"></div>
+        <span id="status-text" class="text-mono text-xs text-dim uppercase">IDLE</span>
+      </div>
+      <div id="sim-info" class="text-mono text-xs text-dim"></div>
+    </div>
+    <div class="top-right">
+      <span class="text-xs text-dim">Shift k:</span>
+      <input type="range" id="shift-range" min="1" max="25" value="3" style="width: 100px; height: 2px;">
+      <span id="shift-val" class="badge badge-amber" style="width: 20px; justify-content: center;">3</span>
+      <button class="btn btn-secondary" id="global-reset" title="Reset Simulation">⏮</button>
+      <button class="btn btn-secondary" id="global-prev" title="Step Backward">⏪</button>
+      <button class="btn btn-primary" id="global-play" title="Play/Pause">▶</button>
+      <button class="btn btn-secondary" id="global-step" title="Step Forward">⏩</button>
+      <button class="btn btn-secondary" id="global-run" title="Run All">⏭</button>
+    </div>
+  </header>
+
+  <div class="app-main">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-search">
+        <input type="text" class="input input-mono" placeholder="Search chats..." id="contact-search">
+      </div>
+      <div class="contact-list" id="contact-list">
+        <!-- Contacts will be injected here -->
+      </div>
+    </aside>
+
+    <!-- CHAT PANEL -->
+    <section class="chat-panel">
+      <header class="chat-header">
+        <div class="avatar" id="active-avatar" style="background: var(--accent);">VK</div>
+        <div class="contact-info">
+          <span class="contact-name" id="active-name">Vijay Kumar</span>
+          <span class="text-xs text-accent" id="active-status">online</span>
+        </div>
+        <div style="display: flex; gap: 16px; color: var(--text-dim);">
+          <button id="btn-vid" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></button>
+          <button id="btn-call" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></button>
+          <button id="btn-info" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+          <button id="btn-more" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/></svg></button>
+        </div>
+      </header>
+      
+      <div id="chat-messages" class="chat-messages">
+        <!-- Messages loaded dynamically -->
+      </div>
+      
+      <div class="chat-input-row">
+        <button id="btn-emoji" class="btn btn-ghost">😊</button>
+        <button id="btn-attach" class="btn btn-ghost">📎</button>
+        <input type="text" id="chat-input" class="input" placeholder="Type a message to encrypt...">
+        <button id="send-btn" class="send-btn" style="background: none; border: none; padding: 0;">
+          <svg id="mic-icon" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+      </div>
+    </section>
+
+    <!-- TM PANEL -->
+    <aside class="tm-panel">
+      <nav class="tm-tabs">
+        <div class="tab active" data-tab="tape">Tape</div>
+        <div class="tab" data-tab="states">States</div>
+        <div class="tab" data-tab="transitions">Transitions</div>
+        <div class="tab" data-tab="ids">IDs</div>
+        <div class="tab" data-tab="variants">Variants</div>
+        <div class="tab" data-tab="halting">Halting</div>
+        <div class="tab" data-tab="complexity">Complexity</div>
+      </nav>
+      
+      <div class="tm-content" id="tm-content">
+        <!-- TAPE TAB -->
+        <div class="tab-pane active" id="pane-tape">
+          <div style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-bottom: 12px; cursor: pointer;" onclick="toggleFormalDef()">M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject) ▾</div>
+          <div id="formal-def-content" style="display: none; background: var(--surface); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 10px; line-height: 1.6;">
+            Q = {q₀, q_upper, q_lower, q_skip, q_accept, q_reject}<br>
+            Σ = ASCII, Γ = Σ ∪ {□}, δ: Q×Γ→Q×Γ×{L,R}
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;">
+            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+              <span class="text-xs text-dim uppercase">State</span>
+              <span id="card-state" class="text-mono text-accent">q0</span>
+            </div>
+            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+              <span class="text-xs text-dim uppercase">Reading</span>
+              <span id="card-read" class="text-mono">□</span>
+            </div>
+            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+              <span class="text-xs text-dim uppercase">Writing</span>
+              <span id="card-write" class="text-mono text-accent">□</span>
+            </div>
+            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+              <span class="text-xs text-dim uppercase">Moving</span>
+              <span id="card-move" class="text-mono text-amber">R →</span>
+            </div>
+          </div>
+          
+          <div class="tape-viz">
+            <div style="font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.1); margin-bottom: 4px;" id="tape-indices"></div>
+            <div class="tape-row" id="tape-row"></div>
+            <div style="position: absolute; top: 0; left: 50%; height: 100%; width: 2px; border-left: 1px dashed rgba(245, 158, 11, 0.3); pointer-events: none;"></div>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <span class="text-mono text-xs text-dim uppercase">Computation Log</span>
+            <div style="display: flex; align-items: center; gap: 8px;">
+               <span class="text-xs text-dim">Speed:</span>
+               <input type="range" id="sim-speed" min="1" max="10" value="5" style="width: 80px;">
+            </div>
+          </div>
+          <div class="log-box" id="log-box"></div>
+        </div>
+        
+        <!-- STATES TAB -->
+        <div class="tab-pane" id="pane-states">
+          <div style="height: 100%; position: relative;">
+            <svg id="state-graph" style="width: 100%; height: 400px; background: #0d0d0f; border-radius: 8px; border: 1px solid var(--border-subtle);"></svg>
+            <div style="position: absolute; bottom: 12px; left: 12px; display: flex; gap: 12px;">
+               <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: var(--blue);"></div> Active</div>
+               <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></div> Accept</div>
+               <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px;"><div style="width: 8px; height: 8px; border-radius: 50%; background: var(--red);"></div> Reject</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 20px;">
+            <h4 class="card-title" style="font-size: 14px;">Interactive Logic</h4>
+            <p class="card-desc" style="font-size: 12px;">The TM transitions based on input type: q_upper for caps, q_lower for small letters, q_skip for non-alpha symbols. Drag nodes to explore the layout.</p>
+          </div>
+        </div>
+        
+        <!-- TRANSITIONS TAB -->
+        <div class="tab-pane" id="pane-transitions">
+           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+             <span class="text-mono text-xs text-dim uppercase">δ: Q × Γ → Q × Γ × {L, R}</span>
+             <div style="display: flex; gap: 8px;">
+               <select id="trans-filter" class="input input-mono" style="padding: 4px; border-radius: 4px; font-size: 11px; height: 26px; border: 1px solid var(--border-subtle); background: var(--surface);" onchange="renderTransitions()">
+                  <option value="all">All States</option>
+                  <option value="q0">q0</option>
+                  <option value="q_upper">q_upper</option>
+                  <option value="q_lower">q_lower</option>
+                  <option value="q_skip">q_skip</option>
+                  <option value="q_accept">q_accept</option>
+               </select>
+               <button class="btn btn-secondary btn-xs" onclick="exportTransitions('csv')">CSV ↓</button>
+             </div>
+           </div>
+           <div style="height: 480px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+             <table class="tm-table" id="transitions-table">
+               <thead>
+                 <tr><th>State</th><th>Read</th><th>Write</th><th>Dir</th><th>New State</th></tr>
+               </thead>
+               <tbody id="transitions-body"></tbody>
+             </table>
+           </div>
+        </div>
+        
+        <!-- IDs TAB -->
+        <div class="tab-pane" id="pane-ids">
+           <div class="text-mono text-xs text-dim uppercase" style="margin-bottom: 12px;">Computation sequence — α [q] β notation</div>
+           <div id="id-list" style="flex: 1; min-height: 300px; background: #0d0d0f; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-family: var(--font-mono); font-size: 13px; overflow-y: auto;"></div>
+           <div id="id-summary-card" style="margin-top: 20px; display: none;"></div>
+        </div>
+        
+        <!-- VARIANTS TAB -->
+        <div class="tab-pane" id="pane-variants">
+          <section style="display: flex; flex-direction: column; gap: 20px;">
+            <div class="card">
+              <span class="badge badge-accent" style="margin-bottom: 8px;">Multi-Tape model</span>
+              <h4 class="card-title" style="font-size: 16px;">Step Equivalence</h4>
+              <p class="card-desc" style="font-size: 13px; margin-bottom: 16px;">Two heads, two tapes. Runs parallel O(n) scan proving k-tape reduction theorem.</p>
+              <div id="mt-viz" style="background: #0d0d0f; padding: 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 8px;">
+                <div class="tape-row" id="mt-tape1"></div>
+                <div class="tape-row" id="mt-tape2"></div>
+              </div>
+              <button class="btn btn-primary" style="margin-top: 12px;" id="run-mt">Animate Multi-tape run</button>
+            </div>
+            
+            <div class="card">
+               <span class="badge badge-amber" style="margin-bottom: 8px;">Non-deterministic TM</span>
+               <h4 class="card-title" style="font-size: 16px;">Parallel Path Exploring</h4>
+               <p class="card-desc" style="font-size: 13px; margin-bottom: 16px;">Branches into all 26 possible shift values simultaneously. One path accepts.</p>
+               <div style="height: 350px; overflow-y: auto; background: #0d0d0f; border-radius: 4px; border: 1px solid var(--border-subtle);">
+                 <svg id="ntm-tree" style="width: 100%; height: 550px;"></svg>
+               </div>
+               <button class="btn btn-secondary" style="margin-top: 12px;" id="run-ntm">Animate NTM Branches</button>
+            </div>
+            
+            <div class="card" style="border-left: 3px solid var(--purple);">
+               <h4 class="card-title" style="color: var(--purple); font-size: 15px;">Church-Turing Thesis</h4>
+               <p class="card-desc">Every effectively computable function is Turing-computable. Our Caesar cipher is effectively computable, thus this TM is its ultimate physical realization.</p>
+            </div>
+          </section>
+        </div>
+        
+        <!-- HALTING TAB -->
+        <div class="tab-pane" id="pane-halting">
+           <div style="display: flex; flex-direction: column; gap: 16px;">
+             <!-- Case 1 -->
+             <div class="card" style="border-left: 3px solid var(--accent); cursor: pointer;" onclick="runHaltCase(1)">
+               <h4 class="card-title" style="font-size: 14px; color: var(--accent);">✓ Case 1: Normal Halt — "Hello"</h4>
+               <p class="card-desc">Cipher runs, reaches blank symbol, enters q_accept. Decidable.</p>
+             </div>
+             <!-- Case 2 -->
+             <div class="card" style="border-left: 3px solid var(--red); cursor: pointer;" onclick="runHaltCase(2)">
+               <h4 class="card-title" style="font-size: 14px; color: var(--red);">∞ Case 2: Infinite Loop — Bouncing TM</h4>
+               <p class="card-desc">Enters qA ↔ qB oscillation. Step count increments forever. Undecidable segment.</p>
+               <div id="loop-counter" style="font-family: var(--font-mono); font-size: 18px; color: var(--red); text-align: center; margin-top: 10px; display: none;">Steps: 0</div>
+             </div>
+             <!-- Case 3 -->
+             <div class="card" style="border-left: 3px solid var(--amber);">
+               <h4 class="card-title" style="font-size: 14px; color: var(--amber);">⚠ Case 3: Halting Problem Proof</h4>
+               <p class="card-desc">Interactive 6-step proof by contradiction (Turing 1936).</p>
+               <div id="proof-container" style="margin-top: 12px;">
+                 <!-- Proof steps -->
+                 <div id="proof-step-body" class="proof-card active"></div>
+                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                   <button class="btn btn-secondary" id="proof-prev">← Prev</button>
+                   <span id="proof-indicator" class="text-mono text-xs text-dim">Step 1 / 6</span>
+                   <button class="btn btn-secondary" id="proof-next">Next →</button>
+                 </div>
+               </div>
+             </div>
+           </div>
+        </div>
+        
+        <!-- COMPLEXITY TAB -->
+        <div class="tab-pane" id="pane-complexity">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="chart-container" style="background: radial-gradient(circle at top right, rgba(34,197,94,0.05) 0%, #0d0d0f 100%);">
+               <div class="chart-header">
+                  <span class="text-xs text-accent uppercase font-semibold text-mono">Complexity Radar</span>
+                  <span class="badge badge-accent">O(n)</span>
+               </div>
+               <div style="flex: 1; position: relative;"><canvas id="radar-chart"></canvas></div>
+            </div>
+            <div class="chart-container" style="background: radial-gradient(circle at top right, rgba(59,130,246,0.05) 0%, #0d0d0f 100%);">
+               <div class="chart-header">
+                  <span class="text-xs text-blue uppercase font-semibold text-mono">State Distribution</span>
+               </div>
+               <div style="flex: 1; position: relative;"><canvas id="polar-chart"></canvas></div>
+            </div>
+            <div class="chart-container" style="grid-column: span 2; height: 160px; background: #09090b;">
+               <div class="chart-header">
+                  <span class="text-xs text-dim uppercase font-semibold text-mono">Live Tape Memory Usage</span>
+               </div>
+               <div style="flex: 1; position: relative;"><canvas id="tape-usage-chart"></canvas></div>
+            </div>
+          </div>
+          <div class="card" style="margin-top: 10px; background: rgba(0,0,0,0.5); border-color: rgba(239,68,68,0.2);">
+            <div style="display: flex; flex-direction: column; gap: 16px;">
+              <div>
+                <h4 class="card-title" style="font-size: 14px; text-shadow: 0 0 10px rgba(239,68,68,0.4);">Hierarchical Mapping — Chomsky</h4>
+                <p class="card-desc">Caesar cipher is a Type 0 (Recursive subset) language. Decidable completely.</p>
+              </div>
+              <svg id="chomsky-svg" style="width: 100%; min-height: 280px;"></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- STATUS BAR -->
+  <footer class="status-bar">
+    <div class="sb-section">STATE: <span id="sb-state" class="text-accent" style="margin-left: 4px;">q0</span></div>
+    <div class="sb-section">STEPS: <span id="sb-steps" style="margin-left: 4px; color: var(--text);">0</span></div>
+    <div class="sb-section">HEAD: <span id="sb-head" style="margin-left: 4px; color: var(--amber);">1</span></div>
+    <div class="sb-section" style="margin-left: auto;">CLASS: <span class="text-accent">RECURSIVE (DECIDABLE)</span></div>
+  </footer>
+
+  <!-- MODAL CONTAINER -->
+  <div class="saas-modal-backdrop" id="modal-backdrop">
+    <div class="saas-modal">
+      <div class="modal-pulse" id="modal-icon">📞</div>
+      <h3 class="modal-title" id="modal-title">End-to-End Encrypted Call</h3>
+      <p class="modal-desc" id="modal-desc">Establishing secure cryptographic handshake...</p>
+      <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 8px; width: 100%;">Close</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="assets/tm-engine.js"></script>
+  <script>
+    // DATA
+    const CONTACTS = [
+      { id:'vk', initials:'VK', name:'Vijay Kumar',         color:'#22c55e', time:'10:48 AM', preview:'Machan awesome da!',        unread:0 },
+      { id:'as', initials:'AS', name:'Ajith Sharma',        color:'#3b82f6', time:'11:42 AM', preview:'Super da! Nalla concept',  unread:2 },
+      { id:'rs', initials:'RS', name:'Reema Sen',           color:'#f59e0b', time:'1:22 PM',  preview:'TM encryption ah semma',   unread:0 },
+      { id:'rr', initials:'RR', name:'Revanth R',           color:'#ec4899', time:'2:28 PM',  preview:'Romba cool aa irukku',      unread:1 },
+      { id:'nk', initials:'NK', name:'Nirmal Kumar',        color:'#8b5cf6', time:'3:05 PM',  preview:'Nandri da best project',   unread:0 },
+      { id:'vsh',initials:'VK', name:'Vishal Kumar',        color:'#06b6d4', time:'4:15 PM',  preview:'Bro saas level irukku!',   unread:0 },
+      { id:'sg', initials:'SG', name:'Samiksha Gautam',     color:'#10b981', time:'4:33 PM',  preview:'Marks kedaikum da',        unread:3 },
+      { id:'sp', initials:'SP', name:'Shweta Patel',        color:'#f97316', time:'5:12 PM',  preview:'TM Crypt is live now!',    unread:0 },
+      { id:'ar', initials:'AR', name:'Arjun Reddy',         color:'#ef4444', time:'Saturday', preview:'Machan semma work da',     unread:0 },
+      { id:'dl', initials:'DL', name:'Divya Lakshmi',       color:'#a78bfa', time:'Friday',   preview:'Chala interesting ga undi?', unread:0 },
+      { id:'goa',initials:'🌴', name:'Goa Trip 🏖️',         color:'#14b8a6', time:'11:00 AM', preview:'Tickets book panniyacha?',   unread:5 },
+      { id:'ccn3',initials:'💻', name:'CCN3 Group',          color:'#6366f1', time:'Yesterday',preview:'Project submission eppo?', unread:0 },
+      { id:'sec',initials:'🏫', name:'Sec-1 Official',      color:'#8b5cf6', time:'Tuesday',  preview:'Tomorrow class is cancelled',unread:1 }
+    ];
+
+    let activeContact = CONTACTS[0];
+    let chatStore = {}; // msg history
+    let curTM = null;
+    let encTM = TMEngine.createCaesarTM(3);
+    let decTM = TMEngine.createDecryptTM(3);
+    let tmSpeed = 400;
+    let tmInterval = null;
+    let isPlaying = false;
+    let charts = {};
+
+    // UI ELEMENTS
+    const contactList = document.getElementById('contact-list');
+    const chatMessages = document.getElementById('chat-messages');
+    const chatInput = document.getElementById('chat-input');
+    const micIcon = document.getElementById('mic-icon');
+    const sendBtn = document.getElementById('send-btn');
+    const tapeRow = document.getElementById('tape-row');
+    const logBox = document.getElementById('log-box');
+    const idList = document.getElementById('id-list');
+
+    // INIT
+    function init() {
+      // PRELOAD REAL CHATS
+      CONTACTS.forEach(c => chatStore[c.id] = []);
+      chatStore['vk'] = [
+        { s:'them', text:'Machan! Enna pandra? TOC project ready ah?',           time:'9:00 AM'  },
+        { s:'them', text:'Namma batch la evanum ithu panala da, unique idea!',    time:'9:02 AM'  },
+        { s:'me',   text:'Da, Turing Machine based encryption simulator panni irukken', time:'9:45 AM', processed: true },
+        { s:'them', text:'Seriously ah?? That sounds semma da 🔥',                time:'9:46 AM'  },
+        { s:'me',   text:'H→K, e→h, l→o shift by 3. "Hello" becomes "Khoor" on the tape', time:'9:49 AM', processed: true },
+        { s:'them', text:'Whoa! Actual TM tape animation ah? Step by step?',      time:'9:51 AM'  },
+        { s:'me',   text:'Yes da! 7 tabs — tape, states, transitions, IDs, variants, halting problem everything', time:'9:52 AM', processed: true },
+        { s:'them', text:'Machan awesome ah irukku da! 🔥 Full marks kedaikum',   time:'10:48 AM' }
+      ];
+      chatStore['as'] = [
+        { s:'them', text:'Super da! Enna concept eduthu?',         time:'11:20 AM' },
+        { s:'me',   text:'Turing Machine based encryption da',     time:'11:21 AM', processed: true },
+        { s:'them', text:'Like Caesar cipher ah?',                 time:'11:22 AM' },
+        { s:'me',   text:'Exactly! But visualized as actual TM tape with states and transitions', time:'11:23 AM', processed: true },
+        { s:'them', text:'NTM branching tree also iruka?',         time:'11:38 AM' },
+        { s:'them', text:'Super da! Nalla concept',               time:'11:42 AM' }
+      ];
+      chatStore['sg'] = [
+        { s:'them', text:'TOC project ah? Which unit?',            time:'4:30 PM' },
+        { s:'me',   text:'Unit 5 — Turing Machines',               time:'4:31 PM', processed: true },
+        { s:'them', text:'Church thesis and halting problem also?', time:'4:31 PM' },
+        { s:'me',   text:'Yes! Multi-tape, NTM, halting proof — all covered with visualizations', time:'4:32 PM', processed: true },
+        { s:'them', text:'Marks kedaikum da', time:'4:33 PM' }
+      ];
+      chatStore['goa'] = [
+        { s:'them', sender:'Vijay k', text:'Macha Goa plan enna aachu?', time:'10:00 AM' },
+        { s:'them', sender:'Ajith Sharma', text:'Tickets book panniyacha guys??', time:'11:00 AM' },
+        { s:'me',   text:'Let me check the availability tonight and tell you', time:'11:05 AM', processed: false },
+      ];
+      chatStore['ccn3'] = [
+        { s:'them', sender:'Nirmal Kumar', text:'Guys, TOC project review eppo irukku?', time:'Yesterday' },
+        { s:'them', sender:'Shweta Patel', text:'Project submission this weekend guys.', time:'Yesterday' }
+      ];
+      chatStore['rr'] = [
+        { s:'them', text:'Bro eppo free ah irukka?', time:'2:00 PM' },
+        { s:'me',   text:'Ippo free thaan da sollu', time:'2:15 PM' },
+        { s:'them', text:'Romba cool aa irukku namma interface', time:'2:28 PM' }
+      ];
+      
+      // others default
+      CONTACTS.forEach(c => { if(chatStore[c.id].length===0) chatStore[c.id] = [{ s: 'them', text: c.preview, time: c.time }]; });
+      
+      renderContacts();
+      loadChat(activeContact.id);
+      setupTabs();
+      setupControls();
+      initGraph();
+      initCharts();
+      initChomsky();
+      initProof();
+    }
+
+    // CONTACTS
+    function renderContacts() {
+      contactList.innerHTML = '';
+      CONTACTS.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'contact-item' + (c.id === activeContact.id ? ' active' : '');
+        item.onclick = () => loadChat(c.id);
+        item.innerHTML = `
+          <div class="avatar" style="background: ${c.color}">${c.initials}</div>
+          <div class="contact-info">
+            <span class="contact-name">${c.name}</span>
+            <span class="contact-preview">${c.preview}</span>
+          </div>
+          <div class="contact-meta">
+            <span class="contact-time">${c.time}</span>
+            ${c.unread > 0 ? `<div class="unread-badge">${c.unread}</div>` : ''}
+          </div>
+        `;
+        contactList.appendChild(item);
+      });
+    }
+
+    function loadChat(id) {
+      activeContact = CONTACTS.find(c => c.id === id);
+      document.getElementById('active-name').textContent = activeContact.name;
+      document.getElementById('active-avatar').textContent = activeContact.initials;
+      document.getElementById('active-avatar').style.background = activeContact.color;
+      document.getElementById('active-status').textContent = 'online';
+      document.getElementById('active-status').className = 'text-xs text-accent';
+      
+      renderContacts();
+      renderMessages();
+    }
+
+    function renderMessages() {
+      chatMessages.innerHTML = '';
+      chatStore[activeContact.id].forEach(m => {
+        const wrap = document.createElement('div');
+        wrap.className = 'msg-bubble ' + (m.s === 'me' ? 'msg-sent' : 'msg-recv');
+        
+        let content = '';
+        
+        // Group Header Rendering
+        if (activeContact.isGroup && m.s === 'them') {
+           const colors = ['#f59e0b', '#ec4899', '#3b82f6', '#8b5cf6', '#06b6d4', '#10b981'];
+           // pseudo-random color based on string length
+           const senderColor = m.sender ? colors[m.sender.length % colors.length] : colors[4];
+           content += `<div style="font-size: 11px; font-weight: 600; color: ${senderColor}; margin-bottom: 4px;">${m.sender || 'Group Member'}</div>`;
+        }
+
+        content += `<div class="msg-text ${m.isCipher ? 'text-mono text-amber' : ''}">${m.text}</div>`;
+        if (m.s === 'me') {
+          content += `<div class="msg-meta">${m.time} <span style="color:#60a5fa">✓✓</span></div>`;
+          if (m.processed) content += `<span class="msg-tm-badge">🔒 TM Caesar Cipher ✓</span>`;
+        } else {
+          content += `<div class="msg-meta">${m.time}</div>`;
+        }
+        
+        wrap.innerHTML = content;
+        chatMessages.appendChild(wrap);
+      });
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    // INPUT
+    chatInput.oninput = () => {
+      if (chatInput.value.trim().length > 0) {
+        sendBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="var(--accent)"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>`;
+      } else {
+        sendBtn.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`;
+      }
+    };
+
+    chatInput.onkeydown = (e) => { if (e.key === 'Enter') handleSend(); };
+    sendBtn.onclick = handleSend;
+
+    function handleSend() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+      
+      const now = new Date();
+      const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+      
+      const newMsg = { s: 'me', text: text, time: timeStr, processed: false, isCipher: false };
+      chatStore[activeContact.id].push(newMsg);
+      chatInput.value = '';
+      chatInput.oninput();
+      renderMessages();
+      
+      startSimulation(text, newMsg);
+    }
+      
+      // SIMULATION PIPELINE
+    function startSimulation(text, msgObj) {
+      if (tmInterval) clearInterval(tmInterval);
+      
+      const shiftK = document.getElementById('shift-range').value;
+      
+      // Phase 1: Encrypt
+      window._currentPhase = 'encrypt';
+      if(linkLabels) linkLabels.text(d => d.label); // Default A-Z / write+k
+      document.getElementById('sim-info').innerHTML = `<span class="badge badge-amber">ENCRYPTING: +${shiftK}</span>`;
+      const encTM = TMEngine.createCaesarTM(shiftK);
+      encTM.loadInput(text);
+      
+      runTMPhase('encrypt', encTM, msgObj, (cipherText) => {
+        // Phase 2: Decrypt (Auto-responder simulated)
+        setTimeout(() => {
+          const now = new Date();
+          const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+          
+          const repMsg = { s: 'them', text: cipherText, time: timeStr, processed: false, isCipher: true };
+          chatStore[activeContact.id].push(repMsg);
+          renderMessages();
+          
+          window._currentPhase = 'decrypt';
+          if(linkLabels) linkLabels.text(d => d.label.replace('+k', '-k'));
+          document.getElementById('sim-info').innerHTML = `<span class="badge badge-accent" style="border:1px solid var(--blue); color:var(--blue); background:rgba(59,130,246,0.1);">DECRYPTING: -${shiftK}</span>`;
+          const decTM = TMEngine.createDecryptTM(shiftK);
+          decTM.loadInput(cipherText);
+          
+          runTMPhase('decrypt', decTM, repMsg, (plainText) => {
+             document.getElementById('sim-info').innerHTML = ``;
+          });
+          
+        }, 1200);
+      });
+    }
+
+    function runTMPhase(phaseType, tmInstance, msgObj, onComplete) {
+      curTM = tmInstance;
+      isPlaying = true;
+      updateControlsUI();
+      logBox.innerHTML = '';
+      
+      msgObj.isCipher = false;
+      msgObj.processed = false;
+      renderMessages();
+      
+      let toast = document.getElementById('encrypt-toast');
+      if(!toast) { 
+        toast = document.createElement('div'); toast.id = 'encrypt-toast';
+        toast.style.position = 'absolute'; toast.style.top = '10px'; toast.style.left = '50%'; toast.style.transform = 'translate(-50%, -100%)'; toast.style.transition = 'transform 0.4s';
+        toast.style.padding = '8px 16px'; toast.style.background = 'var(--surface)'; toast.style.color = '#fafafa'; toast.style.borderRadius = '6px'; toast.style.fontSize='12px'; toast.style.border='1px solid var(--amber)'; toast.style.zIndex='100'; toast.style.boxShadow='0 4px 12px rgba(0,0,0,0.5)';
+        document.querySelector('.chat-panel').appendChild(toast);
+      }
+      
+      const isEnc = phaseType === 'encrypt';
+      setTimeout(() => {
+        msgObj.isCipher = isEnc;
+        msgObj.text = isEnc ? "...encrypting..." : "...decrypting...";
+        renderMessages();
+        toast.innerHTML = isEnc ? '🔒 TM Encrypting...' : '🔓 TM Decrypting...';
+        toast.style.borderColor = isEnc ? 'var(--amber)' : 'var(--blue)';
+        toast.style.transform = 'translate(-50%, 10px)';
+      }, 100);
+      
+      document.getElementById('status-dot').className = 'status-dot active';
+      document.getElementById('status-dot').style.background = isEnc ? 'var(--amber)' : 'var(--blue)';
+      document.getElementById('status-text').textContent = isEnc ? 'ENCRYPTING' : 'DECRYPTING';
+      
+      tmInterval = setInterval(() => {
+        if (curTM.isHalted()) {
+           clearInterval(tmInterval);
+           isPlaying = false;
+           updateControlsUI();
+           document.getElementById('status-dot').className = 'status-dot done';
+           document.getElementById('status-dot').style.background = 'var(--accent)';
+           document.getElementById('status-text').textContent = 'COMPLETE';
+           
+           const finalOut = curTM.out();
+           msgObj.text = finalOut;
+           msgObj.processed = isEnc; // Only show TM Badge for Sent ones if preferred
+           msgObj.isCipher = !isEnc; // Decrypted becomes plain
+           if(!isEnc) msgObj.isCipher = false; // Plaintext representation
+           renderMessages();
+           
+           toast.innerHTML = isEnc ? '✓ Encrypted successfully' : '✓ Decrypted successfully';
+           toast.style.background = 'rgba(34, 197, 94, 0.1)';
+           toast.style.borderColor = 'var(--accent)';
+           updateStateHighlight(curTM.state);
+           
+           setTimeout(() => {
+              if (isEnc) {
+                  msgObj.isCipher = false;
+                  msgObj.text = curTM.getInputText(); // reset to plaintext view for my side in UI
+                  renderMessages();
+              }
+              toast.style.transform = 'translate(-50%, -150%)';
+              document.getElementById('status-dot').className = 'status-dot';
+              document.getElementById('status-dot').style.background = '#71717a';
+              document.getElementById('status-text').textContent = 'IDLE';
+              
+              if(onComplete) onComplete(finalOut);
+           }, 1500);
+           
+           return;
+        }
+        
+        curTM.step();
+        
+        const outStr = curTM.getTape().join('').replace(/□/g, '').trim();
+        const originalTarget = curTM.getInputText();
+        const partial = originalTarget.substring(Math.min(outStr.length, originalTarget.length));
+        msgObj.text = outStr + (isEnc ? '' : '') + partial;
+        renderMessages();
+        updateUI();
+      }, tmSpeed);
+    }
+
+    function updateUI() {
+      renderTape();
+      updateLog();
+      updateIDList();
+      updateStatus();
+      updateGraph();
+      if (document.getElementById('pane-complexity').classList.contains('active')) updateCharts();
+    }
+
+    function renderTape() {
+      const tape = curTM.getTape();
+      const head = curTM.head;
+      tapeRow.innerHTML = '';
+      
+      const range = 15;
+      const start = Math.max(0, head - 7);
+      
+      for(let i=0; i<range; i++) {
+        const idx = start + i;
+        const sym = tape[idx] || '□';
+        const cell = document.createElement('div');
+        cell.className = 'cell' + (idx === head ? ' head' : '') + (idx < head && sym !== '□' ? ' written' : '');
+        cell.textContent = sym;
+        tapeRow.appendChild(cell);
+      }
+      
+      document.getElementById('card-state').textContent = curTM.state;
+      document.getElementById('card-read').textContent = tape[head] || '□';
+      
+      const latest = curTM.log[curTM.log.length - 1];
+      if (latest) {
+        document.getElementById('card-write').textContent = latest.write;
+        document.getElementById('card-move').textContent = latest.dir + (latest.dir === 'R' ? ' →' : ' ←');
+      }
+    }
+
+    function updateLog() {
+      const l = curTM.log[curTM.log.length - 1];
+      if (!l) return;
+      
+      Array.from(logBox.children).forEach(c => c.classList.remove('active'));
+
+      const div = document.createElement('div');
+      div.className = 'log-entry active';
+      div.innerHTML = `<span class="log-step">Step ${l.step}</span> <span class="log-delta">δ(${l.state}, '${l.read}') = (${l.ns}, '${l.write}', ${l.dir})</span>`;
+      logBox.appendChild(div);
+      logBox.scrollTop = logBox.scrollHeight;
+    }
+
+    function updateIDList() {
+      if (curTM.getStepCount() === 0 && document.getElementById('id-summary-card')) {
+        document.getElementById('id-summary-card').style.display = 'none';
+        idList.innerHTML = '';
+      }
+      const idStr = curTM.getID();
+      
+      const headIdx = idStr.indexOf('[');
+      const rightIdx = idStr.indexOf(']') + 1;
+      const alpha = idStr.substring(0, headIdx); 
+      const q = idStr.substring(headIdx, rightIdx); 
+      const beta = idStr.substring(rightIdx); 
+      
+      const div = document.createElement('div');
+      div.className = 'id-step-row';
+      div.innerHTML = `<span class="id-symbol">⊢</span> <span class="id-step">Step ${String(curTM.getStepCount()).padStart(2, ' ')}:</span> <span class="id-alpha">${alpha}</span><span class="id-q" style="color:#3b82f6; font-weight:bold;">${q}</span><span class="id-beta" style="color:#fafafa;">${beta}</span>`;
+      idList.appendChild(div);
+      idList.scrollTop = idList.scrollHeight;
+
+      if(curTM.isHalted()) {
+         const sum = document.getElementById('id-summary-card');
+         sum.style.display = 'block';
+         sum.style.background = '#18181b'; sum.style.border='1px solid #27272a'; sum.style.borderRadius='8px'; sum.style.padding='16px'; sum.style.fontFamily='monospace'; sum.style.fontSize='13px';
+         sum.innerHTML = `┌─────────────────────────────────────────┐<br>│  Input:   "${curTM.getInputText()}"<br>│  Output:  <span style="color:var(--accent)">"${curTM.out()}"</span><br>│  Steps:   ${curTM.getStepCount()}<br>│  Result:  <span style="color:var(--accent)">ACCEPTED ✓</span><br>│<br>│  L(M) = Σ* — Recursive Language<br>│  This TM is a Total Decider: halts on<br>│  ALL inputs. Caesar cipher language is<br>│  decidable.<br>└─────────────────────────────────────────┘`.replace(/ /g, '&nbsp;');
+      }
+    }
+
+    function updateStatus() {
+      document.getElementById('sb-state').textContent = curTM.state;
+      document.getElementById('sb-steps').textContent = curTM.getStepCount();
+      document.getElementById('sb-head').textContent = curTM.head;
+    }
+
+    // GRAPH (D3)
+    let d3Node, d3Link, d3Svg, d3Sim, linkLabels;
+    const STATES = [
+      { id: 'q0',     label: 'q₀',       type: 'start'  },
+      { id: 'q_upper',label: 'q_upper',  type: 'normal' },
+      { id: 'q_lower',label: 'q_lower',  type: 'normal' },
+      { id: 'q_skip', label: 'q_skip',   type: 'normal' },
+      { id: 'q_accept',label:'q_accept', type: 'accept' },
+      { id: 'q_reject',label:'q_reject', type: 'reject' }
+    ];
+    const LINKS = [
+      { source: 'q0',      target: 'q_upper',  label: 'A-Z / write+k, R' },
+      { source: 'q0',      target: 'q_lower',  label: 'a-z / write+k, R' },
+      { source: 'q0',      target: 'q_skip',   label: 'other / same, R'  },
+      { source: 'q0',      target: 'q_accept', label: '□ / □, R'         },
+      { source: 'q_upper', target: 'q0',       label: '→ next char'      },
+      { source: 'q_lower', target: 'q0',       label: '→ next char'      },
+      { source: 'q_skip',  target: 'q0',       label: '→ next char'      },
+    ];
+
+    function initGraph() {
+      document.getElementById('state-graph').innerHTML = '';
+      d3Svg = d3.select('#state-graph');
+      const width = document.getElementById('state-graph').clientWidth || 640;
+      const height = 400;
+
+      d3Sim = d3.forceSimulation(STATES)
+        .force('link', d3.forceLink(LINKS).id(d => d.id).distance(140).strength(0.8))
+        .force('charge', d3.forceManyBody().strength(-600))
+        .force('center', d3.forceCenter(width / 2, height / 2))
+        .force('collision', d3.forceCollide(50));
+
+      d3Link = d3Svg.append('g').selectAll('line').data(LINKS).enter().append('g');
+      
+      const lines = d3Link.append('line')
+        .attr('stroke', '#27272a').attr('stroke-width', 1.5);
+        
+      linkLabels = d3Link.append('text')
+        .text(d => d.label)
+        .attr('font-size', '9px')
+        .attr('font-family', 'monospace')
+        .attr('fill', '#71717a')
+        .attr('text-anchor', 'middle')
+        .attr('dy', -4);
+
+      d3Node = d3Svg.append('g').selectAll('g').data(STATES).enter().append('g')
+        .call(d3.drag().on('start', dragStarted).on('drag', dragged).on('end', dragEnded));
+
+      d3Node.append('circle').attr('r', 24).attr('fill', '#18181b').attr('stroke', '#3f3f46').attr('id', d => 'graph-node-' + d.id).attr('class', 'state-node');
+      d3Node.append('text').text(d => d.label).attr('fill', '#fafafa').attr('font-size', '10px').attr('text-anchor', 'middle').attr('dy', '.35em');
+
+      d3Sim.on('tick', () => {
+        lines.attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+        linkLabels.attr('x', d => (d.source.x + d.target.x)/2).attr('y', d => (d.source.y + d.target.y)/2);
+        d3Node.attr('transform', d => `translate(${d.x},${d.y})`);
+      });
+    }
+
+    function dragStarted(e, d) { if (!e.active) d3Sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
+    function dragged(e, d) { d.fx = e.x; d.fy = e.y; }
+    function dragEnded(e, d) { if (!e.active) d3Sim.alphaTarget(0); d.fx = null; d.fy = null; }
+
+    function updateStateHighlight(stateName) {
+      if (!curTM) return;
+      const nodes = d3.selectAll('.state-node');
+      nodes.attr('fill', '#18181b').attr('stroke', '#3f3f46').attr('stroke-width', 1.5).style('animation', 'none');
+      
+      const active = d3.select('#graph-node-' + stateName);
+      if(!active.empty()) {
+         active.style('animation', 'statePulse 0.6s infinite');
+         if(stateName === 'q_accept') { active.attr('fill', 'rgba(34,197,94,0.2)').attr('stroke', '#22c55e').attr('stroke-width', 2.5); }
+         else if(stateName === 'q_reject') { active.attr('fill', 'rgba(239,68,68,0.1)').attr('stroke', '#ef4444').attr('stroke-width', 2.5); }
+         else { active.attr('fill', 'rgba(59,130,246,0.2)').attr('stroke', '#3b82f6').attr('stroke-width', 2.5); }
+      }
+    }
+
+    function updateGraph() {
+       updateStateHighlight(curTM.state);
+    }
+
+    // CHARTS
+    function initCharts() {
+      // 1. Radar Chart (Complexity Mapping)
+      const radarCtx = document.getElementById('radar-chart').getContext('2d');
+      charts.radar = new Chart(radarCtx, {
+        type: 'radar',
+        data: { 
+           labels: ['Time O(n)', 'Space O(n)', 'Determinism', 'Alphabet', 'States'], 
+           datasets: [{ 
+              label: ' TM Execution', 
+              data: [20, 20, 90, 80, 50], 
+              backgroundColor: 'rgba(34,197,94,0.15)', 
+              borderColor: '#22c55e',
+              borderWidth: 1.5,
+              pointBackgroundColor: '#18181b',
+              pointBorderColor: '#22c55e',
+           }] 
+        },
+        options: { 
+           responsive: true, maintainAspectRatio: false,
+           scales: { 
+              r: { 
+                 angleLines: { color: 'rgba(255,255,255,0.05)' }, 
+                 grid: { color: 'rgba(255,255,255,0.05)' }, 
+                 pointLabels: { color: '#a1a1aa', font: { family: 'monospace', size: 10 } },
+                 ticks: { display: false, min: 0, max: 100 }
+              } 
+           },
+           plugins: { legend: { display: false } }
+        }
+      });
+
+      // 2. Polar Area Chart (State Visits)
+      const polarCtx = document.getElementById('polar-chart').getContext('2d');
+      charts.visits = new Chart(polarCtx, {
+        type: 'polarArea',
+        data: { 
+           labels: ['Start (q0)', 'Upper', 'Lower', 'Skip'], 
+           datasets: [{ 
+              data: [5, 1, 1, 1], 
+              backgroundColor: ['rgba(59,130,246,0.5)', 'rgba(34,197,94,0.5)', 'rgba(245,158,11,0.5)', 'rgba(167,139,250,0.5)'],
+              borderColor: '#18181b', borderWidth: 2
+           }] 
+        },
+        options: { 
+           responsive: true, maintainAspectRatio: false,
+           scales: { r: { ticks: { display: false } , grid: { color: 'rgba(255,255,255,0.05)' } } },
+           plugins: { legend: { display:false } }
+        }
+      });
+
+      // 3. Live Tape Usage (Line Area)
+      const tapeCtx = document.getElementById('tape-usage-chart').getContext('2d');
+      charts.tape = new Chart(tapeCtx, {
+        type: 'line',
+        data: { labels: [0], datasets: [{ label: 'Cells Used', data: [0], borderColor: '#f59e0b', fill: true, backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3 }] },
+        options: { 
+           responsive: true, maintainAspectRatio: false, 
+           scales: { 
+              x: { display: false }, 
+              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#71717a', stepSize: 2 } } 
+           },
+           plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+    function updateCharts() {
+      if (!curTM || !charts.radar) return;
+      
+      const step = curTM.getStepCount();
+      const maxLen = curTM.getTape().length;
+      
+      // Update Tape Usage
+      charts.tape.data.labels.push(step);
+      charts.tape.data.datasets[0].data.push(maxLen);
+      if (charts.tape.data.labels.length > 30) { charts.tape.data.labels.shift(); charts.tape.data.datasets[0].data.shift(); }
+      charts.tape.update('none');
+      
+      // Tally for state visits
+      const visits = [0,0,0,0];
+      curTM.log.forEach(l => {
+         if (l.state === 'q0') visits[0]++;
+         if (l.state === 'q_upper') visits[1]++;
+         if (l.state === 'q_lower') visits[2]++;
+         if (l.state === 'q_skip') visits[3]++;
+      });
+      
+      // Normalize states for polar display nicely if zeros
+      charts.visits.data.datasets[0].data = visits.map(v => v === 0 ? 0.2 : v);
+      charts.visits.update('none');
+      
+      // Radar chart pulse based on runtime (simulate dynamic complexity mapping O(N) mapping)
+      charts.radar.data.datasets[0].data[0] = Math.min(100, step * 2); // Time
+      charts.radar.data.datasets[0].data[1] = Math.min(100, maxLen * 3); // Space
+      charts.radar.update('none');
+    }
+
+    // TABS
+    function setupTabs() {
+      document.querySelectorAll('.tab').forEach(t => {
+        t.onclick = () => {
+          document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+          document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
+          t.classList.add('active');
+          document.getElementById('pane-' + t.dataset.tab).classList.add('active');
+          if (t.dataset.tab === 'transitions') renderTransitions();
+        };
+      });
+    }
+
+    function setupControls() {
+      document.getElementById('global-play').onclick = () => {
+        if (!curTM) return;
+        isPlaying = !isPlaying;
+        updateControlsUI();
+        if (isPlaying) {
+          tmInterval = setInterval(() => {
+            if (curTM.isHalted()) { clearInterval(tmInterval); isPlaying = false; updateControlsUI(); return; }
+            curTM.step(); updateUI();
+          }, tmSpeed);
+        } else {
+          clearInterval(tmInterval);
+        }
+      };
+      
+      document.getElementById('global-reset').onclick = () => {
+        if (curTM) curTM.reset();
+        idList.innerHTML = '';
+        updateUI();
+      };
+      
+      document.getElementById('global-step').onclick = () => {
+        if (curTM) { curTM.step(); updateUI(); }
+      };
+
+      document.getElementById('shift-range').oninput = (e) => {
+        const val = e.target.value;
+        document.getElementById('shift-val').textContent = val;
+        // Optionally recreate TMs if k changes
+      };
+    }
+
+    function updateControlsUI() {
+      document.getElementById('global-play').textContent = isPlaying ? '⏸' : '▶';
+    }
+
+    // MODALS & BUTTONS BINDING
+    const modalBackdrop = document.getElementById('modal-backdrop');
+    function openModal(title, desc, icon) {
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-desc').textContent = desc;
+      document.getElementById('modal-icon').textContent = icon;
+      modalBackdrop.classList.add('active');
+    }
+    window.closeModal = function() {
+      modalBackdrop.classList.remove('active');
+    }
+
+    document.getElementById('btn-vid').onclick = () => openModal('Video Call', 'Establishing E2E Encrypted TLS handshake...', '📹');
+    document.getElementById('btn-call').onclick = () => openModal('Voice Call', 'Establishing secure cryptographic handshake...', '📞');
+    document.getElementById('btn-info').onclick = () => openModal('Contact Info', 'Fetching verified public key identities...', '👤');
+    document.getElementById('btn-more').onclick = () => openModal('More Options', 'Loading contextual operations...', '⚙️');
+    document.getElementById('btn-emoji').onclick = () => openModal('Emoji Picker', 'Loading encrypted sticker pack...', '😊');
+    document.getElementById('btn-attach').onclick = () => openModal('Attach File', 'Preparing secure file transfer tunnel...', '📎');
+
+    // TRANSITIONS
+    function renderTransitions() {
+      const body = document.getElementById('transitions-body');
+      body.innerHTML = '';
+      if (!curTM) return;
+      
+      const filter = document.getElementById('trans-filter').value;
+      
+      Object.entries(curTM.transitions).forEach(([k, v]) => {
+        const [st, sym] = k.split('|||');
+        if(filter !== 'all' && st !== filter) return;
+
+        const row = document.createElement('tr');
+        if (curTM.state === st && (curTM.getTape()[curTM.head] || '□') === sym) {
+           row.className = 'firing';
+           setTimeout(() => { if(row) row.classList.remove('firing'); }, 800);
+        }
+        
+        row.innerHTML = `<td style="color:#a78bfa">${st}</td><td style="color:#fafafa">${sym}</td><td style="color:#22c55e">${v.write}</td><td style="color:#f59e0b">${v.dir}</td><td style="color:#a78bfa">${v.newState}</td>`;
+        body.appendChild(row);
+      });
+    }
+
+    // VARIANTS
+    document.getElementById('run-mt').onclick = () => {
+       const t1 = document.getElementById('mt-tape1');
+       const t2 = document.getElementById('mt-tape2');
+       t1.innerHTML = ''; t2.innerHTML = '';
+       const text = "HELLO";
+       const shift = 3;
+       
+       for(let i=0; i<10; i++) {
+         const c1 = document.createElement('div'); c1.className = 'cell'; c1.textContent = text[i] || '□';
+         const c2 = document.createElement('div'); c2.className = 'cell'; c2.textContent = '□';
+         t1.appendChild(c1); t2.appendChild(c2);
+       }
+       
+       let h = 0;
+       const iv = setInterval(() => {
+          if (h >= text.length) { clearInterval(iv); return; }
+          t1.children[h].className = 'cell head';
+          t2.children[h].className = 'cell head written';
+          const char = text[h];
+          const enc = String.fromCharCode(65 + (char.charCodeAt(0) - 65 + shift) % 26);
+          t2.children[h].textContent = enc;
+          h++;
+       }, 300);
+    };
+
+    document.getElementById('run-ntm').onclick = () => {
+       const svg = d3.select('#ntm-tree');
+       svg.selectAll('*').remove();
+       
+       svg.append('circle').attr('cx', 20).attr('cy', 275).attr('r', 15).attr('fill', '#3b82f6');
+       svg.append('text').text('q0').attr('x', 20).attr('y', 278).attr('fill', '#fff').attr('font-size', '10px').attr('text-anchor', 'middle');
+       
+       const shifts = Array.from({length: 26}, (_, i) => i+1);
+       const targetK = parseInt(document.getElementById('shift-range').value) % 26 || 3;
+       
+       const nodes = svg.selectAll('g.branch').data(shifts).enter().append('g')
+         .attr('class', 'branch')
+         .attr('transform', (d, i) => `translate(140, ${20 + i * 20})`);
+         
+       svg.selectAll('path.link').data(shifts).enter().append('path')
+         .attr('class', 'link')
+         .attr('d', (d, i) => `M 35 275 C 80 275, 80 ${20 + i * 20}, 140 ${20 + i * 20}`)
+         .attr('fill', 'none').attr('stroke', '#27272a').attr('stroke-width', 1);
+         
+       nodes.append('circle').attr('r', 6).attr('fill', '#27272a');
+       nodes.append('text').text(d => '+'+d).attr('x', 10).attr('y', 3).attr('fill', '#71717a').attr('font-size', '9px').attr('font-family', 'monospace');
+       
+       nodes.append('rect').attr('x', 30).attr('y', -6).attr('width', 60).attr('height', 12).attr('rx', 2).attr('fill', '#18181b').attr('stroke', '#27272a').attr('stroke-width', 1);
+       nodes.append('text').attr('class', 'term-text').text('Processing...').attr('x', 60).attr('y', 3).attr('fill', '#71717a').attr('font-size', '8px').attr('text-anchor', 'middle');
+
+       setTimeout(() => {
+          svg.selectAll('.branch circle').attr('fill', 'rgba(59,130,246,0.2)').attr('stroke', '#3b82f6');
+          svg.selectAll('path.link').attr('stroke', '#3b82f6').attr('opacity', 0.4);
+       }, 200);
+       
+       setTimeout(() => {
+          nodes.each(function(d, i) {
+             const g = d3.select(this);
+             const path = svg.selectAll('path.link').filter(p => p === d);
+             setTimeout(() => {
+                if(d === targetK) {
+                   g.select('circle').attr('fill', 'rgba(34,197,94,0.3)').attr('stroke', '#22c55e');
+                   path.attr('stroke', '#22c55e').attr('stroke-width', 2).attr('opacity', 1);
+                   g.select('rect').attr('stroke', '#22c55e').attr('fill', 'rgba(34,197,94,0.1)');
+                   g.select('.term-text').text('✓ ACCEPT').attr('fill', '#22c55e');
+                } else {
+                   g.select('circle').attr('fill', 'rgba(239,68,68,0.1)').attr('stroke', '#ef4444');
+                   path.attr('stroke', '#ef4444').attr('stroke-width', 1).attr('opacity', 0.2);
+                   g.select('rect').attr('stroke', '#ef4444').attr('fill', 'rgba(239,68,68,0.05)');
+                   g.select('.term-text').text('✗ REJECT').attr('fill', '#ef4444');
+                }
+             }, i * 30);
+          });
+       }, 1000);
+    };
+
+    // HALTING PROOF
+    const PROOF_STEPS = [
+      { t: "Assumption", 
+        b: "Assume a Halting Detector H exists. It takes a program M and input w, and guarantees an output of HALT or LOOP.",
+        viz: `<svg width="100%" height="80"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#71717a"/></marker></defs><path d="M 10 40 L 90 40" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="50" y="32" fill="#a1a1aa" font-family="monospace" font-size="10" text-anchor="middle">Input ⟨M, w⟩</text><rect x="100" y="20" width="160" height="40" rx="4" fill="#18181b" stroke="#3b82f6" stroke-width="2"/><text x="180" y="44" fill="#fafafa" font-family="monospace" font-size="12" text-anchor="middle">H = HALT_DETECTOR</text><path d="M 270 40 L 320 20" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="330" y="24" fill="#22c55e" font-family="monospace" font-size="12">HALTS</text><path d="M 270 40 L 320 60" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="330" y="64" fill="#ef4444" font-family="monospace" font-size="12">LOOPS</text></svg>`
+      },
+      { t: "The Paradox TM", 
+        b: "Build a new TM D that uses H as a subroutine. If H predicts HALT, D intentionally loops forever. If H predicts LOOP, D halts.",
+        viz: `<svg width="100%" height="90"><rect x="10" y="5" width="280" height="80" rx="4" fill="none" stroke="#a78bfa" stroke-width="2"/><text x="20" y="20" fill="#a78bfa" font-family="monospace" font-size="12">D = PARADOX_TM</text><rect x="50" y="30" width="120" height="30" rx="2" fill="#18181b" stroke="#3b82f6" stroke-width="1"/><text x="110" y="49" fill="#fafafa" font-family="monospace" font-size="10" text-anchor="middle">H(M, M)</text><text x="190" y="40" fill="#a1a1aa" font-family="monospace" font-size="10">if HALTS → Loop</text><text x="190" y="55" fill="#a1a1aa" font-family="monospace" font-size="10">if LOOPS → Halt</text></svg>`
+      },
+      { t: "The Conflict", 
+        b: "What happens when we execute D(D)? We feed the paradox machine its own description as input.",
+        viz: `<svg width="100%" height="80"><rect x="100" y="20" width="100" height="40" rx="4" fill="#18181b" stroke="#a78bfa" stroke-width="2"/><text x="150" y="44" fill="#fafafa" font-family="monospace" font-size="12" text-anchor="middle">Execute D(D)</text><path d="M 80 40 Q 50 10 100 10 Q 150 10 150 20" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arr)"/><text x="100" y="10" fill="#f59e0b" font-family="monospace" font-size="10" text-anchor="middle">⟨D⟩ self-reference input</text></svg>`
+      },
+      { t: "Case A", 
+        b: "If D(D) halts, then H(D, D) must have predicted it loops. But we observed it halts! Contradiction.",
+        viz: `<div style="padding:12px; border:1px solid #ef4444; background:rgba(239,68,68,0.1); border-radius:4px;"><span style="color:#ef4444; font-family:monospace; font-size:12px;">⚡ CONTRADICTION: Cannot Halt and Loop simultaneously.</span></div>`
+      },
+      { t: "Case B", 
+        b: "If D(D) loops, then H(D, D) must have predicted it halts. But we observe it loops! Contradiction.",
+        viz: `<div style="padding:12px; border:1px solid #ef4444; background:rgba(239,68,68,0.1); border-radius:4px;"><span style="color:#ef4444; font-family:monospace; font-size:12px;">⚡ CONTRADICTION: Cannot Halt and Loop simultaneously.</span></div>`
+      },
+      { t: "Conclusion", 
+        b: "H cannot physically exist. Thus, the Halting Problem is UNDECIDABLE. Logic breaks under self-reference.",
+        viz: `<div style="padding:16px; border:1px solid #22c55e; background:rgba(34,197,94,0.05); border-radius:8px;"><span style="color:#22c55e; font-family:monospace; font-size:13px; line-height:1.5; display:block;">∴ The Halting Detector Algorithm H cannot exist.<br><br>Formal: ATM = {⟨M,w⟩ | M accepts w} is undecidable.<br>Proved by Alan Turing, 1936.</span></div>`
+      }
+    ];
+    let curProof = 0;
+    function initProof() {
+       renderProof();
+       document.getElementById('proof-next').onclick = () => { if(curProof < 5) { curProof++; renderProof(); } };
+       document.getElementById('proof-prev').onclick = () => { if(curProof > 0) { curProof--; renderProof(); } };
+    }
+    function renderProof() {
+      const step = PROOF_STEPS[curProof];
+      const target = document.getElementById('proof-step-body');
+      target.style.opacity = '0';
+      setTimeout(() => {
+        target.innerHTML = `
+          <span class="text-xs text-accent uppercase">Step ${curProof+1}</span>
+          <h5 class="text-mono" style="font-size: 16px;">${step.t}</h5>
+          <p class="text-muted" style="font-size: 13px;">${step.b}</p>
+          <div style="margin-top: 16px;">${step.viz}</div>
+        `;
+        target.style.opacity = '1';
+        target.style.transition = 'opacity 0.3s';
+      }, 150);
+      document.getElementById('proof-indicator').textContent = `Step ${curProof+1} / 6`;
+    }
+
+    function initChomsky() {
+       const svg = document.getElementById('chomsky-svg');
+       svg.setAttribute('viewBox', '0 0 600 320');
+       svg.innerHTML = `
+         <defs>
+           <linearGradient id="gRE" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(239,68,68,0.1)"/><stop offset="100%" stop-color="rgba(239,68,68,0.02)"/></linearGradient>
+           <linearGradient id="gCS" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(245,158,11,0.1)"/><stop offset="100%" stop-color="rgba(245,158,11,0.02)"/></linearGradient>
+           <linearGradient id="gCF" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(59,130,246,0.15)"/><stop offset="100%" stop-color="rgba(59,130,246,0.02)"/></linearGradient>
+           <linearGradient id="gRG" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="rgba(34,197,94,0.2)"/><stop offset="100%" stop-color="rgba(34,197,94,0.05)"/></linearGradient>
+           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+               <feGaussianBlur stdDeviation="6" result="blur" />
+               <feMerge>
+                   <feMergeNode in="blur" />
+                   <feMergeNode in="SourceGraphic" />
+               </feMerge>
+           </filter>
+         </defs>
+
+         <rect x="10" y="10" width="580" height="300" rx="16" fill="url(#gRE)" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="10 5"/>
+         <text x="30" y="40" fill="#ef4444" font-family="monospace" font-size="12" font-weight="600">Type 0: Recursively Enumerable (Turing Recognizable)</text>
+         
+         <rect x="50" y="60" width="500" height="230" rx="12" fill="url(#gCS)" stroke="#f59e0b" stroke-width="1.5" filter="url(#glow)"/>
+         <text x="70" y="90" fill="#f59e0b" font-family="monospace" font-size="12" font-weight="600">Type 1: Context-Sensitive (Linear Bounded Automaton)</text>
+         
+         <rect x="100" y="110" width="400" height="160" rx="10" fill="url(#gCF)" stroke="#3b82f6" stroke-width="2" filter="url(#glow)"/>
+         <text x="120" y="140" fill="#60a5fa" font-family="monospace" font-size="12" font-weight="600">Type 2: Context-Free (Pushdown Automaton)</text>
+         
+         <rect x="160" y="160" width="280" height="90" rx="8" fill="url(#gRG)" stroke="#22c55e" stroke-width="2" filter="url(#glow)"/>
+         <text x="180" y="195" fill="#4ade80" font-family="monospace" font-size="12" font-weight="600">Type 3: Regular (DFA / NFA)</text>
+
+         <!-- Marker for Caesar Cipher -->
+         <circle cx="210" cy="45" r="4" fill="#a78bfa" filter="url(#glow)" />
+         <line x1="210" y1="45" x2="210" y2="10" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4" />
+         <line x1="210" y1="45" x2="10" y2="45" stroke="#a78bfa" stroke-width="1" stroke-dasharray="4" />
+         <text x="220" y="49" fill="#a78bfa" font-family="monospace" font-size="12" font-weight="bold">← Caesar Cipher TM (Total / Recursive / Decidable subset)</text>
+       `;
+    }
+
+    // UTILS
+    function toggleFormalDef() {
+      const c = document.getElementById('formal-def-content');
+      c.style.display = c.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function runHaltCase(n) {
+      if (n === 2) {
+         document.getElementById('loop-counter').style.display = 'block';
+         let c = 0;
+         setInterval(() => { c+=17; document.getElementById('loop-counter').textContent = `Steps: ${c.toLocaleString()}`; }, 50);
+      } else {
+         alert("Case 1: Standard TM run as demonstrated in chat logic.");
+      }
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

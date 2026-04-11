@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Learn — Theory of Computation</title>
+  <link rel="stylesheet" href="assets/style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+  <style>
+    body { background: var(--bg); color: var(--text); padding-top: 80px; }
+    .learn-container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+    
+    .learn-hero { margin-bottom: 60px; text-align: center; }
+    .learn-hero h1 { font-size: 48px; font-weight: 600; margin-bottom: 16px; letter-spacing: -0.02em; }
+    .learn-hero p { font-size: 18px; color: var(--text-dim); max-width: 600px; margin: 0 auto; line-height: 1.6; }
+    
+    .concept-section { margin-bottom: 80px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+    .concept-header { padding: 32px 40px; border-bottom: 1px solid var(--border-subtle); display: flex; align-items: center; gap: 20px; }
+    .concept-num { font-family: var(--font-mono); font-size: 24px; color: var(--border); font-weight: 500; }
+    .concept-title { font-size: 24px; font-weight: 500; color: #fafafa; }
+    
+    .concept-body { padding: 40px; display: grid; grid-template-columns: 1fr 340px; gap: 40px; }
+    .concept-text { line-height: 1.7; color: var(--text-muted); font-size: 15px; }
+    .concept-text h4 { color: #fafafa; font-size: 14px; margin: 24px 0 12px; font-weight: 500; }
+    .concept-text code { padding: 2px 6px; background: #0d0d0f; border: 1px solid var(--border-subtle); border-radius: 4px; font-family: var(--font-mono); font-size: 13px; color: var(--accent); }
+    
+    .concept-visual { background: #0d0d0f; border: 1px solid var(--border-subtle); border-radius: 8px; display: flex; align-items: center; justify-content: center; min-height: 250px; position: relative; overflow: hidden; padding: 20px; }
+    
+    .mono-card { background: #0d0d0f; padding: 20px; border: 1px solid var(--border-subtle); border-radius: 6px; font-family: var(--font-mono); font-size: 13px; line-height: 1.6; color: var(--text-dim); margin-top: 16px; }
+    .mono-card span.hi { color: var(--accent); }
+    .mono-card span.key { color: var(--blue); }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav class="nav">
+    <div class="nav-brand">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-accent"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+      TM Crypt
+    </div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="app.html">Simulator</a>
+      <a href="learn.html" class="active">Learn TOC</a>
+    </div>
+  </nav>
+
+  <main class="learn-container">
+    <div class="learn-hero">
+      <h1>Theory of Computation Reference</h1>
+      <p>A visual guide to the mathematical models and limits of computation that power the TM Crypt engine.</p>
+    </div>
+    
+    <!-- 1. Formal Definition -->
+    <section class="concept-section">
+      <div class="concept-header">
+        <span class="concept-num">01</span>
+        <h2 class="concept-title">Turing Machine: Formal Definition</h2>
+      </div>
+      <div class="concept-body">
+         <div class="concept-text">
+           <p>A Turing machine is historically the most powerful computational model, forming the basis of the modern computer architecture. It is formally defined as a 7-tuple: M = (Q, Σ, Γ, δ, q₀, q_{accept}, q_{reject}).</p>
+           
+           <h4>The 7 Components</h4>
+           <ul style="list-style: disk; padding-left: 20px; display: flex; flex-direction: column; gap: 8px;">
+             <li><code>Q</code> forms the finite set of continuous states.</li>
+             <li><code>Σ</code> is the input alphabet (all valid input characters, excluding blank).</li>
+             <li><code>Γ</code> is the tape alphabet (includes input symbols + blank symbol □).</li>
+             <li><code>δ</code> is the transition function deciding logic: Q × Γ → Q × Γ × {L, R}.</li>
+             <li><code>q₀</code> is the starting state where execution begins.</li>
+             <li><code>q_{accept}</code> and <code>q_{reject}</code> are halting states.</li>
+           </ul>
+         </div>
+         <div class="mono-card">
+           <span class="key">M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</span><br><br>
+           // TM Crypt Caesar Implementation<br>
+           Q: {q₀, q_lo, q_up, q_sk, q_acc}<br>
+           Σ: {a-z, A-Z, 0-9, symbols}<br>
+           Γ: Σ ∪ {□}<br>
+           <br>// Transition Example<br>
+           <span class="hi">δ(q_lo, 'a')</span> = (q0, <span class="hi">'d'</span>, R)
+         </div>
+      </div>
+    </section>
+    
+    <!-- 2. Computation & Church-Turing -->
+    <section class="concept-section">
+      <div class="concept-header">
+        <span class="concept-num">02</span>
+        <h2 class="concept-title">Church-Turing Thesis & IDs</h2>
+      </div>
+      <div class="concept-body">
+         <div class="concept-text">
+           <p>The Church-Turing thesis states that a function on the natural numbers can be calculated by an effective method if and only if it is computable by a Turing machine.</p>
+           <p>We log a computation sequence using <strong>Instantaneous Descriptions (IDs)</strong>, denoted as <code>α [q] β</code>. Here, α is the tape content to the left of the head, q is the current state, and β is the tape content starting from the head to the right.</p>
+           
+           <h4>Recursive Languages (Type 0)</h4>
+           <p>Our Caesar cipher TM is a Total TM (Decider) — it is guaranteed to eventually halt on all inputs. Hence, the language it decides is Recursive.</p>
+         </div>
+         <div class="mono-card" style="display: flex; flex-direction: column; justify-content: center;">
+           <div style="font-size: 11px; margin-bottom: 8px;">Computation Trace for "cat"</div>
+           <div>[q₀] cat</div>
+           <div>f [q₀] at</div>
+           <div>f d [q₀] t</div>
+           <div>f d w [q₀] □</div>
+           <div>f d w □ <span class="hi">[q_acc]</span></div>
+           <br><div style="color:var(--accent)">⊢ M accepts "cat"</div>
+         </div>
+      </div>
+    </section>
+
+    <!-- 3. Halting Problem -->
+    <section class="concept-section">
+      <div class="concept-header">
+        <span class="concept-num">03</span>
+        <h2 class="concept-title">The Halting Problem Limit</h2>
+      </div>
+      <div class="concept-body">
+         <div class="concept-text">
+           <p>Turing proved in 1936 that a general algorithm to determine whether another program will eventually halt does not exist. This is the Halting Problem, the most famous example of an undecidable language.</p>
+           
+           <h4>Why is it Undecidable?</h4>
+           <p>If we assumed a perfect <code>HaltDetector(Program, Input)</code> existed, we could write a <code>Paradox(Program)</code> that does the exact opposite of what the HaltDetector predicts. If the HaltDetector claims it will halt, the Paradox loops forever. When we run <code>Paradox(Paradox)</code>, logic breaks.</p>
+         </div>
+         <div class="concept-visual" style="flex-direction: column; align-items: flex-start; gap: 12px; font-family: var(--font-mono); font-size: 11px; line-height: 1.5;">
+            <div style="color:#a78bfa">def PARADOX(M):</div>
+            <div style="padding-left:16px; color:#a1a1aa">if HALT_DETECTOR(M, M) == "halts":</div>
+            <div style="padding-left:32px; color:#ef4444">loop forever</div>
+            <div style="padding-left:16px; color:#a1a1aa">else:</div>
+            <div style="padding-left:32px; color:#22c55e">halt</div>
+            <div style="margin-top:16px; color:#fafafa; font-size:12px; background: rgba(255,255,255,0.05); padding: 8px;">Run PARADOX(PARADOX) → 💥 Contradiction</div>
+         </div>
+      </div>
+    </section>
+
+  </main>
+</body>
+</html>
