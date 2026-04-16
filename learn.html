@@ -1,14 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Learn — Theory of Computation</title>
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-  
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap"
+    rel="stylesheet">
 
   <style>
     :root {
@@ -22,7 +25,11 @@
       --font-mono: 'JetBrains Mono', monospace;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
     body {
       background-color: var(--bg);
@@ -71,9 +78,21 @@
       border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .nav-brand { font-family: var(--font-mono); font-size: 18px; font-weight: 600; }
-    .nav-brand span { color: var(--accent); }
-    .nav-links { display: flex; gap: 40px; }
+    .nav-brand {
+      font-family: var(--font-mono);
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .nav-brand span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 40px;
+    }
+
     .nav-link {
       text-decoration: none;
       color: var(--text-muted);
@@ -83,7 +102,11 @@
       letter-spacing: 0.1em;
       transition: color 0.3s;
     }
-    .nav-link:hover, .nav-link.active { color: var(--text); }
+
+    .nav-link:hover,
+    .nav-link.active {
+      color: var(--text);
+    }
 
     .btn-launch {
       padding: 8px 20px;
@@ -95,7 +118,11 @@
       border-radius: 99px;
       transition: all 0.3s ease;
     }
-    .btn-launch:hover { background: var(--accent); color: #000; }
+
+    .btn-launch:hover {
+      background: var(--accent);
+      color: #000;
+    }
 
     /* CONTENT */
     .learn-container {
@@ -139,7 +166,11 @@
       transform: translateY(30px);
       transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    .concept-card.is-visible { opacity: 1; transform: translateY(0); }
+
+    .concept-card.is-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
 
     .concept-info h2 {
       font-size: 28px;
@@ -193,8 +224,13 @@
       color: var(--text-dim);
     }
 
-    .target { color: var(--accent); }
-    .keyword { color: var(--accent-secondary); }
+    .target {
+      color: var(--accent);
+    }
+
+    .keyword {
+      color: var(--accent-secondary);
+    }
 
     /* FOOTER */
     footer {
@@ -203,6 +239,7 @@
       background: #050a0e;
       position: relative;
     }
+
     .footer-content {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr;
@@ -210,19 +247,45 @@
       font-size: 11px;
       color: var(--text-dim);
     }
-    .f-right { text-align: right; color: var(--text-muted); opacity: 0.8; }
-    .f-center { text-align: center; }
+
+    .f-right {
+      text-align: right;
+      color: var(--text-muted);
+      opacity: 0.8;
+    }
+
+    .f-center {
+      text-align: center;
+    }
 
     /* ANIMATIONS */
-    .uppercase { text-transform: uppercase; letter-spacing: 0.2em; font-size: 10px; color: var(--accent); margin-bottom: 20px; display: block; }
+    .uppercase {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      font-size: 10px;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
 
     @media (max-width: 900px) {
-      .concept-card { grid-template-columns: 1fr; padding: 32px; gap: 32px; }
-      nav { padding: 0 20px; }
-      .learn-container { padding-top: 120px; }
+      .concept-card {
+        grid-template-columns: 1fr;
+        padding: 32px;
+        gap: 32px;
+      }
+
+      nav {
+        padding: 0 20px;
+      }
+
+      .learn-container {
+        padding-top: 120px;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <canvas id="gl-canvas"></canvas>
@@ -252,7 +315,8 @@
       <div class="concept-info">
         <span class="uppercase">Model 01</span>
         <h2>Turing Machine: Formal Definition</h2>
-        <p>A Turing machine is historically the most powerful computational model, forming the basis of modern computer architecture. It is formally defined as a 7-tuple.</p>
+        <p>A Turing machine is historically the most powerful computational model, forming the basis of modern computer
+          architecture. It is formally defined as a 7-tuple.</p>
         <ul>
           <li><code>Q</code> <span>Finite set of states</span></li>
           <li><code>Σ</code> <span>Input alphabet (excluding blank)</span></li>
@@ -279,8 +343,10 @@
       <div class="concept-info">
         <span class="uppercase">Thesis 02</span>
         <h2>Church-Turing & Computation</h2>
-        <p>The Church-Turing thesis states that a function is effectively calculable if and only if it is computable by a Turing machine.</p>
-        <p>Computation is tracked using <strong>Instantaneous Descriptions (IDs)</strong>, denoted as <code class="target">α [q] β</code>, capturing the entire tape state and head position at any given step.</p>
+        <p>The Church-Turing thesis states that a function is effectively calculable if and only if it is computable by
+          a Turing machine.</p>
+        <p>Computation is tracked using <strong>Instantaneous Descriptions (IDs)</strong>, denoted as <code
+            class="target">α [q] β</code>, capturing the entire tape state and head position at any given step.</p>
       </div>
       <div class="concept-visual">
         <div class="mono-display">
@@ -300,8 +366,10 @@
       <div class="concept-info">
         <span class="uppercase">Limitation 03</span>
         <h2>The Halting Problem</h2>
-        <p>Turing proved that a general algorithm to determine whether another program will eventually halt does not exist. This is the cornerstone of undecidability.</p>
-        <p>If we assumed a <code>HaltDetector</code> existed, we could create a <code>Paradox</code> function that loops if the detector says it halts. This leads to a logical contradiction.</p>
+        <p>Turing proved that a general algorithm to determine whether another program will eventually halt does not
+          exist. This is the cornerstone of undecidability.</p>
+        <p>If we assumed a <code>HaltDetector</code> existed, we could create a <code>Paradox</code> function that loops
+          if the detector says it halts. This leads to a logical contradiction.</p>
       </div>
       <div class="concept-visual">
         <div class="mono-display">
@@ -322,7 +390,7 @@
       <div class="footer-content">
         <div class="f-left">TM Crypt · M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</div>
         <div class="f-center">
-          <a href="index.html" style="color:inherit; text-decoration:none; margin:0 10px;">Home</a> · 
+          <a href="index.html" style="color:inherit; text-decoration:none; margin:0 10px;">Home</a> ·
           <a href="app.html" style="color:inherit; text-decoration:none; margin:0 10px;">Simulator</a>
         </div>
         <div class="f-right">Vinod Katevarapu — S20240010256</div>
@@ -399,7 +467,7 @@
 
       const positionBuffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 1, -1, -1, 1, -1, 1, 1, -1, 1, 1]), gl.STATIC_DRAW);
 
       const positionLocation = gl.getAttribLocation(program, 'a_position');
       gl.enableVertexAttribArray(positionLocation);
@@ -432,4 +500,5 @@
     document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
   </script>
 </body>
+
 </html>

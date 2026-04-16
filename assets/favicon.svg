@@ -1,8 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <!-- Neon green glowing machine head -->
   <path d="M16 6v14M11 11l5-5 5 5" stroke="#22c55e" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-  <!-- Machine tape base -->
   <rect x="6" y="22" width="20" height="5" rx="1" fill="#22c55e"/>
-  <!-- Detail dots -->
   <circle cx="16" cy="13" r="1.5" fill="#0b141a"/>
 </svg>
