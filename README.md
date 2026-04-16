@@ -1,66 +1,74 @@
-# TM Crypt — WhatsApp Turing Machine Simulator
+<p align="center">
+  <img src="assets/banner.png" alt="TM Crypt Banner" width="100%">
+</p>
 
-[![TOC Project](https://img.shields.io/badge/Theory%20of%20Computation-Unit%205-blueviolet)](https://github.com/vinod24256/TOC_CP)
-[![Version](https://img.shields.io/badge/Version-1.0.0--Ultimate-success)](https://github.com/vinod24256/TOC_CP)
-[![Aesthetics](https://img.shields.io/badge/Design-Premium%20Dark--Mode-ff69b4)](https://github.com/vinod24256/TOC_CP)
+# 📟 TM Crypt — Terminal-Grade Turing Machine Simulator
 
-**TM Crypt** is a high-fidelity, interactive educational tool designed for **Theory of Computation (TOC)** students. It demonstrates the profound connection between modern communication (WhatsApp) and the bedrock of computation (Turing Machines).
+<div align="center">
 
----
+[![TOC Project](https://img.shields.io/badge/Theory%20of%20Computation-Unit%205-22c55e?style=for-the-badge)](https://github.com/vinod24256/TOC_CP)
+[![Cinematic UI](https://img.shields.io/badge/UI-Cinematic%20SaaS-00ff88?style=for-the-badge)](https://github.com/vinod24256/TOC_CP)
+[![WebGL](https://img.shields.io/badge/Engine-WebGL%20Fluid-00d4ff?style=for-the-badge)](https://github.com/vinod24256/TOC_CP)
+[![License](https://img.shields.io/badge/License-Academic%20Only-f59e0b?style=for-the-badge)](https://github.com/vinod24256/TOC_CP)
 
-## 🌟 Key Features
-
-### 1. Realistic WhatsApp Interface
-- **Premium Dark Mode**: Built with vanilla CSS for a sleek, pixel-perfect messaging experience.
-- **Multilingual Support**: Diverse contacts with Tamil, Telugu, Hindi, and English interactions.
-- **Group Chat Dynamics**: Simulation of multi-user encryption/decryption flows.
-
-### 2. High-Fidelity Turing Machine (TM) Engine
-- **Dynamic Caesar Cipher**: A "Total Decider" TM that implements $E(x) = (x + k) \pmod{26}$.
-- **Dynamic Shift Slider**: Adjust the shift value $k$ (1-25) in real-time.
-- **Automated Round-Trip**: Chained simulation that automatically Encrypts → Transmits → Decrypts (Phase 1 & Phase 2).
-
-### 3. Formal Academic Tools
-- **Type 0 Grammar Generator**: Automatically generates unrestricted productions ($\alpha \to \beta$) equivalent to the TM.
-- **Interactive Halting Proof**: A step-by-step paradoxical demonstration of why the Halting Problem is undecidable.
-- **D3.js State Diagrams**: Animated, draggable state graphs that highlight transitions in real-time.
-- **Instantaneous Descriptions (IDs)**: Comprehensive trace logs of $(u, q, v)$ configurations for formal proofs.
-- **Complexity Metrics**: Real-time Chart.js visualisations of $O(n)$ time complexity and state frequency.
+</div>
 
 ---
 
-## 🎓 TOC Concepts Covered
-- **Church-Turing Thesis**: Computation as a sequence of discrete symbolic manipulations.
-- **Decidability**: Proving the Caesar Cipher language is **Recursive** (always halts in `q_accept`).
-- **Nondeterminism (NTM)**: Visual representation of branching computation paths.
-- **Unrestricted Grammars**: The relationship between Type 0 languages and Turing Machines.
-- **The Halting Problem**: Formal proof by contradiction using the "Paradox Wrapper" method.
+## 🎭 The Vision
+
+**TM Crypt** is a premium educational platform that bridges the gap between **High-End Product Design** and **Theoretical Computer Science**. It transforms the abstract concept of a Turing Machine into a tangible, cinematic experience, allowing students to "see" computation breathe as it secures modern communications.
+
+### [🚀 View Live Site](https://vinod24256.github.io/TOC_CP/)
 
 ---
 
-## 🚀 Getting Started
+## 🌟 High-Fidelity Features
 
-**Standalone Application**: No installation or dependencies required.
+### 1. Cinematic Fluid Shader (`index.html`)
+- **Domain-Warp Background**: A raw GLSL fragment shader simulating organic computation veins.
+- **Scroll-Triggered Reveals**: Precise staggered animations that guide the user through Unit 5 theory.
+- **Computation Strip**: A continuous tape runner visualising transition logic $\delta(q, \sigma)$ live.
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/vinod24256/TOC_CP.git
-   ```
-2. Open `index.html` in any modern web browser.
-3. Start sending messages to witness the Turing Machine in action!
+### 2. Messaging SaaS Simulator (`app.html`)
+- **WhatsApp Aesthetic**: Full-screen dark-teal interface with glassmorphic panels.
+- **7-Tuple Logic**: A functional "Total Decider" TM that implements Caesar encryption $E(x) = (x + k) \pmod{26}$.
+- **Analytics Suite**: Integrated Chart.js metrics and interactive D3.js state graphs.
 
----
-
-## 🛠️ Technology Stack
-- **Frontend**: HTML5, Vanilla CSS3 (Custom Design System).
-- **Core Logic**: Pure JavaScript (ES6+).
-- **Visualizations**: [D3.js v7](https://d3js.org/) (State Graphs), [Chart.js v4](https://www.chartjs.org/) (Analytics).
-- **Typography**: Inter & JetBrains Mono (Google Fonts).
+### 3. Theory Deep-Dive (`learn.html`)
+- **Formal Academic Rigor**: Detailed visualisations of the Church-Turing thesis, Instantaneous Descriptions (IDs), and the Halting Problem proof.
+- **Interactive Methodology**: Visualizing logical contradictions to prove undecidability.
 
 ---
 
-## 📄 License
-This project is created for educational purposes in Theory of Computation. Feel free to use and adapt!
+## 📐 Formal Academic Specifications
+
+- **Machine Type**: 1-Tape Deterministic Turing Machine (DTM)
+- **Complexity**: $O(n)$ Time | $O(n)$ Space
+- **Formal Definition**: $M = (Q, \Sigma, \Gamma, \delta, q_0, q_{acc}, q_{rej})$
+- **States (Q)**: $\{q_0, q_{upper}, q_{lower}, q_{skip}, q_{accept}\}$
 
 ---
-*Created with ❤️ for TOC Excellence.*
+
+## 🚀 Deployment & Installation
+
+**TM Crypt** is built with zero dependencies, requiring only a modern browser.
+
+1.  **Clone the Repository**:
+    ```bash
+    git clone https://github.com/vinod24256/TOC_CP.git
+    ```
+2.  **Run Locally**: Open `index.html` in any browser (we recommend using VS Code Live Server for the best shader performance).
+3.  **One-Click Deployment**: Fully compatible with GitHub Pages.
+
+---
+
+## 🏷️ Credits
+- **Developed by**: Vinod Katevarapu
+- **Student ID**: S20240010256
+- **Project**: Theory of Computation — Class Participation (Unit 5)
+
+---
+<p align="center">
+  <i>"Computation is not just math; it is a cinematic sequence of discrete wonders."</i>
+</p>
