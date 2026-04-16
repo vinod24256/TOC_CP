@@ -607,6 +607,59 @@
       align-items: center;
       margin-bottom: 16px;
     }
+
+    /* TYPING INDICATOR */
+    .typing-bubble {
+      align-self: flex-start;
+      background: linear-gradient(135deg, #202c33 0%, #182229 100%);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 18px;
+      border-bottom-left-radius: 6px;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      max-width: 80px;
+      animation: typingFadeIn 0.3s ease;
+    }
+    .typing-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--text-dim);
+      animation: typingBounce 1.2s ease-in-out infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce {
+      0%,60%,100% { transform: translateY(0); opacity: 0.5; }
+      30% { transform: translateY(-6px); opacity: 1; }
+    }
+    @keyframes typingFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* EXPORT TOAST */
+    .export-toast {
+      position: fixed;
+      bottom: 60px;
+      right: 24px;
+      background: var(--accent);
+      color: #000;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 8px;
+      z-index: 9999;
+      box-shadow: 0 8px 24px rgba(34,197,94,0.4);
+      animation: toastIn 0.3s ease;
+      pointer-events: none;
+    }
+    @keyframes toastIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -764,6 +817,7 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="text-xs text-dim">Speed:</span>
               <input type="range" id="sim-speed" min="1" max="10" value="5" style="width: 80px;">
+              <button id="export-log-btn" class="btn btn-secondary" style="height:26px; font-size:11px; padding:0 10px; font-family:var(--font-mono);" title="Export full TM trace as text file">↓ Export</button>
             </div>
           </div>
           <div class="log-box" id="log-box"></div>
@@ -1179,33 +1233,47 @@
       encTM.loadInput(text);
 
       runTMPhase('encrypt', encTM, msgObj, (cipherText) => {
-        // Phase 2: Decrypt (Auto-responder simulated)
+        // Phase 2: Decrypt (Auto-responder simulated) — show typing indicator first
         setTimeout(() => {
-          const now = new Date();
-          const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+          // TYPING INDICATOR — show "Vijay is typing" for 1200ms
+          const typingBubble = document.createElement('div');
+          typingBubble.className = 'typing-bubble';
+          typingBubble.id = 'typing-indicator';
+          typingBubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+          chatMessages.appendChild(typingBubble);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
 
-          const repMsg = { s: 'them', text: cipherText, originalCipher: cipherText, time: timeStr, processed: false, isCipher: true };
-          chatStore[activeContact.id].push(repMsg);
-          renderMessages();
+          setTimeout(() => {
+            // Remove typing bubble and add real reply
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) indicator.remove();
 
-          window._currentPhase = 'decrypt';
-          pb.style.background = 'rgba(59, 130, 246, 0.1)';
-          pb.style.color = 'var(--blue)';
-          pb.textContent = `🔓 DECRYPTING — Caesar -${shiftK}`;
+            const now = new Date();
+            const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
 
-          logBox.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
-          idList.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
-          document.getElementById('computation-path').textContent = `Path: q₀`;
+            const repMsg = { s: 'them', text: cipherText, originalCipher: cipherText, time: timeStr, processed: false, isCipher: true };
+            chatStore[activeContact.id].push(repMsg);
+            renderMessages();
 
-          if (linkLabels) linkLabels.text(d => d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `-${shiftK}`));
-          const decTM = TMEngine.createDecryptTM(shiftK);
-          decTM.loadInput(cipherText);
+            window._currentPhase = 'decrypt';
+            pb.style.background = 'rgba(59, 130, 246, 0.1)';
+            pb.style.color = 'var(--blue)';
+            pb.textContent = `🔓 DECRYPTING — Caesar -${shiftK}`;
 
-          runTMPhase('decrypt', decTM, repMsg, (plainText) => {
-            setTimeout(() => { pb.style.display = 'none'; }, 2000);
-          });
+            logBox.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
+            idList.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
+            document.getElementById('computation-path').textContent = `Path: q₀`;
 
-        }, 1500);
+            if (linkLabels) linkLabels.text(d => d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `-${shiftK}`));
+            const decTM = TMEngine.createDecryptTM(shiftK);
+            decTM.loadInput(cipherText);
+
+            runTMPhase('decrypt', decTM, repMsg, (plainText) => {
+              setTimeout(() => { pb.style.display = 'none'; }, 2000);
+            });
+          }, 1200); // typing duration
+
+        }, 500); // slight delay before typing starts
       });
     }
 
@@ -1672,6 +1740,47 @@
     };
 
     document.getElementById('btn-attach').onclick = () => openModal('📎 File Attachment', 'All files encrypted with TM Caesar Cipher before transmission', '📎');
+
+    // EXPORT LOG LOGIC
+    document.getElementById('export-log-btn').onclick = () => {
+      if (!curTM || curTM.log.length === 0) {
+        alert("No computation log to export. Run a simulation first!");
+        return;
+      }
+
+      let content = `TM CRYPT - RECURSIVE TOTAL DECIDER\n`;
+      content += `Vinod Katevarapu — S20240010256\n`;
+      content += `====================================\n`;
+      content += `Configuration: M = (Q, Σ, Γ, δ, q0, q_acc, q_rej)\n`;
+      content += `Shift k: ${document.getElementById('shift-range').value}\n`;
+      content += `Time: ${new Date().toLocaleString()}\n`;
+      content += `------------------------------------\n\n`;
+
+      curTM.log.forEach((l, i) => {
+        content += `Step ${String(i).padStart(3, '0')}: δ(${l.state}, '${l.read}') → (${l.ns}, '${l.write}', ${l.dir})\n`;
+      });
+
+      content += `\nFinal State: ${curTM.state}\n`;
+      content += `Final Output: ${curTM.out()}\n`;
+      content += `Steps: ${curTM.log.length}\n`;
+
+      const blob = new Blob([content], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `tm_trace_${Date.now()}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Toast feedback
+      const toast = document.createElement('div');
+      toast.className = 'export-toast';
+      toast.textContent = '✓ TM Trace Downloaded';
+      document.body.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    };
 
     // TRANSITIONS
     function renderTransitions() {
