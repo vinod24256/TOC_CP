@@ -30,7 +30,7 @@
       padding: 0 20px;
       justify-content: space-between;
       z-index: 10;
-      box-shadow: 0 1px 0 rgba(255,255,255,0.03);
+      box-shadow: 0 1px 0 rgba(255, 255, 255, 0.03);
     }
 
     .top-left {
@@ -189,7 +189,7 @@
       background-color: #0b141a;
       background-image:
         radial-gradient(rgba(34, 197, 94, 0.015) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(11,20,26,0) 0%, rgba(6,11,15,0.4) 100%);
+        linear-gradient(180deg, rgba(11, 20, 26, 0) 0%, rgba(6, 11, 15, 0.4) 100%);
       background-size: 22px 22px, 100% 100%;
     }
 
@@ -262,7 +262,10 @@
       border-color: var(--accent);
     }
 
-    #send-btn { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    #send-btn {
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
     #send-btn:hover {
       background: rgba(255, 255, 255, 0.05) !important;
       transform: scale(1.08);
@@ -369,7 +372,7 @@
       margin-bottom: 20px;
       overflow: hidden;
       position: relative;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.03), 0 4px 24px rgba(0,0,0,0.3);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 4px 24px rgba(0, 0, 0, 0.3);
     }
 
     .tape-row {
@@ -380,9 +383,9 @@
     .cell {
       width: 46px;
       height: 46px;
-      border: 1px solid rgba(255,255,255,0.06);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       border-radius: 6px;
-      background: rgba(255,255,255,0.02);
+      background: rgba(255, 255, 255, 0.02);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -396,14 +399,14 @@
       border: 2px solid var(--amber);
       background: rgba(245, 158, 11, 0.12);
       color: var(--amber);
-      box-shadow: 0 0 16px rgba(245,158,11,0.2);
+      box-shadow: 0 0 16px rgba(245, 158, 11, 0.2);
     }
 
     .cell.written {
       border-color: var(--accent);
       color: var(--accent);
       animation: cellWrite 0.4s;
-      box-shadow: 0 0 12px rgba(34,197,94,0.15);
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.15);
     }
 
     /* LOGS */
@@ -417,7 +420,7 @@
       font-family: var(--font-mono);
       font-size: 12px;
       color: var(--text-dim);
-      box-shadow: inset 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
     .log-entry {
@@ -500,15 +503,15 @@
 
     /* HALTING PROOF */
     .proof-card {
-      background: linear-gradient(135deg, rgba(18,18,22,0.9) 0%, rgba(10,13,16,0.9) 100%);
-      border: 1px solid rgba(255,255,255,0.05);
+      background: linear-gradient(135deg, rgba(18, 18, 22, 0.9) 0%, rgba(10, 13, 16, 0.9) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 10px;
       padding: 24px;
       display: none;
       flex-direction: column;
       gap: 12px;
       animation: slideDown 0.3s;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
     }
 
     .proof-card.active {
@@ -540,7 +543,7 @@
       border-radius: 16px;
       padding: 32px 28px;
       min-width: 300px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(34,197,94,0.05);
+      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(34, 197, 94, 0.05);
       transform: translateY(20px);
       transition: transform 0.2s;
       display: flex;
@@ -581,9 +584,9 @@
 
     /* CHARTS */
     .chart-container {
-      background: linear-gradient(135deg, rgba(11,20,26,0.9) 0%, rgba(6,10,13,0.95) 100%);
+      background: linear-gradient(135deg, rgba(11, 20, 26, 0.9) 0%, rgba(6, 10, 13, 0.95) 100%);
       border: 1px solid rgba(34, 197, 94, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 8px 32px rgba(0,0,0,0.4);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 8px 32px rgba(0, 0, 0, 0.4);
       border-radius: 10px;
       padding: 20px;
       height: 260px;
@@ -596,9 +599,11 @@
     .chart-container::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
+      top: 0;
+      left: 0;
+      right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(34,197,94,0.2), transparent);
+      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
     }
 
     .chart-header {
@@ -606,59 +611,6 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-    }
-
-    /* TYPING INDICATOR */
-    .typing-bubble {
-      align-self: flex-start;
-      background: linear-gradient(135deg, #202c33 0%, #182229 100%);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 18px;
-      border-bottom-left-radius: 6px;
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      max-width: 80px;
-      animation: typingFadeIn 0.3s ease;
-    }
-    .typing-dot {
-      width: 7px; height: 7px;
-      border-radius: 50%;
-      background: var(--text-dim);
-      animation: typingBounce 1.2s ease-in-out infinite;
-    }
-    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes typingBounce {
-      0%,60%,100% { transform: translateY(0); opacity: 0.5; }
-      30% { transform: translateY(-6px); opacity: 1; }
-    }
-    @keyframes typingFadeIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-
-    /* EXPORT TOAST */
-    .export-toast {
-      position: fixed;
-      bottom: 60px;
-      right: 24px;
-      background: var(--accent);
-      color: #000;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      font-weight: 700;
-      padding: 10px 18px;
-      border-radius: 8px;
-      z-index: 9999;
-      box-shadow: 0 8px 24px rgba(34,197,94,0.4);
-      animation: toastIn 0.3s ease;
-      pointer-events: none;
-    }
-    @keyframes toastIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to   { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -817,7 +769,6 @@
             <div style="display: flex; align-items: center; gap: 8px;">
               <span class="text-xs text-dim">Speed:</span>
               <input type="range" id="sim-speed" min="1" max="10" value="5" style="width: 80px;">
-              <button id="export-log-btn" class="btn btn-secondary" style="height:26px; font-size:11px; padding:0 10px; font-family:var(--font-mono);" title="Export full TM trace as text file">↓ Export</button>
             </div>
           </div>
           <div class="log-box" id="log-box"></div>
@@ -1009,7 +960,8 @@
     <div class="sb-section">STATE: <span id="sb-state" class="text-accent" style="margin-left: 4px;">q0</span></div>
     <div class="sb-section">STEPS: <span id="sb-steps" style="margin-left: 4px; color: var(--text);">0</span></div>
     <div class="sb-section">HEAD: <span id="sb-head" style="margin-left: 4px; color: var(--amber);">1</span></div>
-    <div class="sb-section" style="margin-left: auto; color: var(--text-dim); opacity: 0.7; font-size: 10px;">Vinod Katevarapu — S20240010256</div>
+    <div class="sb-section" style="margin-left: auto; color: var(--text-dim); opacity: 0.7; font-size: 10px;">Vinod
+      Katevarapu — S20240010256</div>
     <div class="sb-section">CLASS: <span class="text-accent">RECURSIVE (DECIDABLE)</span>
     </div>
   </footer>
@@ -1037,7 +989,7 @@
       { id: 'st', initials: 'SG', name: 'Samiksha Gautam', color: '#06b6d4', time: '4:15 PM', preview: 'hey, the project is great', unread: 0 },
       { id: 'sm', initials: 'SM', name: 'Shweta M', color: '#f97316', time: '5:12 PM', preview: 'TM Crypt is live now!', unread: 0 },
       { id: 'ar', initials: 'AR', name: 'Arjun Reddy', color: '#ef4444', time: 'Saturday', preview: 'Machan semma work da', unread: 0 },
-      { id: 'dl', initials: 'DL', name: 'Divya Laks', color: '#a78bfa', time: 'Friday', preview: 'Chala interesting ga undi', unread: 0 }
+      { id: 'd', initials: 'D', name: 'Divya', color: '#a78bfa', time: 'Friday', preview: 'Chala interesting ga undi', unread: 0 }
     ];
 
     let activeContact = CONTACTS[0];
@@ -1173,27 +1125,9 @@
         }
 
         wrap.innerHTML = content;
-        wrap.title = "Click to copy text";
-        wrap.style.cursor = "pointer";
-        wrap.onclick = () => {
-          navigator.clipboard.writeText(m.text);
-          showCopyToast();
-        };
         chatMessages.appendChild(wrap);
       });
       chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    function showCopyToast() {
-      let t = document.getElementById('copy-toast');
-      if (!t) {
-        t = document.createElement('div'); t.id = 'copy-toast';
-        t.className = 'export-toast';
-        t.style.bottom = '80px';
-        document.body.appendChild(t);
-      }
-      t.textContent = '✓ Copied to clipboard';
-      setTimeout(() => t.remove(), 2000);
     }
 
     // INPUT
@@ -1251,47 +1185,33 @@
       encTM.loadInput(text);
 
       runTMPhase('encrypt', encTM, msgObj, (cipherText) => {
-        // Phase 2: Decrypt (Auto-responder simulated) — show typing indicator first
+        // Phase 2: Decrypt (Auto-responder simulated)
         setTimeout(() => {
-          // TYPING INDICATOR — show "Vijay is typing" for 1200ms
-          const typingBubble = document.createElement('div');
-          typingBubble.className = 'typing-bubble';
-          typingBubble.id = 'typing-indicator';
-          typingBubble.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
-          chatMessages.appendChild(typingBubble);
-          chatMessages.scrollTop = chatMessages.scrollHeight;
+          const now = new Date();
+          const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
 
-          setTimeout(() => {
-            // Remove typing bubble and add real reply
-            const indicator = document.getElementById('typing-indicator');
-            if (indicator) indicator.remove();
+          const repMsg = { s: 'them', text: cipherText, originalCipher: cipherText, time: timeStr, processed: false, isCipher: true };
+          chatStore[activeContact.id].push(repMsg);
+          renderMessages();
 
-            const now = new Date();
-            const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+          window._currentPhase = 'decrypt';
+          pb.style.background = 'rgba(59, 130, 246, 0.1)';
+          pb.style.color = 'var(--blue)';
+          pb.textContent = `🔓 DECRYPTING — Caesar -${shiftK}`;
 
-            const repMsg = { s: 'them', text: cipherText, originalCipher: cipherText, time: timeStr, processed: false, isCipher: true };
-            chatStore[activeContact.id].push(repMsg);
-            renderMessages();
+          logBox.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
+          idList.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
+          document.getElementById('computation-path').textContent = `Path: q₀`;
 
-            window._currentPhase = 'decrypt';
-            pb.style.background = 'rgba(59, 130, 246, 0.1)';
-            pb.style.color = 'var(--blue)';
-            pb.textContent = `🔓 DECRYPTING — Caesar -${shiftK}`;
+          if (linkLabels) linkLabels.text(d => d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `-${shiftK}`));
+          const decTM = TMEngine.createDecryptTM(shiftK);
+          decTM.loadInput(cipherText);
 
-            logBox.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
-            idList.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
-            document.getElementById('computation-path').textContent = `Path: q₀`;
+          runTMPhase('decrypt', decTM, repMsg, (plainText) => {
+            setTimeout(() => { pb.style.display = 'none'; }, 2000);
+          });
 
-            if (linkLabels) linkLabels.text(d => d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `-${shiftK}`));
-            const decTM = TMEngine.createDecryptTM(shiftK);
-            decTM.loadInput(cipherText);
-
-            runTMPhase('decrypt', decTM, repMsg, (plainText) => {
-              setTimeout(() => { pb.style.display = 'none'; }, 2000);
-            });
-          }, 1200); // typing duration
-
-        }, 500); // slight delay before typing starts
+        }, 1500);
       });
     }
 
@@ -1759,47 +1679,6 @@
 
     document.getElementById('btn-attach').onclick = () => openModal('📎 File Attachment', 'All files encrypted with TM Caesar Cipher before transmission', '📎');
 
-    // EXPORT LOG LOGIC
-    document.getElementById('export-log-btn').onclick = () => {
-      if (!curTM || curTM.log.length === 0) {
-        alert("No computation log to export. Run a simulation first!");
-        return;
-      }
-
-      let content = `TM CRYPT - RECURSIVE TOTAL DECIDER\n`;
-      content += `Vinod Katevarapu — S20240010256\n`;
-      content += `====================================\n`;
-      content += `Configuration: M = (Q, Σ, Γ, δ, q0, q_acc, q_rej)\n`;
-      content += `Shift k: ${document.getElementById('shift-range').value}\n`;
-      content += `Time: ${new Date().toLocaleString()}\n`;
-      content += `------------------------------------\n\n`;
-
-      curTM.log.forEach((l, i) => {
-        content += `Step ${String(i).padStart(3, '0')}: δ(${l.state}, '${l.read}') → (${l.ns}, '${l.write}', ${l.dir})\n`;
-      });
-
-      content += `\nFinal State: ${curTM.state}\n`;
-      content += `Final Output: ${curTM.out()}\n`;
-      content += `Steps: ${curTM.log.length}\n`;
-
-      const blob = new Blob([content], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `tm_trace_${Date.now()}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-
-      // Toast feedback
-      const toast = document.createElement('div');
-      toast.className = 'export-toast';
-      toast.textContent = '✓ TM Trace Downloaded';
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    };
-
     // TRANSITIONS
     function renderTransitions() {
       const body = document.getElementById('transitions-body');
@@ -1993,29 +1872,6 @@
     }
 
     window.onload = init;
-
-    // KEYBOARD SHORTCUTS
-    window.addEventListener('keydown', (e) => {
-      // Don't trigger shortcuts if user is typing in chat or search
-      if (document.activeElement.tagName === 'INPUT') return;
-
-      switch(e.code) {
-        case 'Space':
-          e.preventDefault();
-          document.getElementById('global-play').click();
-          break;
-        case 'ArrowRight':
-          document.getElementById('global-step').click();
-          break;
-        case 'ArrowLeft':
-          document.getElementById('global-prev').click();
-          break;
-        case 'KeyR':
-          document.getElementById('global-reset').click();
-          break;
-      }
-    });
-
   </script>
 </body>
 

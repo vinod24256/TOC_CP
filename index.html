@@ -4,10 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TM Crypt — Secured by Computation</title>
-  <meta name="description" content="A Turing Machine encrypts your messages in real time. Watch M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej) compute — state by state.">
+  <meta name="description" content="A cinematic Theory of Computation simulator. Messages secured by Turing Machines.">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
 
   <style>
     :root {
@@ -201,52 +202,6 @@
       display: inline-flex; align-items:center; gap:8px;
     }
     .btn-secondary-hero:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.04); }
-
-    /* HERO INPUT */
-    .hero-input-wrap {
-      margin-top: 32px;
-      position: relative;
-      width: 100%;
-      max-width: 440px;
-      animation: slideUp 1s ease 0.4s both;
-    }
-    .hero-input {
-      width: 100%;
-      background: rgba(34, 197, 94, 0.05);
-      border: 1px solid rgba(34, 197, 94, 0.2);
-      border-radius: 8px;
-      padding: 16px 20px 16px 48px;
-      color: #fff;
-      font-family: var(--mono);
-      font-size: 14px;
-      transition: all 0.3s;
-      outline: none;
-    }
-    .hero-input:focus {
-      background: rgba(34, 197, 94, 0.1);
-      border-color: var(--accent);
-      box-shadow: 0 0 20px rgba(34, 197, 94, 0.15);
-    }
-    .hero-input-icon {
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--accent);
-      font-size: 18px;
-    }
-    .hero-input-label {
-      position: absolute;
-      top: -24px;
-      left: 0;
-      font-family: var(--mono);
-      font-size: 10px;
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      opacity: 0.7;
-    }
-
 
     /* Scroll hint */
     .scroll-hint {
@@ -752,11 +707,7 @@
   </p>
   <div class="hero-ctas">
     <a href="app.html" class="btn-primary-hero">→ Open Simulator</a>
-    <div class="hero-input-wrap">
-      <div class="hero-input-label">Live Simulation Pilot</div>
-      <span class="hero-input-icon">⚡</span>
-      <input type="text" id="hero-sim-input" class="hero-input" placeholder="Type a message to encrypt state-by-state..." autocomplete="off">
-    </div>
+    <a href="learn.html" class="btn-secondary-hero">Watch Demo ▷</a>
   </div>
   <div class="scroll-hint" id="scroll-hint">
     <span>Scroll</span>
@@ -1118,26 +1069,21 @@
   }
 
   function nextWord(){
-    if (userMode) return; // Wait for user to stop typing or manually reset
     wi = (wi + 1) % WORDS.length;
-    start(WORDS[wi]);
+    start();
   }
 
-  let userMode = false;
-  let userDebounce;
-
-  function start(text){
+  function start(){
     if (iv) clearInterval(iv);
     tm = TMEngine.createCaesarTM(3);
-    tm.loadInput(text);
+    tm.loadInput(WORDS[wi]);
     renderTape();
-    log.innerHTML = '';
-    appendLog(`── Encrypting: "${text.trim()}" ──`);
+    appendLog(`── Encrypting: "${WORDS[wi].trim()}" ──`);
     iv = setInterval(() => {
       if (tm.isHalted()) {
         clearInterval(iv);
         appendLog(`✓ Result: "${tm.out()}" [q_accept]`);
-        if (!userMode) setTimeout(nextWord, 2200);
+        setTimeout(nextWord, 2200);
         return;
       }
       const before = tm.tape[tm.head] || '□';
@@ -1149,23 +1095,7 @@
       renderTape();
     }, 280);
   }
-
-  const hInput = document.getElementById('hero-sim-input');
-  hInput.addEventListener('input', (e) => {
-    userMode = true;
-    const val = e.target.value;
-    if (!val) {
-      userMode = false;
-      return;
-    }
-    
-    clearTimeout(userDebounce);
-    userDebounce = setTimeout(() => {
-      start(val.toUpperCase());
-    }, 400);
-  });
-
-  start(WORDS[wi]);
+  start();
 })();
 
 // ─────────────────────────────────────────────────────
