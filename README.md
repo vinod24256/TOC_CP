@@ -59,7 +59,17 @@
     git clone https://github.com/vinod24256/TOC_CP.git
     ```
 2.  **Run Locally**: Open `index.html` in any browser (we recommend using VS Code Live Server for the best shader performance).
-3.  **One-Click Deployment**: Fully compatible with GitHub Pages.
+3.  **One-Click Deployment**: Fully compatible with GitHub Pages and Vercel.
+
+### 🍱 Deploy to Vercel
+
+The easiest way to deploy this project is via the Vercel Dashboard:
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/import?s=https://github.com/vinod24256/TOC_CP)
+
+1.  Push your code to GitHub.
+2.  Import your repository into [Vercel](https://vercel.com/).
+3.  Vercel will automatically detect the static project and deploy it.
 
 ---
 
