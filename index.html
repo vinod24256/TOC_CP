@@ -4,931 +4,1169 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TM Crypt — Secured by Computation</title>
-  <meta name="description" content="A cinematic Theory of Computation simulator. Messages secured by Turing Machines.">
-  
+  <meta name="description" content="A Turing Machine encrypts your messages in real time. Watch M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej) compute — state by state.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <style>
     :root {
-      --bg: #08080f;
-      --accent: #00ff88;
-      --accent-secondary: #00d4ff;
-      --text: #ffffff;
-      --text-muted: #8892a4;
-      --text-dim: #4a5568;
-      --font-sans: 'Inter', sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
+      --bg:         #0b141a;
+      --accent:     #22c55e;
+      --accent2:    #00d4ff;
+      --text:       #fafafa;
+      --muted:      #8892a4;
+      --dim:        #4a5568;
+      --surface:    rgba(32,44,51,0.5);
+      --mono:       'JetBrains Mono', monospace;
+      --sans:       'Inter', sans-serif;
     }
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      background-color: var(--bg);
+      background: var(--bg);
       color: var(--text);
-      font-family: var(--font-sans);
+      font-family: var(--sans);
       overflow-x: hidden;
-      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    canvas#gl-canvas {
+    /* ── WEBGL CANVAS ───────────────────────────────────────────── */
+    #gl {
       position: fixed;
-      top: 0;
-      left: 0;
+      inset: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -2;
+      z-index: 0;
       pointer-events: none;
     }
 
-    .dot-grid {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-      background-size: 32px 32px;
-      z-index: -1;
-      pointer-events: none;
+    /* ── OVERLAY (content sits above shader) ────────────────────── */
+    .overlay {
+      position: relative;
+      z-index: 10;
     }
 
-    /* TYPOGRAPHY */
-    h1, h2, h3 { font-weight: 700; }
-    .text-mono { font-family: var(--font-mono); }
-    .text-accent { color: var(--accent); }
-    .text-muted { color: var(--text-muted); }
-    .text-dim { color: var(--text-dim); }
-    .uppercase { text-transform: uppercase; letter-spacing: 0.15em; font-size: 11px; }
-
-    /* NAV */
+    /* ── NAV ────────────────────────────────────────────────────── */
     nav {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 80px;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      height: 72px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 60px;
-      z-index: 100;
-      backdrop-filter: blur(12px);
-      background: rgba(8, 8, 15, 0.3);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      opacity: 0;
-      transform: translateY(-20px);
-      animation: navFadeIn 0.8s forwards 0.8s;
+      padding: 0 56px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(11,20,26,0.2);
+      border-bottom: 1px solid rgba(34,197,94,0.06);
+      animation: fadeDown .8s ease 0.5s both;
     }
 
-    @keyframes navFadeIn {
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes fadeDown {
+      from { opacity:0; transform:translateY(-16px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
-    .nav-brand { font-family: var(--font-mono); font-size: 18px; font-weight: 600; }
-    .nav-links { display: flex; gap: 40px; }
-    .nav-link {
+    .nav-brand {
+      font-family: var(--mono);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: 0.05em;
+    }
+    .nav-brand span { color: var(--accent); }
+
+    .nav-links { display:flex; gap:36px; align-items:center; }
+    .nav-links a {
       text-decoration: none;
-      color: var(--text-muted);
       font-size: 11px;
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
-      transition: color 0.3s;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      transition: color .25s;
     }
-    .nav-link:hover { color: var(--text); }
+    .nav-links a:hover { color: var(--text); }
 
-    .btn-launch {
-      padding: 8px 20px;
-      background: transparent;
+    .nav-cta {
+      padding: 9px 22px;
       border: 1px solid var(--accent);
-      color: var(--accent);
-      text-decoration: none;
-      font-size: 12px;
-      border-radius: 99px;
-      transition: all 0.3s ease;
+      border-radius: 999px;
+      color: var(--accent) !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      transition: background .25s, color .25s !important;
     }
-    .btn-launch:hover {
-      background: var(--accent);
-      color: #000;
-    }
+    .nav-cta:hover { background: var(--accent) !important; color: #000 !important; }
 
-    /* SECTIONS */
-    section {
-      width: 100%;
-      padding: 120px 60px;
-      position: relative;
-    }
-
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-
-    /* HERO */
+    /* ── HERO ───────────────────────────────────────────────────── */
     .hero {
       height: 100vh;
       display: flex;
       flex-direction: column;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       text-align: center;
-      padding-top: 80px;
+      padding: 0 32px;
+      position: relative;
     }
 
-    .hero-label { margin-bottom: 32px; }
-    
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 10px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      margin-bottom: 36px;
+      opacity: 0;
+      animation: slideUp .8s ease 0.8s both;
+    }
+
     .hero-title {
-      font-size: clamp(48px, 8vw, 84px);
-      line-height: 1.1;
+      font-size: clamp(52px, 9vw, 96px);
+      font-weight: 900;
+      line-height: 1.0;
+      letter-spacing: -0.03em;
       margin-bottom: 32px;
     }
-
-    .hero-title span {
-      display: block;
-      opacity: 0;
-      transform: translateY(40px);
-    }
-    .hero-title.is-visible span:nth-child(1) { animation: slideUp 0.8s forwards 0.2s; }
-    .hero-title.is-visible span:nth-child(2) { animation: slideUp 0.8s forwards 0.4s; }
-    .hero-title.is-visible span:nth-child(3) { animation: slideUp 0.8s forwards 0.6s; }
+    .hero-title .l1 { opacity:0; animation: slideUp .9s ease 1.0s both; display:block; }
+    .hero-title .l2 { opacity:0; animation: slideUp .9s ease 1.2s both; display:block; color: var(--accent); }
+    .hero-title .l3 { opacity:0; animation: slideUp .9s ease 1.4s both; display:block; font-weight:300; font-size:0.6em; color: var(--muted); margin-top:8px; }
 
     @keyframes slideUp {
-      to { opacity: 1; transform: translateY(0); }
+      from { opacity:0; transform:translateY(32px); }
+      to   { opacity:1; transform:translateY(0); }
     }
 
     .hero-sub {
-      font-size: 18px;
-      color: var(--text-muted);
-      max-width: 600px;
-      margin-bottom: 48px;
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 580px;
+      line-height: 1.7;
+      margin-bottom: 52px;
       opacity: 0;
+      animation: slideUp .9s ease 1.6s both;
     }
-    .hero-sub.is-visible { animation: fadeIn 1s forwards 1s; }
 
-    .tuple-glow {
+    .hero-sub .formula {
+      font-family: var(--mono);
+      font-size: 13px;
       color: var(--accent);
-      text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
-      animation: glowPulse 3s infinite;
+      display: inline-block;
+      animation: formulaGlow 4s ease-in-out infinite 2s;
     }
 
-    @keyframes glowPulse {
-      0%, 100% { filter: brightness(1); text-shadow: 0 0 5px var(--accent); }
-      50% { filter: brightness(1.3); text-shadow: 0 0 15px var(--accent); }
+    @keyframes formulaGlow {
+      0%,100% { text-shadow: 0 0 6px rgba(34,197,94,0.3); }
+      50%      { text-shadow: 0 0 18px rgba(34,197,94,0.8), 0 0 40px rgba(34,197,94,0.2); }
     }
 
     .hero-ctas {
-      display: flex;
-      gap: 20px;
-      opacity: 0;
+      display: flex; gap:16px; align-items:center;
+      opacity:0; animation: slideUp .9s ease 1.8s both;
     }
-    .hero-ctas.is-visible { animation: fadeIn 1.2s forwards 1.2s; }
 
-    .btn {
-      padding: 14px 28px;
-      border-radius: 4px;
+    .btn-primary-hero {
+      padding: 16px 36px;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 15px;
+      border-radius: 6px;
       text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
+      transition: transform .2s, box-shadow .2s;
+      display: inline-flex; align-items:center; gap:8px;
     }
-    .btn-primary { background: var(--accent); color: #000; }
-    .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
-    .btn-secondary:hover { border-color: var(--text); }
+    .btn-primary-hero:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(34,197,94,0.35);
+    }
 
-    /* SCROLL HINT */
+    .btn-secondary-hero {
+      padding: 16px 32px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.15);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 15px;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: border-color .2s, background .2s;
+      display: inline-flex; align-items:center; gap:8px;
+    }
+    .btn-secondary-hero:hover { border-color: rgba(255,255,255,0.4); background: rgba(255,255,255,0.04); }
+
+    /* Scroll hint */
     .scroll-hint {
       position: absolute;
       bottom: 40px;
       left: 50%;
       transform: translateX(-50%);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      transition: opacity 0.5s;
+      display: flex; flex-direction:column; align-items:center; gap:8px;
+      opacity:0; animation: fadeIn 1s ease 3s both;
+      transition: opacity .5s;
     }
-    .scroll-hint.hidden { opacity: 0; }
-    .arrow-down {
+    .scroll-hint.gone { opacity:0 !important; }
+    .scroll-hint span {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--dim);
+      font-family: var(--mono);
+    }
+    .scroll-arrow {
       width: 1px;
-      height: 40px;
+      height: 48px;
       background: linear-gradient(to bottom, var(--accent), transparent);
-      position: relative;
-      animation: bounceY 2s infinite;
+      animation: arrowDrop 2s ease-in-out infinite;
     }
-    @keyframes bounceY {
-      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
-      40% {transform: translateY(10px);}
-      60% {transform: translateY(5px);}
+    @keyframes arrowDrop {
+      0%,100% { transform:translateY(-6px); opacity:.4; }
+      50%      { transform:translateY(6px);  opacity:1; }
     }
 
-    /* LIVE TAPE */
-    .live-tape-strip {
-      width: 100vw;
-      margin-left: -60px;
-      background: rgba(0,0,0,0.4);
-      padding: 60px 0;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-      position: relative;
+    /* ── TICKER ─────────────────────────────────────────────────── */
+    .ticker-wrap {
       overflow: hidden;
-    }
-
-    .faint-bg-text {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 120px;
-      font-family: var(--font-mono);
-      opacity: 0.03;
       white-space: nowrap;
-      pointer-events: none;
+      border-top:    1px solid rgba(34,197,94,0.08);
+      border-bottom: 1px solid rgba(34,197,94,0.08);
+      padding: 18px 0;
+      background: rgba(11,20,26,0.7);
+      backdrop-filter: blur(8px);
+    }
+    .ticker-track {
+      display: inline-flex; gap: 80px;
+      animation: ticker 28s linear infinite;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+    }
+    .ticker-track .enc { color: var(--accent); }
+    .ticker-track .arr { color: var(--dim); margin:0 8px; }
+    @keyframes ticker {
+      from { transform:translateX(0); }
+      to   { transform:translateX(-50%); }
     }
 
-    .tape-viz {
-      display: flex;
-      justify-content: center;
-      gap: 8px;
-      perspective: 1000px;
-    }
-
-    .tape-cell {
-      width: 60px;
-      height: 60px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: var(--bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-size: 24px;
-      border-radius: 4px;
-      transition: all 0.3s;
-    }
-    .tape-cell.active {
-      border-color: var(--accent);
-      box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
-      background: rgba(0, 255, 136, 0.05);
-    }
-    .tape-cell.head-pos::after {
-      content: "↑";
-      position: absolute;
-      bottom: -30px;
-      color: var(--accent);
-      font-size: 20px;
-      animation: headPulse 1s infinite;
-    }
-    @keyframes headPulse {
-      0%, 100% { opacity: 0.4; transform: translateY(0); }
-      50% { opacity: 1; transform: translateY(-4px); }
-    }
-
-    .tape-status {
+    /* ── TAPE SECTION ───────────────────────────────────────────── */
+    .tape-section {
+      padding: 120px 56px;
       text-align: center;
-      margin-top: 48px;
-      font-family: var(--font-mono);
-      font-size: 13px;
+      position: relative;
     }
 
-    /* HOW IT WORKS */
-    .how-it-works { padding: 160px 60px; }
+    .section-label {
+      font-family: var(--mono);
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.25em;
+      color: var(--accent);
+      margin-bottom: 20px;
+      display: block;
+    }
+    .section-title {
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      margin-bottom: 80px;
+    }
+    .section-title .dim { font-weight:300; color: var(--muted); }
+
+    /* tape filmstrip */
+    .tape-filmstrip {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 28px;
+    }
+
+    .t-cell {
+      width: 64px; height: 64px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: rgba(11,20,26,0.6);
+      display: flex; align-items:center; justify-content:center;
+      font-family: var(--mono);
+      font-size: 26px;
+      font-weight: 500;
+      color: var(--muted);
+      border-radius: 4px;
+      transition: all .25s cubic-bezier(.4,0,.2,1);
+      backdrop-filter: blur(4px);
+    }
+    .t-cell.h {
+      border-color: var(--accent);
+      background: rgba(34,197,94,0.07);
+      color: var(--accent);
+      box-shadow: 0 0 0 1px var(--accent), 0 0 32px rgba(34,197,94,0.25);
+    }
+    .t-cell.w {
+      border-color: rgba(34,197,94,0.4);
+      color: rgba(34,197,94,0.7);
+    }
+
+    .tape-pin {
+      text-align:center;
+      margin-bottom: 4px;
+    }
+    .tape-pin-arrow {
+      display: inline-block;
+      font-size: 20px;
+      color: var(--accent);
+      animation: arrowDrop 1.2s ease-in-out infinite;
+      line-height: 1;
+    }
+
+    .tape-meta {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--dim);
+      letter-spacing: 0.05em;
+      margin-bottom: 60px;
+    }
+    .tape-meta .v { color: var(--accent); }
+
+    .tape-log {
+      max-width: 640px; margin: 0 auto;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+      text-align: left;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: rgba(0,0,0,0.3);
+      border-radius: 6px;
+      padding: 16px;
+      height: 120px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(34,197,94,0.2) transparent;
+    }
+
+    /* ── HOW IT WORKS ───────────────────────────────────────────── */
+    .how-section {
+      padding: 120px 56px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
     .timeline {
       position: relative;
-      max-width: 800px;
-      margin: 80px auto 0;
-      padding-left: 60px;
+      padding-left: 48px;
+      margin-top: 72px;
     }
     .timeline::before {
-      content: "";
+      content: '';
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 0; top: 0;
       width: 1px;
       height: 100%;
       background: rgba(255,255,255,0.05);
     }
-    .timeline-progress {
+    .timeline-ink {
       position: absolute;
-      left: 0;
-      top: 0;
+      left: 0; top: 0;
       width: 1px;
-      background: var(--accent);
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      box-shadow: 0 0 8px var(--accent);
       height: 0;
-      transition: height 0.1s linear;
-      box-shadow: 0 0 10px var(--accent);
+      transition: height .08s linear;
     }
+
     .step {
-      margin-bottom: 120px;
+      position: relative;
+      margin-bottom: 100px;
       opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateY(24px);
+      transition: opacity .7s ease, transform .7s ease;
     }
-    .step.is-visible { opacity: 1; transform: translateY(0); }
-    .step-num {
+    .step.vis { opacity:1; transform:translateY(0); }
+    .step::before {
+      content: '';
       position: absolute;
-      left: -60px;
-      width: 60px;
-      color: var(--text-dim);
-      font-family: var(--font-mono);
-      font-size: 14px;
-      padding-top: 4px;
+      left: -54px; top: 6px;
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: var(--bg);
+      border: 1px solid rgba(255,255,255,0.15);
     }
-    .step-content h3 { font-size: 24px; margin-bottom: 16px; }
-    .step-content p { color: var(--text-muted); max-width: 500px; margin-bottom: 24px; }
-    .step-viz {
-      background: rgba(255,255,255,0.02);
+    .step.vis::before { border-color: var(--accent); background: rgba(34,197,94,0.1); }
+
+    .step-num {
+      font-family: var(--mono);
+      font-size: 10px;
+      color: var(--dim);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 12px;
+    }
+    .step h3 { font-size: 22px; font-weight: 700; margin-bottom: 12px; }
+    .step p  { color: var(--muted); line-height: 1.7; max-width: 520px; margin-bottom: 20px; }
+    .step-code {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--muted);
+      background: rgba(0,0,0,0.35);
       border: 1px solid rgba(255,255,255,0.05);
       border-radius: 4px;
-      padding: 16px;
-      display: inline-block;
+      padding: 12px 16px;
+      line-height: 1.8;
     }
 
-    /* FORMAL DEF */
-    .formal-def { text-align: center; }
-    .m-title {
-      font-size: 48px;
-      font-family: var(--font-mono);
-      margin: 60px 0;
-      opacity: 0;
-    }
-    .m-title.is-visible { animation: fadeIn 1s forwards; }
-    .def-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .def-row {
-      display: grid;
-      grid-template-columns: 80px 1fr 140px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      font-family: var(--font-mono);
-      font-size: 13px;
-      opacity: 0;
-      transform: translateX(-20px);
-    }
-    .def-row.is-visible { animation: slideInX 0.6s forwards; }
-    .def-sym { color: var(--accent); font-weight: 700; text-align: left; }
-    .def-val { color: var(--text); text-align: left; }
-    .def-note { color: var(--text-dim); text-align: right; }
-
-    @keyframes slideInX {
-      to { opacity: 1; transform: translateX(0); }
-    }
-
-    .pulse-box {
-      margin-top: 48px;
-      font-size: 14px;
-      letter-spacing: 0.2em;
-      color: var(--accent);
-      animation: glowPulse 4s infinite;
-    }
-
-    /* CHOMSKY */
-    .chomsky { 
-      padding: 160px 60px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .rings-container {
-      position: relative;
-      width: 500px;
-      height: 500px;
-      margin-top: 80px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .ring {
-      position: absolute;
-      border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.1);
-      transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
-      transform: scale(0);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .ring::before {
-      content: attr(data-label);
-      position: absolute;
-      top: 10px;
-      font-size: 9px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: rgba(255,255,255,0.2);
-    }
-    .ring.r4 { width: 500px; height: 500px; border-color: rgba(167, 139, 250, 0.2); }
-    .ring.r3 { width: 400px; height: 400px; border-color: rgba(59, 130, 246, 0.2); }
-    .ring.r2 { width: 300px; height: 300px; border-color: rgba(6, 182, 212, 0.2); }
-    .ring.r1 { width: 200px; height: 200px; border-color: rgba(34, 197, 94, 0.2); }
-    .ring.active { transform: scale(1); }
-    
-    .tm-dot {
-      width: 12px;
-      height: 12px;
-      background: var(--accent);
-      border-radius: 50%;
-      box-shadow: 0 0 20px var(--accent);
-      animation: headPulse 2s infinite;
-    }
-    .dot-label {
-      position: absolute;
-      bottom: -40px;
+    /* ── FORMAL DEF ─────────────────────────────────────────────── */
+    .formal-section {
+      padding: 140px 56px;
       text-align: center;
-      font-family: var(--font-mono);
-      font-size: 12px;
-      color: var(--accent);
+      position: relative;
+      overflow: hidden;
     }
 
-    /* SYLLABUS */
-    .syllabus-list {
-      max-width: 700px;
-      margin: 60px auto 0;
+    .formal-bg-glyph {
+      position: absolute;
+      left: 50%; top: 50%;
+      transform: translate(-50%,-50%);
+      font-family: var(--mono);
+      font-size: 280px;
+      font-weight: 900;
+      color: rgba(34,197,94,0.02);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.05em;
+    }
+
+    .m-formula {
+      font-family: var(--mono);
+      font-size: clamp(20px, 3.5vw, 40px);
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      margin: 48px 0 72px;
+      opacity:0;
+      animation: none;
+    }
+    .m-formula.vis { animation: slideUp .8s ease both; }
+
+    .def-rows {
+      max-width: 780px;
+      margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 0;
     }
-    .syllabus-item {
+
+    .def-row {
+      display: grid;
+      grid-template-columns: 60px 1fr 160px;
+      align-items: center;
       padding: 16px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-      display: flex;
-      gap: 20px;
-      opacity: 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-family: var(--mono);
+      font-size: 13px;
+      text-align: left;
+      opacity:0; transform:translateX(-20px);
+      transition: opacity .5s ease, transform .5s ease;
     }
-    .syllabus-item.is-visible { animation: fadeIn 0.5s forwards; }
-    .check { color: var(--accent); font-family: var(--font-mono); }
+    .def-row.vis { opacity:1; transform:translateX(0); }
+    .def-sym { color: var(--accent); font-weight:700; font-size:16px; }
+    .def-val { color: var(--text); }
+    .def-note { color: var(--dim); text-align:right; font-size:10px; text-transform:uppercase; letter-spacing:0.1em; }
 
-    /* FINAL CTA */
-    .final-cta { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
-    .final-cta h2 { font-size: 72px; line-height: 1.1; margin-bottom: 32px; }
-    .final-cta h2 span { display: block; opacity:0; }
+    .stat-band {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 1px;
+      max-width: 780px;
+      margin: 60px auto 0;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .stat-cell {
+      padding: 24px;
+      background: rgba(11,20,26,0.8);
+      font-family: var(--mono);
+      text-align: center;
+    }
+    .stat-v { font-size: 36px; font-weight:700; color: var(--accent); display:block; }
+    .stat-k { font-size: 10px; color: var(--dim); text-transform:uppercase; letter-spacing:0.1em; margin-top:4px; }
 
-    /* FOOTER */
-    footer {
-      padding: 40px 60px;
-      border-top: 1px solid rgba(255,255,255,0.05);
-      background: #05050a;
+    .recursive-badge {
+      margin-top: 60px;
+      font-family: var(--mono);
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      animation: formulaGlow 4s ease-in-out infinite;
+    }
+
+    /* ── CHOMSKY ────────────────────────────────────────────────── */
+    .chomsky-section {
+      padding: 140px 56px;
+      display: flex; flex-direction:column; align-items:center;
+      text-align: center;
+    }
+
+    .rings {
+      position: relative;
+      width: 520px; height: 520px;
+      margin-top: 72px;
+      display: flex; align-items:center; justify-content:center;
+    }
+
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      transition: all 1.2s cubic-bezier(.34,1.56,.64,1);
+      transform: scale(0);
+      display: flex; align-items:center; justify-content:center;
+    }
+    .ring.r4 { width:520px;height:520px; border-color: rgba(167,139,250,0.18); }
+    .ring.r3 { width:400px;height:400px; border-color: rgba(59,130,246,0.18); }
+    .ring.r2 { width:290px;height:290px; border-color: rgba(0,212,255,0.18); }
+    .ring.r1 { width:190px;height:190px; border-color: rgba(34,197,94,0.3); }
+
+    .ring.show { transform: scale(1); }
+    .ring.r4.show { transition-delay: 0ms; }
+    .ring.r3.show { transition-delay: 150ms; }
+    .ring.r2.show { transition-delay: 300ms; }
+    .ring.r1.show { transition-delay: 450ms; }
+
+    .ring-label {
+      position: absolute;
+      top: 12px;
+      font-family: var(--mono);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .ring.r4 .ring-label { color: rgba(167,139,250,0.5); }
+    .ring.r3 .ring-label { color: rgba(59,130,246,0.5); }
+    .ring.r2 .ring-label { color: rgba(0,212,255,0.5); }
+    .ring.r1 .ring-label { color: rgba(34,197,94,0.6); }
+
+    .dot-center {
+      width: 14px; height: 14px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 0 4px rgba(34,197,94,0.15), 0 0 32px var(--accent);
+      animation: centerPulse 2.5s ease-in-out infinite;
+      position: relative; z-index:10;
+    }
+    @keyframes centerPulse {
+      0%,100% { box-shadow: 0 0 0 4px rgba(34,197,94,0.15), 0 0 20px var(--accent); }
+      50%      { box-shadow: 0 0 0 12px rgba(34,197,94,0), 0 0 60px rgba(34,197,94,0.4); }
+    }
+    .dot-label {
+      position: absolute;
+      bottom: -44px;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--accent);
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* ── SYLLABUS ───────────────────────────────────────────────── */
+    .syllabus-section {
+      padding: 120px 56px;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .syllabus-list {
+      margin-top: 60px;
+      display: flex; flex-direction:column; gap:0;
+    }
+    .syl-item {
+      display: flex; gap:20px; align-items:baseline;
+      padding: 18px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      font-size: 15px;
+      opacity:0; transform:translateY(12px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .syl-item.vis { opacity:1; transform:translateY(0); }
+    .syl-check { font-family:var(--mono); color: var(--accent); flex-shrink:0; font-weight:700; }
+    .syl-text { color: var(--muted); line-height:1.6; }
+    .syl-text strong { color: var(--text); }
+
+    /* ── FINAL CTA ──────────────────────────────────────────────── */
+    .cta-section {
+      height: 100vh;
+      display: flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align: center; padding: 0 32px;
       position: relative;
     }
-    .footer-content {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-dim);
+
+    .cta-title {
+      font-size: clamp(44px, 8vw, 88px);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin-bottom: 28px;
     }
-    .f-right { text-align: right; color: var(--text-muted); opacity: 0.8; }
-    .f-center { text-align: center; }
-    .scan-line {
+    .cta-title .line { display:block; opacity:0; transform:translateY(28px); }
+    .cta-title.vis .line:nth-child(1) { animation: slideUp .8s ease .1s both; }
+    .cta-title.vis .line:nth-child(2) { animation: slideUp .8s ease .25s both; }
+    .cta-title.vis .line:nth-child(3) { animation: slideUp .8s ease .4s both; color:var(--accent); }
+
+    .cta-sub { color: var(--muted); font-size:17px; max-width:480px; margin-bottom:52px; opacity:0; }
+    .cta-sub.vis { animation: slideUp .8s ease .55s both; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: #050a0e;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      padding: 36px 56px;
+      position: relative; overflow:hidden;
+    }
+    .f-scan {
       position: absolute;
-      top: -1px;
-      left: 0;
-      width: 100px;
-      height: 1px;
-      background: var(--accent);
-      box-shadow: 0 0 10px var(--accent);
-      animation: scan 10s linear infinite;
+      top: -1px; left: -120px;
+      width: 120px; height: 1px;
+      background: linear-gradient(to right, transparent, var(--accent), transparent);
+      animation: scan 12s linear infinite;
     }
     @keyframes scan {
-      0% { left: -100px; }
+      0%   { left: -120px; }
       100% { left: 100%; }
     }
+    .f-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      align-items: center;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--dim);
+    }
+    .f-grid a { color: var(--dim); text-decoration:none; transition:color .2s; margin:0 8px; }
+    .f-grid a:hover { color: var(--muted); }
+    .f-mid { text-align: center; }
+    .f-right { text-align: right; color: var(--muted); }
 
-    @keyframes fadeIn { to { opacity: 1; } }
+    /* ── UTILS ──────────────────────────────────────────────────── */
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
 
-    /* MEDIA QUERIES */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .reveal.vis { opacity:1; transform:translateY(0); }
+
     @media (max-width: 768px) {
       nav { padding: 0 20px; }
-      .nav-links { display: none; }
-      section { padding: 80px 20px; }
-      .hero-title { font-size: 42px; }
-      .def-grid { font-size: 11px; }
-      .def-row { grid-template-columns: 40px 1fr 80px; }
-      .rings-container { transform: scale(0.6); }
-      .final-cta h2 { font-size: 42px; }
-      .footer-content { grid-template-columns: 1fr; gap: 10px; text-align: center; }
-      .f-right, .f-center { text-align: center; }
+      .nav-links { display:none; }
+      .tape-section, .how-section, .formal-section, .chomsky-section, .syllabus-section { padding: 80px 20px; }
+      footer { padding: 24px 20px; }
+      .f-grid { grid-template-columns:1fr; gap:8px; text-align:center; }
+      .f-right { text-align:center; }
+      .rings { transform: scale(0.55); margin-top: 20px; }
+      .stat-band { grid-template-columns:1fr; }
     }
   </style>
 </head>
 <body>
 
-  <canvas id="gl-canvas"></canvas>
-  <div class="dot-grid"></div>
+<!-- WEBGL BACKGROUND -->
+<canvas id="gl"></canvas>
 
-  <!-- NAVIGATION -->
-  <nav>
-    <div class="nav-brand text-mono">TM CRYPT</div>
-    <div class="nav-links">
-      <a href="#how" class="nav-link">How it Works</a>
-      <a href="#formal" class="nav-link">Concepts</a>
-      <a href="app.html" class="nav-link">Simulator</a>
-    </div>
-    <a href="app.html" class="btn-launch">→ Launch App</a>
-  </nav>
+<!-- NAV -->
+<nav class="overlay">
+  <div class="nav-brand">TM <span>CRYPT</span></div>
+  <div class="nav-links">
+    <a href="#how">How it Works</a>
+    <a href="#formal">Concepts</a>
+    <a href="app.html">Simulator</a>
+    <a href="app.html" class="nav-cta">→ Launch App</a>
+  </div>
+</nav>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-label uppercase text-accent animate-on-scroll">Theory of Computation · Unit 5 · Turing Machines</div>
-    <h1 class="hero-title animate-on-scroll">
-      <span>Messages secured</span>
-      <span>by a Turing</span>
-      <span>Machine.</span>
-    </h1>
-    <p class="hero-sub animate-on-scroll">
-      Watch <span class="text-mono tuple-glow">M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</span> encrypt in real time — state by state.
-    </p>
-    <div class="hero-ctas animate-on-scroll">
-      <a href="app.html" class="btn btn-primary">→ Open Simulator</a>
-      <a href="learn.html" class="btn btn-secondary">Watch Demo ▷</a>
-    </div>
+<!-- HERO -->
+<section class="hero overlay">
+  <div class="hero-eyebrow">Theory of Computation · Unit 5 · Turing Machines</div>
+  <h1 class="hero-title">
+    <span class="l1">Messages secured</span>
+    <span class="l2">by Turing Machines.</span>
+    <span class="l3">Encryption. State by state.</span>
+  </h1>
+  <p class="hero-sub">
+    Watch <span class="formula">M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</span> encrypt in real time.
+  </p>
+  <div class="hero-ctas">
+    <a href="app.html" class="btn-primary-hero">→ Open Simulator</a>
+    <a href="learn.html" class="btn-secondary-hero">Watch Demo ▷</a>
+  </div>
+  <div class="scroll-hint" id="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
 
-    <div class="scroll-hint" id="scroll-hint">
-      <span class="uppercase text-dim" style="font-size: 9px;">Scroll to explore</span>
-      <div class="arrow-down"></div>
-    </div>
-  </section>
+<!-- TICKER -->
+<div class="ticker-wrap overlay">
+  <div class="ticker-track" id="ticker">
+    <span>"hello vijay"<span class="arr">→</span><span class="enc">"khoor eljdb"</span></span>
+    <span>δ(q_lower,'h') → (q_lower,'k',R)</span>
+    <span>"toc project"<span class="arr">→</span><span class="enc">"arf surmhfw"</span></span>
+    <span>δ(q_lower,'t') → (q_lower,'w',R)</span>
+    <span>"turing machine"<span class="arr">→</span><span class="enc">"wxulqj pdfklqh"</span></span>
+    <span>State: q_lower · Head: 3 · Op: WRITE</span>
+    <span>L(M) = Σ* · RECURSIVE · O(n)</span>
+    <span>"hello vijay"<span class="arr">→</span><span class="enc">"khoor eljdb"</span></span>
+    <span>δ(q_lower,'h') → (q_lower,'k',R)</span>
+    <span>"toc project"<span class="arr">→</span><span class="enc">"arf surmhfw"</span></span>
+    <span>δ(q_lower,'t') → (q_lower,'w',R)</span>
+    <span>"turing machine"<span class="arr">→</span><span class="enc">"wxulqj pdfklqh"</span></span>
+    <span>State: q_lower · Head: 3 · Op: WRITE</span>
+    <span>L(M) = Σ* · RECURSIVE · O(n)</span>
+  </div>
+</div>
 
-  <!-- LIVE TAPE -->
-  <section style="padding: 0;">
-    <div class="live-tape-strip">
-      <div class="faint-bg-text">δ(q, σ) → (q', σ', D)</div>
-      <div class="uppercase text-accent text-mono" style="text-align:center; margin-bottom: 40px; font-size: 10px;">Live Computation Strip</div>
-      
-      <div class="tape-viz" id="tape-viz">
-        <!-- Cells generated by JS -->
+<!-- LIVE TAPE -->
+<section class="tape-section overlay">
+  <span class="section-label reveal">Live Computation</span>
+  <h2 class="section-title reveal">The tape <span class="dim">never sleeps.</span></h2>
+
+  <div class="tape-pin">
+    <div id="tape-head-arrow" class="tape-pin-arrow">↓</div>
+  </div>
+  <div class="tape-filmstrip" id="tape-viz"></div>
+  <div class="tape-meta" id="tape-meta">
+    STATE: <span class="v">q₀</span> · HEAD: <span class="v">0</span> · READING: <span class="v">'□'</span> · MOVE: <span class="v">—</span>
+  </div>
+  <div class="tape-log" id="tape-log"></div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how-section overlay" id="how">
+  <span class="section-label reveal">The Process</span>
+  <h2 class="section-title reveal">Three steps.<br><span class="dim">One Turing Machine.</span></h2>
+
+  <div class="timeline">
+    <div class="timeline-ink" id="ink"></div>
+
+    <div class="step" id="step1">
+      <div class="step-num">Step 01</div>
+      <h3>Message enters the tape</h3>
+      <p>Your plaintext is written cell by cell. Read/write head positions at index 1. State initialises to q₀.</p>
+      <div class="step-code">
+        ┌───┬───┬───┬───┬───┐<br>
+        │ □ │ h │ e │ l │ l │<br>
+        └───┴───┴───┴───┴───┘<br>
+            ↑ head @ 1 · state q₀
       </div>
-      
-      <div class="tape-status text-mono text-dim" id="tape-status">
-        STATE: <span class="text-accent">q_lower</span>  ·  READING: <span class="text-accent">'l'</span>  ·  MOVE: <span class="text-accent">R →</span>
+    </div>
+
+    <div class="step" id="step2">
+      <div class="step-num">Step 02</div>
+      <h3>Transitions fire — characters encrypt</h3>
+      <p>δ(q, σ) → (q', σ', D) fires for each character. Uppercase → q_upper · Lowercase → q_lower · Non-alpha → q_skip. Each letter shifts by k.</p>
+      <div class="step-code">
+        [q₀] ──'h'/'k',R──▶ [q_lower]<br>
+        [q_lower] ──'e'/'h',R──▶ [q_lower]<br>
+        [q_lower] ──'l'/'o',R──▶ [q_lower]
       </div>
     </div>
-  </section>
 
-  <!-- HOW IT WORKS -->
-  <section class="how-it-works" id="how">
-    <div class="container">
-      <div class="uppercase text-accent animate-on-scroll">The Process</div>
-      <h2 style="font-size: 42px; margin: 12px 0 60px;" class="animate-on-scroll">How it Works</h2>
-      
-      <div class="timeline">
-        <div class="timeline-progress" id="timeline-progress"></div>
-        
-        <div class="step animate-on-scroll">
-          <div class="step-num">01</div>
-          <div class="step-content">
-            <h3>Message enters the tape</h3>
-            <p>Your plaintext is written cell by cell. Head positions at 0. State: q₀.</p>
-            <div class="step-viz text-mono text-dim">
-              ┌───┬───┬───┬───┬───┐<br>
-              │ □ │ h │ e │ l │ l │<br>
-              └───┴───┴───┴───┴───┘
+    <div class="step" id="step3">
+      <div class="step-num">Step 03</div>
+      <h3>TM halts — cipher delivered</h3>
+      <p>On reading blank □, the TM transitions to q_accept and halts. Tape holds the ciphertext. L(M) = Σ* — Total Decider.</p>
+      <div class="step-code">
+        k h o o r · q_accept ✓<br>
+        Time complexity: O(n)<br>
+        Language class: RECURSIVE
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FORMAL DEFINITION -->
+<section class="formal-section overlay" id="formal">
+  <div class="formal-bg-glyph">M</div>
+  <span class="section-label reveal">Formal Model</span>
+  <div class="m-formula reveal">M = (<span style="color:var(--accent)">Q</span>, <span style="color:var(--accent)">Σ</span>, <span style="color:var(--accent)">Γ</span>, <span style="color:var(--accent)">δ</span>, q₀, q_acc, q_rej)</div>
+
+  <div class="def-rows">
+    <div class="def-row" id="dr0">
+      <div class="def-sym">Q</div>
+      <div class="def-val">{q₀, q_upper, q_lower, q_skip, q_accept, q_reject}</div>
+      <div class="def-note">6 States</div>
+    </div>
+    <div class="def-row" id="dr1">
+      <div class="def-sym">Σ</div>
+      <div class="def-val">Printable ASCII — the language TM Crypt speaks</div>
+      <div class="def-note">Input Alphabet</div>
+    </div>
+    <div class="def-row" id="dr2">
+      <div class="def-sym">Γ</div>
+      <div class="def-val">Σ ∪ {□} — every symbol the tape can hold</div>
+      <div class="def-note">Tape Alphabet</div>
+    </div>
+    <div class="def-row" id="dr3">
+      <div class="def-sym">δ</div>
+      <div class="def-val">Q × Γ → Q × Γ × {L, R} — the cipher heart</div>
+      <div class="def-note">Transition Fn</div>
+    </div>
+    <div class="def-row" id="dr4">
+      <div class="def-sym">q₀</div>
+      <div class="def-val">Where every encryption begins</div>
+      <div class="def-note">Start State</div>
+    </div>
+  </div>
+
+  <div class="stat-band reveal">
+    <div class="stat-cell"><span class="stat-v">6</span><span class="stat-k">States</span></div>
+    <div class="stat-cell"><span class="stat-v">O(n)</span><span class="stat-k">Time</span></div>
+    <div class="stat-cell"><span class="stat-v">676</span><span class="stat-k">Transitions</span></div>
+  </div>
+
+  <div class="recursive-badge reveal">RECURSIVE · TOTAL DECIDER · L(M) = Σ*</div>
+</section>
+
+<!-- CHOMSKY -->
+<section class="chomsky-section overlay">
+  <span class="section-label reveal">Classification</span>
+  <h2 class="section-title reveal">Where does<br><span class="dim">TM Crypt sit?</span></h2>
+
+  <div class="rings" id="chomsky-rings">
+    <div class="ring r4">
+      <div class="ring-label">Type 0 — Recursively Enumerable</div>
+      <div class="ring r3">
+        <div class="ring-label">Type 1 — Context Sensitive</div>
+        <div class="ring r2">
+          <div class="ring-label">Type 2 — Context Free</div>
+          <div class="ring r1">
+            <div class="ring-label">Type 3 — Regular</div>
+            <div style="position:relative">
+              <div class="dot-center"></div>
+              <div class="dot-label">TM Crypt Caesar<br>Total Decider ✓</div>
             </div>
           </div>
         </div>
-
-        <div class="step animate-on-scroll">
-          <div class="step-num">02</div>
-          <div class="step-content">
-            <h3>Transitions fire — characters encrypt</h3>
-            <p>δ(q, σ) → (q', σ', D) fires for each character. Uppercase → q_upper. Lowercase → q_lower. Each shifts by k=3.</p>
-            <div class="step-viz text-mono">
-              <span class="text-dim">[q₀]</span> <span class="text-accent">──'h'/'k',R──▶</span> <span class="text-muted">[q_lower]</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="step animate-on-scroll">
-          <div class="step-num">03</div>
-          <div class="step-content">
-            <h3>TM halts — message delivered</h3>
-            <p>On blank □, transitions to q_accept. Tape holds ciphertext. L(M) = Σ* is Recursive. Time: O(n).</p>
-            <div class="step-viz text-mono">
-              <span class="text-accent">k h o o r</span> <span style="color:#22c55e">✓ q_accept</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <!-- FORMAL DEFINITION -->
-  <section id="formal" class="formal-def">
-    <div class="container">
-      <div class="uppercase text-dim animate-on-scroll">Formal Model</div>
-      <div class="m-title animate-on-scroll">M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</div>
-      
-      <div class="def-grid">
-        <div class="def-row animate-on-scroll">
-          <div class="def-sym">Q</div>
-          <div class="def-val">{q₀, q_upper, q_lower, q_skip, q_accept, q_reject}</div>
-          <div class="def-note">6 States</div>
-        </div>
-        <div class="def-row animate-on-scroll">
-          <div class="def-sym">Σ</div>
-          <div class="def-val">Printable ASCII — the language TM Crypt speaks</div>
-          <div class="def-note">Alphabet</div>
-        </div>
-        <div class="def-row animate-on-scroll">
-          <div class="def-sym">Γ</div>
-          <div class="def-val">Σ ∪ {□} — every symbol the tape can hold</div>
-          <div class="def-note">Tape Alphabet</div>
-        </div>
-        <div class="def-row animate-on-scroll">
-          <div class="def-sym">δ</div>
-          <div class="def-val">Q × Γ → Q × Γ × {L,R} — the cipher heart</div>
-          <div class="def-note">Transitions</div>
-        </div>
-        <div class="def-row animate-on-scroll">
-          <div class="def-sym">q₀</div>
-          <div class="def-val">Where every encryption begins</div>
-          <div class="def-note">Start State</div>
-        </div>
-      </div>
+<!-- SYLLABUS -->
+<section class="syllabus-section overlay">
+  <span class="section-label reveal">Coverage</span>
+  <h2 class="section-title reveal">Unit 5 —<br><span class="dim">Complete Coverage.</span></h2>
+  <div class="syllabus-list">
+    <div class="syl-item syl0"><div class="syl-check">✓</div><div class="syl-text"><strong>Basic TM Model</strong> — 7-tuple, state transitions, tape mechanics</div></div>
+    <div class="syl-item syl1"><div class="syl-check">✓</div><div class="syl-text"><strong>Instantaneous Descriptions</strong> — α[q]β notation, full history</div></div>
+    <div class="syl-item syl2"><div class="syl-check">✓</div><div class="syl-text"><strong>TM as Computer of Functions</strong> — f(w) = Caesar(w,k), total functions</div></div>
+    <div class="syl-item syl3"><div class="syl-check">✓</div><div class="syl-text"><strong>Non-deterministic TM</strong> — 26 branches, NTM→DTM equivalence</div></div>
+    <div class="syl-item syl4"><div class="syl-check">✓</div><div class="syl-text"><strong>Recursive Languages</strong> — total decider, L(M) = Σ*</div></div>
+    <div class="syl-item syl5"><div class="syl-check">✓</div><div class="syl-text"><strong>The Halting Problem</strong> — undecidability proof, Rice's Theorem</div></div>
+  </div>
+</section>
 
-      <div class="pulse-box text-mono uppercase animate-on-scroll">RECURSIVE · TOTAL DECIDER</div>
-      
-      <div class="def-row animate-on-scroll" style="border:none; margin-top: 40px; grid-template-columns: 1fr;">
-        <div class="def-val text-dim" style="text-align:center;">Time: O(n)  ·  Space: O(n)  ·  Transitions: 676</div>
-      </div>
+<!-- FINAL CTA -->
+<section class="cta-section overlay">
+  <h2 class="cta-title" id="cta-title">
+    <span class="line">Ready to see a</span>
+    <span class="line">Turing Machine</span>
+    <span class="line">think?</span>
+  </h2>
+  <p class="cta-sub" id="cta-sub">Open the simulator. Watch every state transition. See computation live.</p>
+  <a href="app.html" class="btn-primary-hero" style="opacity:0;" id="cta-btn">→ Open TM Crypt Simulator</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="overlay">
+  <div class="f-scan"></div>
+  <div class="f-grid">
+    <div>TM Crypt · M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</div>
+    <div class="f-mid">
+      <a href="app.html">Simulator</a> ·
+      <a href="learn.html">Learn</a> ·
+      <a href="https://github.com/vinod24256/TOC_CP" target="_blank">GitHub ↗</a>
     </div>
-  </section>
+    <div class="f-right">Vinod Katevarapu — S20240010256</div>
+  </div>
+</footer>
 
-  <!-- CHOMSKY -->
-  <section class="chomsky">
-    <div class="container" style="text-align: center;">
-      <div class="uppercase text-accent animate-on-scroll">Classification</div>
-      <h2 style="font-size: 32px; margin-top: 12px;" class="animate-on-scroll">Where does TM Crypt sit?</h2>
-      
-      <div class="rings-container">
-        <div class="ring r4 animate-ring" data-label="Type 0 — Recursively Enumerable">
-          <div class="ring r3 animate-ring" data-label="Type 1 — Context Sensitive">
-            <div class="ring r2 animate-ring" data-label="Type 2 — Context Free">
-              <div class="ring r1 animate-ring" data-label="Type 3 — Regular">
-                <div class="tm-dot"></div>
-                <div class="dot-label text-mono uppercase">TM Crypt Caesar<br><span style="font-size: 10px;">Total Decider</span></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<script src="assets/tm-engine.js"></script>
+<script>
+// ─────────────────────────────────────────────────────
+// 1. WEBGL SHADER — dramatic fluid waves
+// ─────────────────────────────────────────────────────
+(function(){
+  const canvas = document.getElementById('gl');
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
 
-  <!-- SYLLABUS -->
-  <section>
-    <div class="container">
-      <div class="uppercase text-accent animate-on-scroll">Syllabus Alignment</div>
-      <h2 style="font-size: 32px; margin: 12px 0 40px;" class="animate-on-scroll">Unit 5 — Complete Coverage</h2>
-      <p class="text-muted animate-on-scroll">Every TOC concept from the syllabus, simulated.</p>
+  if (!gl) {
+    document.body.style.background =
+      'radial-gradient(ellipse at 30% 30%, #0d2418 0%, #0b141a 50%, #05080b 100%)';
+    return;
+  }
 
-      <div class="syllabus-list">
-        <div class="syllabus-item animate-on-scroll">
-          <div class="check">✓</div>
-          <div class="text-muted"><b>Basic TM Model</b> — 7-tuple, state transitions, tape mechanics</div>
-        </div>
-        <div class="syllabus-item animate-on-scroll">
-          <div class="check">✓</div>
-          <div class="text-muted"><b>Instantaneous Descriptions</b> — α[q]β notation, full history</div>
-        </div>
-        <div class="syllabus-item animate-on-scroll">
-          <div class="check">✓</div>
-          <div class="text-muted"><b>TM as Computer of Functions</b> — f(w) = Caesar(w,k), total functions</div>
-        </div>
-        <div class="syllabus-item animate-on-scroll">
-          <div class="check">✓</div>
-          <div class="text-muted"><b>Non-deterministic TM</b> — 26 branches, NTM→DTM equivalence</div>
-        </div>
-        <div class="syllabus-item animate-on-scroll">
-          <div class="check">✓</div>
-          <div class="text-muted"><b>Recursive Languages</b> — total decider, L(M) = Σ*</div>
-        </div>
-        <div class="syllabus-item animate-on-scroll">
-          <div class="check">✓</div>
-          <div class="text-muted"><b>The Halting Problem</b> — undecidability proof, Rice's Theorem</div>
-        </div>
-      </div>
-    </div>
-  </section>
+  const VS = `
+    attribute vec2 a_pos;
+    void main() { gl_Position = vec4(a_pos, 0.0, 1.0); }
+  `;
 
-  <!-- FINAL CTA -->
-  <section class="final-cta">
-    <h2 class="animate-on-scroll">
-      <span>Ready to see a</span>
-      <span>Turing Machine</span>
-      <span>think?</span>
-    </h2>
-    <p class="text-muted animate-on-scroll" style="margin: 32px 0 48px; max-width: 500px;">
-      Open the simulator. Watch every state transition. See computation live.
-    </p>
-    <a href="app.html" class="btn btn-primary btn-lg animate-on-scroll">→ Open TM Crypt Simulator</a>
-  </section>
+  // Full Simplex noise + multi-octave fluid
+  const FS = `
+    precision highp float;
+    uniform float u_t;
+    uniform vec2  u_res;
 
-  <!-- FOOTER -->
-  <footer>
-    <div class="scan-line"></div>
-    <div class="container">
-      <div class="footer-content">
-        <div class="f-left">TM Crypt · M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</div>
-        <div class="f-center">
-          <a href="app.html" style="color:inherit; text-decoration:none; margin:0 10px;">Simulator</a> · 
-          <a href="learn.html" style="color:inherit; text-decoration:none; margin:0 10px;">Learn</a> · 
-          <a href="https://github.com/vinod24256/TOC_CP" style="color:inherit; text-decoration:none; margin:0 10px;">GitHub</a>
-        </div>
-        <div class="f-right">Vinod Katevarapu — S20240010256</div>
-      </div>
-    </div>
-  </footer>
+    // ── simplex noise ──
+    vec3 mod289(vec3 x){return x-floor(x*(1./289.))*289.;}
+    vec2 mod289(vec2 x){return x-floor(x*(1./289.))*289.;}
+    vec3 permute(vec3 x){return mod289(((x*34.)+1.)*x);}
 
-  <script src="assets/tm-engine.js"></script>
-  <script>
-    // --- WEBGL SHADER BACKGROUND ---
-    const canvas = document.getElementById('gl-canvas');
-    const gl = canvas.getContext('webgl');
-
-    if (!gl) {
-      document.body.style.background = 'radial-gradient(circle at center, #0a0a14 0%, #08080f 100%)';
-    } else {
-      const vsSource = `
-        attribute vec4 a_position;
-        void main() { gl_Position = a_position; }
-      `;
-
-      const fsSource = `
-        precision highp float;
-        uniform float u_time;
-        uniform vec2 u_resolution;
-
-        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-        vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-        vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
-
-        float snoise(vec2 v) {
-          const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
-          vec2 i  = floor(v + dot(v, C.yy));
-          vec2 x0 = v -   i + dot(i, C.xx);
-          vec2 i1; i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
-          vec4 x12 = x0.xyxy + C.xxzz;
-          x12.xy -= i1;
-          i = mod289(i);
-          vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
-          vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
-          m = m*m; m = m*m;
-          vec3 x = 2.0 * fract(p * C.www) - 1.0;
-          vec3 h = abs(x) - 0.5;
-          vec3 ox = floor(x + 0.5);
-          vec3 a0 = x - ox;
-          m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
-          vec3 g;
-          g.x  = a0.x  * x0.x  + h.x  * x0.y;
-          g.yz = a0.yz * x12.xz + h.yz * x12.yw;
-          return 130.0 * dot(m, g);
-        }
-
-        void main() {
-          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-          float t = u_time * 0.0003;
-          
-          float n = snoise(uv * 3.0 + t);
-          n += 0.5 * snoise(uv * 6.0 - t * 1.5);
-          
-          vec3 color1 = vec3(0.0, 1.0, 0.53); // #00ff88
-          vec3 color2 = vec3(0.0, 0.83, 1.0); // #00d4ff
-          vec3 base = vec3(0.031, 0.031, 0.059); // #08080f
-          
-          vec3 finalColor = mix(base, color1, clamp(n * 0.06, 0.0, 1.0));
-          finalColor = mix(finalColor, color2, clamp(snoise(uv * 2.0 - t) * 0.04, 0.0, 1.0));
-          
-          // Vignette
-          float dist = distance(uv, vec2(0.5));
-          finalColor *= smoothstep(0.8, 0.2, dist * 0.7);
-          
-          gl_FragColor = vec4(finalColor, 1.0);
-        }
-      `;
-
-      function createShader(gl, type, source) {
-        const shader = gl.createShader(type);
-        gl.shaderSource(shader, source);
-        gl.compileShader(shader);
-        return shader;
-      }
-
-      const program = gl.createProgram();
-      gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
-      gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
-      gl.linkProgram(program);
-      gl.useProgram(program);
-
-      const positionBuffer = gl.createBuffer();
-      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
-
-      const positionLocation = gl.getAttribLocation(program, 'a_position');
-      gl.enableVertexAttribArray(positionLocation);
-      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
-
-      const timeLocation = gl.getUniformLocation(program, 'u_time');
-      const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
-
-      function render(time) {
-        if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
-          canvas.width = window.innerWidth;
-          canvas.height = window.innerHeight;
-          gl.viewport(0, 0, canvas.width, canvas.height);
-        }
-        gl.uniform1f(timeLocation, time);
-        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
-        gl.drawArrays(gl.TRIANGLES, 0, 6);
-        requestAnimationFrame(render);
-      }
-      requestAnimationFrame(render);
+    float snoise(vec2 v){
+      const vec4 C=vec4(.211324865405187,.366025403784439,-.577350269189626,.024390243902439);
+      vec2 i=floor(v+dot(v,C.yy));
+      vec2 x0=v-i+dot(i,C.xx);
+      vec2 i1=(x0.x>x0.y)?vec2(1.,0.):vec2(0.,1.);
+      vec4 x12=x0.xyxy+C.xxzz; x12.xy-=i1;
+      i=mod289(i);
+      vec3 p=permute(permute(i.y+vec3(0.,i1.y,1.))+i.x+vec3(0.,i1.x,1.));
+      vec3 m=max(.5-vec3(dot(x0,x0),dot(x12.xy,x12.xy),dot(x12.zw,x12.zw)),0.);
+      m=m*m; m=m*m;
+      vec3 x2=2.*fract(p*C.www)-1.;
+      vec3 h=abs(x2)-.5;
+      vec3 ox=floor(x2+.5);
+      vec3 a0=x2-ox;
+      m*=1.79284291400159-.85373472095314*(a0*a0+h*h);
+      vec3 g;
+      g.x=a0.x*x0.x+h.x*x0.y;
+      g.yz=a0.yz*x12.xz+h.yz*x12.yw;
+      return 130.*dot(m,g);
     }
 
-    // --- INTERSECTION OBSERVER FOR ANIMATIONS ---
-    const observerOptions = { threshold: 0.15 };
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          if (entry.target.classList.contains('rings-container')) {
-            entry.target.querySelectorAll('.ring').forEach(r => r.classList.add('active'));
-          }
-        }
-      });
-    }, observerOptions);
+    void main(){
+      vec2 uv = gl_FragCoord.xy / u_res;
+      float t = u_t * 0.00025;
 
-    document.querySelectorAll('.animate-on-scroll, .hero-title, .hero-sub, .hero-ctas, .rings-container, .syllabus-item, .def-row, .m-title, .final-cta h2, .hero-label').forEach(el => observer.observe(el));
+      // multi-octave noise for organic feel
+      float n  = snoise(uv * 2.5 + t * vec2(1., 0.7));
+      n += 0.5  * snoise(uv * 5.0 - t * vec2(0.9, 1.2));
+      n += 0.25 * snoise(uv * 9.0 + t * vec2(1.4,-0.8));
+      n = n / 1.75; // normalise
 
-    // Stagger helper for syllabus and rows
-    document.querySelectorAll('.syllabus-list, .def-grid').forEach(list => {
-      Array.from(list.children).forEach((item, i) => {
-        item.style.transitionDelay = (i * 100) + 'ms';
-      });
+      // domain-warp for extra swirl
+      vec2 warp = vec2(snoise(uv*3.+t), snoise(uv*3.-t+7.));
+      float n2 = snoise(uv * 2.5 + warp * 0.4 + t);
+
+      float fluid = mix(n, n2, 0.6);
+
+      // base colour (#0b141a)
+      vec3 base  = vec3(0.043, 0.078, 0.102);
+      // green vein (#22c55e @ low alpha)
+      vec3 green = vec3(0.133, 0.773, 0.369);
+      // cyan vein (#00d4ff @ low alpha)
+      vec3 cyan  = vec3(0.0, 0.831, 1.0);
+
+      // lay colour in
+      vec3 col = base;
+      col = mix(col, green, clamp(fluid * 0.18, 0., 1.));
+      float n3 = snoise(uv*4. - t*0.6 + 3.7);
+      col = mix(col, cyan, clamp(n3 * 0.10, 0., 1.));
+
+      // subtle radial vignette
+      float d = length(uv - vec2(.5));
+      col *= 1. - smoothstep(0.35, 0.85, d) * 0.7;
+
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `;
+
+  function mkShader(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+
+  const prog = gl.createProgram();
+  gl.attachShader(prog, mkShader(gl.VERTEX_SHADER, VS));
+  gl.attachShader(prog, mkShader(gl.FRAGMENT_SHADER, FS));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,-1,1,1,-1,1,1]), gl.STATIC_DRAW);
+  const loc = gl.getAttribLocation(prog, 'a_pos');
+  gl.enableVertexAttribArray(loc);
+  gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+
+  const uT   = gl.getUniformLocation(prog, 'u_t');
+  const uRes = gl.getUniformLocation(prog, 'u_res');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    gl.viewport(0, 0, canvas.width, canvas.height);
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  function loop(t) {
+    gl.uniform1f(uT, t);
+    gl.uniform2f(uRes, canvas.width, canvas.height);
+    gl.drawArrays(gl.TRIANGLES, 0, 6);
+    requestAnimationFrame(loop);
+  }
+  requestAnimationFrame(loop);
+})();
+
+// ─────────────────────────────────────────────────────
+// 2. LIVE TAPE RUNNER
+// ─────────────────────────────────────────────────────
+(function(){
+  const WORDS = ["hello vijay   ", "toc project   ", "turing machine   ", "caesar cipher   "];
+  let wi = 0;
+  const viz  = document.getElementById('tape-viz');
+  const meta = document.getElementById('tape-meta');
+  const log  = document.getElementById('tape-log');
+  let tm;
+  let iv;
+
+  function renderTape(){
+    const tape = tm.getTape();
+    const h    = tm.head;
+    viz.innerHTML = '';
+    const start = Math.max(0, h - 5);
+    for (let i = 0; i < 11; i++) {
+      const idx = start + i;
+      const sym = tape[idx] || '□';
+      const cell = document.createElement('div');
+      cell.className = 't-cell' + (idx === h ? ' h' : (idx < h && sym !== '□' ? ' w' : ''));
+      cell.textContent = sym;
+      viz.appendChild(cell);
+    }
+    const r = tape[h] || '□';
+    meta.innerHTML = `STATE: <span class="v">${tm.state}</span> · HEAD: <span class="v">${h}</span> · READING: <span class="v">'${r}'</span> · MOVE: <span class="v">${tm.isHalted() ? 'HALT' : 'R →'}</span>`;
+  }
+
+  function appendLog(entry){
+    const d = document.createElement('div');
+    d.style.cssText = 'padding:2px 0; border-bottom:1px solid rgba(255,255,255,0.03);';
+    d.style.color = 'rgba(34,197,94,0.6)';
+    d.textContent = entry;
+    log.appendChild(d);
+    log.scrollTop = log.scrollHeight;
+  }
+
+  function nextWord(){
+    wi = (wi + 1) % WORDS.length;
+    start();
+  }
+
+  function start(){
+    if (iv) clearInterval(iv);
+    tm = TMEngine.createCaesarTM(3);
+    tm.loadInput(WORDS[wi]);
+    renderTape();
+    appendLog(`── Encrypting: "${WORDS[wi].trim()}" ──`);
+    iv = setInterval(() => {
+      if (tm.isHalted()) {
+        clearInterval(iv);
+        appendLog(`✓ Result: "${tm.out()}" [q_accept]`);
+        setTimeout(nextWord, 2200);
+        return;
+      }
+      const before = tm.tape[tm.head] || '□';
+      tm.step();
+      if (tm.log.length) {
+        const e = tm.log[tm.log.length-1];
+        if (before !== '□') appendLog(`δ(${e.state},'${e.read}') → (${e.ns},'${e.write}',${e.dir})`);
+      }
+      renderTape();
+    }, 280);
+  }
+  start();
+})();
+
+// ─────────────────────────────────────────────────────
+// 3. INTERSECTION OBSERVER — scroll reveals
+// ─────────────────────────────────────────────────────
+(function(){
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('vis');
+      io.unobserve(e.target);
     });
+  }, { threshold: 0.15 });
 
-    // --- LIVE TAPE LOGIC ---
-    const TAPE_STRINGS = ["hello vijay  ", "toc project  ", "turing machine  "];
-    let currentTapeIdx = 0;
-    const viz = document.getElementById('tape-viz');
-    const status = document.getElementById('tape-status');
-    const tm = TMEngine.createCaesarTM(3);
+  // generic reveals
+  document.querySelectorAll('.reveal, .step, .syl-item, .def-row, .m-formula').forEach(el => io.observe(el));
 
-    function rebuildTapeUI() {
-      const tape = tm.getTape();
-      viz.innerHTML = '';
-      const start = Math.max(0, tm.head - 5);
-      for(let i=0; i<11; i++) {
-        const idx = start + i;
-        const cell = document.createElement('div');
-        cell.className = 'tape-cell' + (idx === tm.head ? ' active head-pos' : '');
-        cell.textContent = tape[idx] || '□';
-        viz.appendChild(cell);
-      }
-      status.innerHTML = `STATE: <span class="text-accent">${tm.state}</span>  ·  READING: <span class="text-accent">'${tm.tape[tm.head] || '□'}'</span>  ·  MOVE: <span class="text-accent">${tm.isHalted() ? 'HALT' : 'R →'}</span>`;
-    }
+  // stagger syllabus
+  document.querySelectorAll('.syl-item').forEach((el, i) => el.style.transitionDelay = (i * 80) + 'ms');
 
-    function runTapeLoop() {
-      tm.loadInput(TAPE_STRINGS[currentTapeIdx]);
-      const intv = setInterval(() => {
-        if (tm.isHalted()) {
-          clearInterval(intv);
-          currentTapeIdx = (currentTapeIdx + 1) % TAPE_STRINGS.length;
-          setTimeout(runTapeLoop, 2000);
-        } else {
-          tm.step();
-          rebuildTapeUI();
-        }
-      }, 300);
-    }
-    runTapeLoop();
+  // stagger def rows
+  document.querySelectorAll('.def-row').forEach((el, i) => {
+    el.style.transitionDelay = (i * 90) + 'ms';
+    io.observe(el);
+  });
 
-    // --- SCROLL LOGIC ---
-    window.addEventListener('scroll', () => {
-      const prog = document.getElementById('timeline-progress');
-      const timeline = document.querySelector('.timeline');
-      const rect = timeline.getBoundingClientRect();
-      const winH = window.innerHeight;
-      
-      if (rect.top < winH && rect.bottom > 0) {
-        const scrollPercent = Math.min(1, Math.max(0, (winH - rect.top) / rect.height));
-        prog.style.height = (scrollPercent * 100) + '%';
-      }
-
-      if (window.scrollY > 100) {
-        document.getElementById('scroll-hint').classList.add('hidden');
-      } else {
-        document.getElementById('scroll-hint').classList.remove('hidden');
-      }
+  // chomsky rings
+  const chIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      document.querySelectorAll('.ring').forEach(r => r.classList.add('show'));
+      chIO.unobserve(e.target);
     });
-  </script>
+  }, { threshold: 0.3 });
+  chIO.observe(document.getElementById('chomsky-rings'));
+
+  // CTA section
+  const ctaIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      e.target.classList.add('vis');
+      document.getElementById('cta-sub').classList.add('vis');
+      const btn = document.getElementById('cta-btn');
+      btn.style.animation = 'slideUp .8s ease .6s both';
+      ctaIO.unobserve(e.target);
+    });
+  }, { threshold: 0.3 });
+  ctaIO.observe(document.getElementById('cta-title'));
+})();
+
+// ─────────────────────────────────────────────────────
+// 4. TIMELINE INK + SCROLL HINT
+// ─────────────────────────────────────────────────────
+(function(){
+  const ink = document.getElementById('ink');
+  const tl  = document.querySelector('.timeline');
+  const hint= document.getElementById('scroll-hint');
+
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 80) hint.classList.add('gone');
+    else hint.classList.remove('gone');
+
+    if (!tl) return;
+    const rect = tl.getBoundingClientRect();
+    const winH = window.innerHeight;
+    if (rect.top < winH && rect.bottom > 0) {
+      const pct = Math.min(1, Math.max(0, (winH - rect.top) / (rect.height + winH)));
+      ink.style.height = (pct * 100) + '%';
+    }
+  }, { passive: true });
+})();
+</script>
+
 </body>
 </html>
