@@ -3,712 +3,932 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TM Crypt — Secure Messaging by Turing Machines</title>
-  <meta name="description" content="A high-fidelity simulator for Theory of Computation. Watch a 7-tuple Turing Machine encrypt messages in real time using a Caesar cipher.">
+  <title>TM Crypt — Secured by Computation</title>
+  <meta name="description" content="A cinematic Theory of Computation simulator. Messages secured by Turing Machines.">
   
-  <!-- Shared Design System -->
-  <link rel="stylesheet" href="assets/style.css">
-  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+
   <style>
-    /* Page Specific Styles */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding: 0 80px;
-      gap: 40px;
-      position: relative;
-      overflow: hidden;
+    :root {
+      --bg: #08080f;
+      --accent: #00ff88;
+      --accent-secondary: #00d4ff;
+      --text: #ffffff;
+      --text-muted: #8892a4;
+      --text-dim: #4a5568;
+      --font-sans: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
-    .hero-content {
-      flex: 0 0 55%;
-      z-index: 2;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      overflow-x: hidden;
+      line-height: 1.6;
     }
 
-    .hero-visual {
-      flex: 1;
-      z-index: 2;
-      display: flex;
-      justify-content: flex-end;
-    }
-
-    .hero-badge {
-      margin-bottom: 24px;
-    }
-
-    .hero-title {
-      font-size: 64px;
-      line-height: 1.1;
-      margin-bottom: 32px;
-    }
-
-    .hero-title .light { font-weight: 300; }
-    .hero-title .bold { font-weight: 600; display: block; }
-
-    .hero-subtitle {
-      font-size: 18px;
-      color: var(--text-muted);
-      line-height: 1.7;
-      max-width: 480px;
-      margin-bottom: 24px;
-    }
-
-    .hero-formal {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--text-dim);
-      margin-bottom: 32px;
-    }
-
-    /* Mini Simulator Card */
-    .mini-sim {
-      width: 100%;
-      max-width: 480px;
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 12px;
-      padding: 24px;
-    }
-
-    .mini-sim-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-
-    .mini-sim-title {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .mini-sim-input-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .tape-container {
-      background: var(--bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 16px;
-      margin-bottom: 12px;
-      overflow: hidden;
-    }
-
-    .tape-row {
-      display: flex;
-      gap: 4px;
-      transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .mini-cell {
-      width: 42px;
-      height: 42px;
-      background: var(--bg);
-      border: 1px solid var(--border-subtle);
-      border-radius: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: var(--font-mono);
-      font-size: 16px;
-      flex-shrink: 0;
-      transition: all 0.2s;
-    }
-
-    .mini-cell.active {
-      border: 2px solid var(--amber);
-      background: rgba(245, 158, 11, 0.1);
-      color: var(--amber);
-    }
-
-    .mini-cell.written {
-      border-color: var(--accent);
-      color: var(--accent);
-      animation: cellWrite 0.5s;
-    }
-
-    .mini-sim-meta {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-dim);
-      display: flex;
-      justify-content: space-between;
-    }
-
-    /* Ticker Strip */
-    .ticker-wrap {
-      background: var(--surface);
-      border-top: 1px solid var(--border-subtle);
-      border-bottom: 1px solid var(--border-subtle);
-      height: 56px;
-      display: flex;
-      align-items: center;
-      overflow: hidden;
-      white-space: nowrap;
-    }
-
-    .ticker-track {
-      display: inline-block;
-      padding-left: 100%;
-      animation: tickerScroll 25s linear infinite;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-
-    .ticker-track span {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 60px;
-    }
-
-    @keyframes tickerScroll {
-      from { transform: translateX(0); }
-      to { transform: translateX(-100%); }
-    }
-
-    .ticker-arrow { color: var(--text-dim); margin: 0 12px; }
-    .ticker-states { color: var(--accent); }
-
-    /* How it works */
-    .section-header {
-      padding: 100px 80px 40px;
-    }
-
-    .section-header h2 {
-      font-size: 40px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .section-header p {
-      font-size: 18px;
-      font-weight: 300;
-      color: var(--text-dim);
-    }
-
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 40px;
-      padding: 0 80px 100px;
-    }
-
-    .step-card {
-      position: relative;
-    }
-
-    .step-num {
-      font-family: var(--font-mono);
-      font-size: 72px;
-      font-weight: 500;
-      color: var(--surface-raised);
-      position: absolute;
-      top: -40px;
+    canvas#gl-canvas {
+      position: fixed;
+      top: 0;
       left: 0;
-      z-index: -1;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      pointer-events: none;
     }
 
-    .step-label {
+    .dot-grid {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 32px 32px;
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* TYPOGRAPHY */
+    h1, h2, h3 { font-weight: 700; }
+    .text-mono { font-family: var(--font-mono); }
+    .text-accent { color: var(--accent); }
+    .text-muted { color: var(--text-muted); }
+    .text-dim { color: var(--text-dim); }
+    .uppercase { text-transform: uppercase; letter-spacing: 0.15em; font-size: 11px; }
+
+    /* NAV */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 60px;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+      background: rgba(8, 8, 15, 0.3);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      opacity: 0;
+      transform: translateY(-20px);
+      animation: navFadeIn 0.8s forwards 0.8s;
+    }
+
+    @keyframes navFadeIn {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .nav-brand { font-family: var(--font-mono); font-size: 18px; font-weight: 600; }
+    .nav-links { display: flex; gap: 40px; }
+    .nav-link {
+      text-decoration: none;
+      color: var(--text-muted);
       font-size: 11px;
       font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.1em;
+      transition: color 0.3s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    .btn-launch {
+      padding: 8px 20px;
+      background: transparent;
+      border: 1px solid var(--accent);
       color: var(--accent);
-      margin-bottom: 12px;
-      display: block;
-    }
-
-    .step-title {
-      font-size: 22px;
-      font-weight: 600;
-      margin-bottom: 16px;
-    }
-
-    .step-desc {
-      font-size: 15px;
-      color: var(--text-muted);
-      line-height: 1.7;
-      margin-bottom: 24px;
-    }
-
-    .step-visual {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 8px;
-      padding: 12px;
-      font-family: var(--font-mono);
+      text-decoration: none;
       font-size: 12px;
+      border-radius: 99px;
+      transition: all 0.3s ease;
+    }
+    .btn-launch:hover {
+      background: var(--accent);
+      color: #000;
     }
 
-    /* Features Grid */
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      background: var(--surface-raised);
-      gap: 1px;
-      padding: 1px;
+    /* SECTIONS */
+    section {
+      width: 100%;
+      padding: 120px 60px;
+      position: relative;
     }
 
-    .feature-card {
-      background: var(--surface);
-      padding: 28px;
-      transition: all 0.15s ease;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
     }
 
-    .feature-card:hover {
-      background: #1f1f23;
-      transform: translateY(-1px);
+    /* HERO */
+    .hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding-top: 80px;
     }
 
-    .feature-icon {
-      width: 24px;
-      height: 24px;
-      margin-bottom: 20px;
+    .hero-label { margin-bottom: 32px; }
+    
+    .hero-title {
+      font-size: clamp(48px, 8vw, 84px);
+      line-height: 1.1;
+      margin-bottom: 32px;
     }
 
-    /* Concepts */
-    .concepts-section {
-      padding: 80px;
-      display: grid;
-      grid-template-columns: 1fr 400px;
-      gap: 80px;
+    .hero-title span {
+      display: block;
+      opacity: 0;
+      transform: translateY(40px);
+    }
+    .hero-title.is-visible span:nth-child(1) { animation: slideUp 0.8s forwards 0.2s; }
+    .hero-title.is-visible span:nth-child(2) { animation: slideUp 0.8s forwards 0.4s; }
+    .hero-title.is-visible span:nth-child(3) { animation: slideUp 0.8s forwards 0.6s; }
+
+    @keyframes slideUp {
+      to { opacity: 1; transform: translateY(0); }
     }
 
-    .concept-list {
+    .hero-sub {
+      font-size: 18px;
+      color: var(--text-muted);
+      max-width: 600px;
+      margin-bottom: 48px;
+      opacity: 0;
+    }
+    .hero-sub.is-visible { animation: fadeIn 1s forwards 1s; }
+
+    .tuple-glow {
+      color: var(--accent);
+      text-shadow: 0 0 10px rgba(0, 255, 136, 0.4);
+      animation: glowPulse 3s infinite;
+    }
+
+    @keyframes glowPulse {
+      0%, 100% { filter: brightness(1); text-shadow: 0 0 5px var(--accent); }
+      50% { filter: brightness(1.3); text-shadow: 0 0 15px var(--accent); }
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+    }
+    .hero-ctas.is-visible { animation: fadeIn 1.2s forwards 1.2s; }
+
+    .btn {
+      padding: 14px 28px;
+      border-radius: 4px;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-secondary { background: transparent; border: 1px solid rgba(255,255,255,0.2); color: var(--text); }
+    .btn-secondary:hover { border-color: var(--text); }
+
+    /* SCROLL HINT */
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      transition: opacity 0.5s;
+    }
+    .scroll-hint.hidden { opacity: 0; }
+    .arrow-down {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+      position: relative;
+      animation: bounceY 2s infinite;
+    }
+    @keyframes bounceY {
+      0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+      40% {transform: translateY(10px);}
+      60% {transform: translateY(5px);}
+    }
+
+    /* LIVE TAPE */
+    .live-tape-strip {
+      width: 100vw;
+      margin-left: -60px;
+      background: rgba(0,0,0,0.4);
+      padding: 60px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .faint-bg-text {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 120px;
+      font-family: var(--font-mono);
+      opacity: 0.03;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .tape-viz {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      perspective: 1000px;
+    }
+
+    .tape-cell {
+      width: 60px;
+      height: 60px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 24px;
+      border-radius: 4px;
+      transition: all 0.3s;
+    }
+    .tape-cell.active {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+      background: rgba(0, 255, 136, 0.05);
+    }
+    .tape-cell.head-pos::after {
+      content: "↑";
+      position: absolute;
+      bottom: -30px;
+      color: var(--accent);
+      font-size: 20px;
+      animation: headPulse 1s infinite;
+    }
+    @keyframes headPulse {
+      0%, 100% { opacity: 0.4; transform: translateY(0); }
+      50% { opacity: 1; transform: translateY(-4px); }
+    }
+
+    .tape-status {
+      text-align: center;
+      margin-top: 48px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+    }
+
+    /* HOW IT WORKS */
+    .how-it-works { padding: 160px 60px; }
+    .timeline {
+      position: relative;
+      max-width: 800px;
+      margin: 80px auto 0;
+      padding-left: 60px;
+    }
+    .timeline::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1px;
+      height: 100%;
+      background: rgba(255,255,255,0.05);
+    }
+    .timeline-progress {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1px;
+      background: var(--accent);
+      height: 0;
+      transition: height 0.1s linear;
+      box-shadow: 0 0 10px var(--accent);
+    }
+    .step {
+      margin-bottom: 120px;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .step.is-visible { opacity: 1; transform: translateY(0); }
+    .step-num {
+      position: absolute;
+      left: -60px;
+      width: 60px;
+      color: var(--text-dim);
+      font-family: var(--font-mono);
+      font-size: 14px;
+      padding-top: 4px;
+    }
+    .step-content h3 { font-size: 24px; margin-bottom: 16px; }
+    .step-content p { color: var(--text-muted); max-width: 500px; margin-bottom: 24px; }
+    .step-viz {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.05);
+      border-radius: 4px;
+      padding: 16px;
+      display: inline-block;
+    }
+
+    /* FORMAL DEF */
+    .formal-def { text-align: center; }
+    .m-title {
+      font-size: 48px;
+      font-family: var(--font-mono);
+      margin: 60px 0;
+      opacity: 0;
+    }
+    .m-title.is-visible { animation: fadeIn 1s forwards; }
+    .def-grid {
       display: flex;
       flex-direction: column;
       gap: 16px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .def-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 140px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      font-family: var(--font-mono);
+      font-size: 13px;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    .def-row.is-visible { animation: slideInX 0.6s forwards; }
+    .def-sym { color: var(--accent); font-weight: 700; text-align: left; }
+    .def-val { color: var(--text); text-align: left; }
+    .def-note { color: var(--text-dim); text-align: right; }
+
+    @keyframes slideInX {
+      to { opacity: 1; transform: translateX(0); }
     }
 
-    .concept-item {
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 15px;
+    .pulse-box {
+      margin-top: 48px;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      color: var(--accent);
+      animation: glowPulse 4s infinite;
     }
 
-    .concept-name { font-weight: 500; }
-    .concept-note { color: var(--text-dim); }
-    .check-icon { color: var(--accent); flex-shrink: 0; margin-top: 3px; }
-
-    .formal-card {
-      background: var(--surface);
-      border: 1px solid var(--border-subtle);
-      border-radius: 10px;
-      padding: 28px;
-    }
-
-    /* Stats Bar */
-    .stats-bar {
-      background: #18181b;
-      border-top: 1px solid #27272a;
-      border-bottom: 1px solid #27272a;
-      padding: 40px 80px;
-      display: flex;
-      justify-content: space-between;
-    }
-
-    .stat-item {
+    /* CHOMSKY */
+    .chomsky { 
+      padding: 160px 60px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
-    .stat-val {
-      font-family: var(--font-sans);
-      font-size: 52px;
-      font-weight: 300;
-      color: #fafafa;
-      margin-bottom: 4px;
-      display: block;
+    .rings-container {
+      position: relative;
+      width: 500px;
+      height: 500px;
+      margin-top: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
-
-    .stat-label {
-      font-family: var(--font-sans);
-      font-size: 11px;
-      font-weight: 500;
-      color: #71717a;
+    .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: scale(0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ring::before {
+      content: attr(data-label);
+      position: absolute;
+      top: 10px;
+      font-size: 9px;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 1px;
+      color: rgba(255,255,255,0.2);
     }
-
-    /* Footer */
-    .footer {
-      padding: 48px 80px;
-      background: var(--bg);
-      border-top: 1px solid var(--border-subtle);
+    .ring.r4 { width: 500px; height: 500px; border-color: rgba(167, 139, 250, 0.2); }
+    .ring.r3 { width: 400px; height: 400px; border-color: rgba(59, 130, 246, 0.2); }
+    .ring.r2 { width: 300px; height: 300px; border-color: rgba(6, 182, 212, 0.2); }
+    .ring.r1 { width: 200px; height: 200px; border-color: rgba(34, 197, 94, 0.2); }
+    .ring.active { transform: scale(1); }
+    
+    .tm-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--accent);
+      border-radius: 50%;
+      box-shadow: 0 0 20px var(--accent);
+      animation: headPulse 2s infinite;
     }
-
-    .footer-top {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 48px;
-    }
-
-    .footer-bottom {
-      border-top: 1px solid var(--border-subtle);
-      padding-top: 24px;
-      display: flex;
-      justify-content: space-between;
+    .dot-label {
+      position: absolute;
+      bottom: -40px;
+      text-align: center;
+      font-family: var(--font-mono);
       font-size: 12px;
-      color: var(--border);
+      color: var(--accent);
+    }
+
+    /* SYLLABUS */
+    .syllabus-list {
+      max-width: 700px;
+      margin: 60px auto 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .syllabus-item {
+      padding: 16px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      display: flex;
+      gap: 20px;
+      opacity: 0;
+    }
+    .syllabus-item.is-visible { animation: fadeIn 0.5s forwards; }
+    .check { color: var(--accent); font-family: var(--font-mono); }
+
+    /* FINAL CTA */
+    .final-cta { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+    .final-cta h2 { font-size: 72px; line-height: 1.1; margin-bottom: 32px; }
+    .final-cta h2 span { display: block; opacity:0; }
+
+    /* FOOTER */
+    footer {
+      padding: 40px 60px;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: #05050a;
+      position: relative;
+    }
+    .footer-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+    .f-right { text-align: right; color: var(--text-muted); opacity: 0.8; }
+    .f-center { text-align: center; }
+    .scan-line {
+      position: absolute;
+      top: -1px;
+      left: 0;
+      width: 100px;
+      height: 1px;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: scan 10s linear infinite;
+    }
+    @keyframes scan {
+      0% { left: -100px; }
+      100% { left: 100%; }
+    }
+
+    @keyframes fadeIn { to { opacity: 1; } }
+
+    /* MEDIA QUERIES */
+    @media (max-width: 768px) {
+      nav { padding: 0 20px; }
+      .nav-links { display: none; }
+      section { padding: 80px 20px; }
+      .hero-title { font-size: 42px; }
+      .def-grid { font-size: 11px; }
+      .def-row { grid-template-columns: 40px 1fr 80px; }
+      .rings-container { transform: scale(0.6); }
+      .final-cta h2 { font-size: 42px; }
+      .footer-content { grid-template-columns: 1fr; gap: 10px; text-align: center; }
+      .f-right, .f-center { text-align: center; }
     }
   </style>
 </head>
 <body>
 
-  <!-- DOTS BACKGROUND -->
-  <div class="dots-bg"></div>
+  <canvas id="gl-canvas"></canvas>
+  <div class="dot-grid"></div>
 
-  <!-- FIXED NAV -->
-  <nav class="nav">
-    <div class="nav-brand">
-      <svg class="nav-logo" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="8" width="20" height="8" rx="2"/><circle cx="7" cy="12" r="1.5"/><circle cx="17" cy="12" r="1.5"/><path d="M12 8v8"/></svg>
-      <span class="nav-title">TM Crypt</span>
-      <span class="nav-subtitle">Theory of Computation · Unit 5</span>
-    </div>
+  <!-- NAVIGATION -->
+  <nav>
+    <div class="nav-brand text-mono">TM CRYPT</div>
     <div class="nav-links">
       <a href="#how" class="nav-link">How it Works</a>
-      <a href="#concepts" class="nav-link">Concepts</a>
+      <a href="#formal" class="nav-link">Concepts</a>
       <a href="app.html" class="nav-link">Simulator</a>
-      <a href="learn.html" class="nav-link">Learn</a>
     </div>
-    <div class="nav-actions">
-      <a href="https://github.com" class="btn btn-secondary">GitHub ↗</a>
-      <a href="app.html" class="btn btn-primary">Launch App →</a>
-    </div>
+    <a href="app.html" class="btn-launch">→ Launch App</a>
   </nav>
 
-  <!-- HERO SECTION -->
-  <main class="hero">
-    <div class="hero-content">
-      <div class="hero-badge badge badge-accent">
-        <span style="display:inline-block; width:6px; height:6px; background:var(--accent); border-radius:50%; margin-right:8px;"></span>
-        Theory of Computation — Unit 5: Turing Machines
-      </div>
-      <h1 class="hero-title">
-        <span class="light">Messages secured</span>
-        <span class="bold">by Turing Machines.</span>
-      </h1>
-      <p class="hero-subtitle">
-        Watch a 7-tuple Turing Machine M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej) encrypt your messages in real time — step by step, state by state.
-      </p>
-      <div class="hero-formal">
-        M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject)
-      </div>
-      <div style="display: flex; gap: 10px;">
-        <a href="app.html" class="btn btn-primary btn-lg">→ Open Simulator</a>
-        <button class="btn btn-secondary btn-lg">Watch Demo ▷</button>
-      </div>
-      <p style="margin-top: 32px; font-size: 11px; color: var(--text-dim);">
-        Built for TOC class · Caesar cipher · 6 states · O(n) complexity
-      </p>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-label uppercase text-accent animate-on-scroll">Theory of Computation · Unit 5 · Turing Machines</div>
+    <h1 class="hero-title animate-on-scroll">
+      <span>Messages secured</span>
+      <span>by a Turing</span>
+      <span>Machine.</span>
+    </h1>
+    <p class="hero-sub animate-on-scroll">
+      Watch <span class="text-mono tuple-glow">M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</span> encrypt in real time — state by state.
+    </p>
+    <div class="hero-ctas animate-on-scroll">
+      <a href="app.html" class="btn btn-primary">→ Open Simulator</a>
+      <a href="learn.html" class="btn btn-secondary">Watch Demo ▷</a>
     </div>
 
-    <div class="hero-visual">
-      <!-- MINI SIMULATOR -->
-      <div class="mini-sim">
-        <div class="mini-sim-header">
-          <div class="mini-sim-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="8" width="20" height="8" rx="2"/><circle cx="7" cy="12" r="1.5"/><circle cx="12" cy="8" x2="12" y2="16"/></svg>
-            Live Turing Machine
-          </div>
-          <span class="badge badge-accent" style="font-size: 10px;">Caesar +3</span>
-        </div>
-        <div class="mini-sim-input-row">
-          <input type="text" id="hero-input" class="input input-mono" placeholder="Type anything..." value="Hello Vijay">
-          <button id="hero-btn" class="btn btn-primary" style="height: 36px;">Encrypt →</button>
-        </div>
-        <div class="tape-container">
-          <div class="tape-row" id="hero-tape">
-            <!-- Cells generated by JS -->
-          </div>
-        </div>
-        <div class="mini-sim-meta">
-          <span id="hero-pos">Head: 0</span>
-          <span id="hero-state">State: q0</span>
-          <span id="hero-step">Step: 0</span>
-        </div>
+    <div class="scroll-hint" id="scroll-hint">
+      <span class="uppercase text-dim" style="font-size: 9px;">Scroll to explore</span>
+      <div class="arrow-down"></div>
+    </div>
+  </section>
+
+  <!-- LIVE TAPE -->
+  <section style="padding: 0;">
+    <div class="live-tape-strip">
+      <div class="faint-bg-text">δ(q, σ) → (q', σ', D)</div>
+      <div class="uppercase text-accent text-mono" style="text-align:center; margin-bottom: 40px; font-size: 10px;">Live Computation Strip</div>
+      
+      <div class="tape-viz" id="tape-viz">
+        <!-- Cells generated by JS -->
+      </div>
+      
+      <div class="tape-status text-mono text-dim" id="tape-status">
+        STATE: <span class="text-accent">q_lower</span>  ·  READING: <span class="text-accent">'l'</span>  ·  MOVE: <span class="text-accent">R →</span>
       </div>
     </div>
-  </main>
-
-  <!-- TICKER STRIP -->
-  <div class="ticker-wrap">
-    <div class="ticker-track">
-      <span>"hello vijay" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_accept]</span> <span class="ticker-arrow">→</span> "khoor eljdb"</span>
-      <span>"toc project" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_skip→q_accept]</span> <span class="ticker-arrow">→</span> "arf surmhfw"</span>
-      <span>"machan da" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_skip→q_lower→q_accept]</span> <span class="ticker-arrow">→</span> "pdfkdq gd"</span>
-      <span>"turing machine" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_skip→q_lower→q_accept]</span> <span class="ticker-arrow">→</span> "wxulqj pdfklqh"</span>
-      <!-- duplicated for seamless loop -->
-      <span>"hello vijay" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_accept]</span> <span class="ticker-arrow">→</span> "khoor eljdb"</span>
-      <span>"toc project" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_skip→q_accept]</span> <span class="ticker-arrow">→</span> "arf surmhfw"</span>
-      <span>"machan da" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_skip→q_lower→q_accept]</span> <span class="ticker-arrow">→</span> "pdfkdq gd"</span>
-      <span>"turing machine" <span class="ticker-arrow">→</span> <span class="ticker-states">[q₀→q_lower→q_skip→q_lower→q_accept]</span> <span class="ticker-arrow">→</span> "wxulqj pdfklqh"</span>
-    </div>
-  </div>
+  </section>
 
   <!-- HOW IT WORKS -->
-  <section id="how">
-    <div class="section-header">
-      <h2>How TM Crypt works</h2>
-      <p>Three steps. One Turing Machine.</p>
-    </div>
-    <div class="steps-grid">
-      <div class="step-card">
-        <span class="step-num">01</span>
-        <span class="step-label">STEP 01</span>
-        <h3 class="step-title">Message enters the tape</h3>
-        <p class="step-desc">Your plaintext message is written onto the TM's infinite tape, one character per cell. The read/write head positions at cell 0. State initializes to q₀.</p>
-        <div class="step-visual">
-          <svg width="200" height="40" viewBox="0 0 200 40">
-            <rect x="0" y="0" width="30" height="30" fill="none" stroke="#3f3f46" rx="4"/>
-            <text x="15" y="20" fill="#a1a1aa" text-anchor="middle" font-family="monospace">□</text>
-            <rect x="35" y="0" width="30" height="30" fill="rgba(34,197,94,0.1)" stroke="#22c55e" rx="4"/>
-            <text x="50" y="20" fill="#22c55e" text-anchor="middle" font-family="monospace">h</text>
-            <rect x="70" y="0" width="30" height="30" fill="none" stroke="#3f3f46" rx="4"/>
-            <text x="85" y="20" fill="#a1a1aa" text-anchor="middle" font-family="monospace">e</text>
-            <rect x="105" y="0" width="30" height="30" fill="none" stroke="#3f3f46" rx="4"/>
-            <text x="120" y="20" fill="#a1a1aa" text-anchor="middle" font-family="monospace">l</text>
-            <rect x="140" y="0" width="30" height="30" fill="none" stroke="#3f3f46" rx="4"/>
-            <text x="155" y="20" fill="#a1a1aa" text-anchor="middle" font-family="monospace">l</text>
-          </svg>
+  <section class="how-it-works" id="how">
+    <div class="container">
+      <div class="uppercase text-accent animate-on-scroll">The Process</div>
+      <h2 style="font-size: 42px; margin: 12px 0 60px;" class="animate-on-scroll">How it Works</h2>
+      
+      <div class="timeline">
+        <div class="timeline-progress" id="timeline-progress"></div>
+        
+        <div class="step animate-on-scroll">
+          <div class="step-num">01</div>
+          <div class="step-content">
+            <h3>Message enters the tape</h3>
+            <p>Your plaintext is written cell by cell. Head positions at 0. State: q₀.</p>
+            <div class="step-viz text-mono text-dim">
+              ┌───┬───┬───┬───┬───┐<br>
+              │ □ │ h │ e │ l │ l │<br>
+              └───┴───┴───┴───┴───┘
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="step-card">
-        <span class="step-num">02</span>
-        <span class="step-label">STEP 02</span>
-        <h3 class="step-title">Transitions fire, characters encrypt</h3>
-        <p class="step-desc">For each character, δ(q, σ) → (q', σ', D) fires. Uppercase letters enter q_upper, lowercase enter q_lower. Each character shifts by k positions.</p>
-        <div class="step-visual">
-          <span style="color:#3b82f6">[q₀]</span> <span style="color:#f59e0b">──'h'/'k',R──&gt;</span> <span style="color:#a78bfa">[q_lower]</span>
+
+        <div class="step animate-on-scroll">
+          <div class="step-num">02</div>
+          <div class="step-content">
+            <h3>Transitions fire — characters encrypt</h3>
+            <p>δ(q, σ) → (q', σ', D) fires for each character. Uppercase → q_upper. Lowercase → q_lower. Each shifts by k=3.</p>
+            <div class="step-viz text-mono">
+              <span class="text-dim">[q₀]</span> <span class="text-accent">──'h'/'k',R──▶</span> <span class="text-muted">[q_lower]</span>
+            </div>
+          </div>
         </div>
-      </div>
-      <div class="step-card">
-        <span class="step-num">03</span>
-        <span class="step-label">STEP 03</span>
-        <h3 class="step-title">TM halts — message delivered</h3>
-        <p class="step-desc">On reading blank □, the TM transitions to q_accept and halts. The tape now holds the ciphertext. The language L(M) = Σ* is Recursive.</p>
-        <div class="step-visual" style="color: var(--accent);">
-          <span style="color:#fafafa">k h o o r</span> <span style="color:#22c55e">✓ [q_acc]</span>
+
+        <div class="step animate-on-scroll">
+          <div class="step-num">03</div>
+          <div class="step-content">
+            <h3>TM halts — message delivered</h3>
+            <p>On blank □, transitions to q_accept. Tape holds ciphertext. L(M) = Σ* is Recursive. Time: O(n).</p>
+            <div class="step-viz text-mono">
+              <span class="text-accent">k h o o r</span> <span style="color:#22c55e">✓ q_accept</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- FEATURES GRID -->
-  <section class="features-grid">
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M22 12H2M5.45 5.11L2 12v6a2 2 0 002 2h16a2 2 0 002-2v-6l-3.45-6.89A2 2 0 0014.76 4H9.24a2 2 0 00-1.79 1.11z"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Live Tape Animation</h4>
-      <p class="card-desc">Watch the read/write head traverse each cell. Step forward, backward, or let it run. Every transition is logged.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 006 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">D3 State Diagram</h4>
-      <p class="card-desc">Interactive graph of all 6 states. Active state pulses. Transitions animate as edges light up in real time.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Transition Function δ</h4>
-      <p class="card-desc">Full δ: Q × Γ → Q × Γ × {L,R} table. Currently firing rule highlighted. Export as JSON or CSV.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 00 2 2h12a2 2 0 00 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Instantaneous Descriptions</h4>
-      <p class="card-desc">Every step recorded as α[q]β. The complete computation history in formal TM notation.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2"><path d="M2 17h20M2 7h20M5 12h14"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Multi-Tape Variant</h4>
-      <p class="card-desc">Two tapes, two heads, running simultaneously. Proves multi-tape TM equivalence to single-tape.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--blue)" stroke-width="2"><path d="M18 8l4 4-4 4M2 12h20M6 8l-4 4 4 4"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Non-Deterministic TM</h4>
-      <p class="card-desc">All 26 shift branches explored in parallel. Visualizes NTM → DTM equivalence theorem.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Halting Problem Proof</h4>
-      <p class="card-desc">Interactive 6-step proof that HALT_DETECTOR cannot exist. The self-reference paradox, visualized.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="2"/><rect x="6" y="6" width="12" height="12" rx="2"/><rect x="10" y="10" width="4" height="4" rx="1"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Chomsky Hierarchy</h4>
-      <p class="card-desc">See where Caesar cipher sits in the Type 0–3 hierarchy. Recursive vs RE languages explained.</p>
-    </div>
-    <div class="feature-card">
-      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="var(--purple)" stroke-width="2"><path d="M12 21s-8-4.5-8-11.8A8 8 0 0112 2a8 8 0 018 7.2c0 7.3-8 11.8-8 11.8z"/><circle cx="12" cy="9" r="3"/></svg>
-      <h4 class="card-title" style="font-size: 16px;">Church-Turing Thesis</h4>
-      <p class="card-desc">Every effectively computable function is Turing-computable. See the proof applied to our encryption.</p>
-    </div>
-  </section>
+  <!-- FORMAL DEFINITION -->
+  <section id="formal" class="formal-def">
+    <div class="container">
+      <div class="uppercase text-dim animate-on-scroll">Formal Model</div>
+      <div class="m-title animate-on-scroll">M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</div>
+      
+      <div class="def-grid">
+        <div class="def-row animate-on-scroll">
+          <div class="def-sym">Q</div>
+          <div class="def-val">{q₀, q_upper, q_lower, q_skip, q_accept, q_reject}</div>
+          <div class="def-note">6 States</div>
+        </div>
+        <div class="def-row animate-on-scroll">
+          <div class="def-sym">Σ</div>
+          <div class="def-val">Printable ASCII — the language TM Crypt speaks</div>
+          <div class="def-note">Alphabet</div>
+        </div>
+        <div class="def-row animate-on-scroll">
+          <div class="def-sym">Γ</div>
+          <div class="def-val">Σ ∪ {□} — every symbol the tape can hold</div>
+          <div class="def-note">Tape Alphabet</div>
+        </div>
+        <div class="def-row animate-on-scroll">
+          <div class="def-sym">δ</div>
+          <div class="def-val">Q × Γ → Q × Γ × {L,R} — the cipher heart</div>
+          <div class="def-note">Transitions</div>
+        </div>
+        <div class="def-row animate-on-scroll">
+          <div class="def-sym">q₀</div>
+          <div class="def-val">Where every encryption begins</div>
+          <div class="def-note">Start State</div>
+        </div>
+      </div>
 
-  <!-- CONCEPTS -->
-  <section id="concepts" class="concepts-section">
-    <div>
-      <div class="section-header" style="padding: 0 0 40px;">
-        <h2 style="font-size: 32px;">Theory of Computation · Unit 5 coverage</h2>
-        <p style="font-size: 18px;">Every concept from the syllabus, simulated — not just described.</p>
-      </div>
-      <div class="concept-list">
-        <div class="concept-item">
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <div><span class="concept-name">Basic TM Model</span> — <span class="concept-note">7-tuple formal definition, state transitions</span></div>
-        </div>
-        <div class="concept-item">
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <div><span class="concept-name">Instantaneous Descriptions</span> — <span class="concept-note">α[q]β notation, computation sequences</span></div>
-        </div>
-        <div class="concept-item">
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <div><span class="concept-name">TM as Computer of Functions</span> — <span class="concept-note">f(w) = Caesar(w,k), total functions</span></div>
-        </div>
-        <div class="concept-item">
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <div><span class="concept-name">Non-deterministic TM</span> — <span class="concept-note">branching, NTM→DTM equivalence theorem</span></div>
-        </div>
-        <div class="concept-item">
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <div><span class="concept-name">Recursive Languages</span> — <span class="concept-note">total decider, L(M) = Σ*</span></div>
-        </div>
-        <div class="concept-item">
-          <svg class="check-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-          <div><span class="concept-name">The Halting Problem</span> — <span class="concept-note">undecidability proof, Rice's Theorem mention</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="formal-card">
-      <div style="font-size: 13px; font-weight: 500; color: var(--text-dim); margin-bottom: 24px;">Formal Definition</div>
-      <div style="font-family: var(--font-mono); font-size: 13px; line-height: 2; color: var(--text);">
-        M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject)<br><br>
-        Q = {q₀, q_upper, q_lower, q_skip, q_accept, q_reject}<br>
-        Σ = printable ASCII<br>
-        Γ = Σ ∪ {□}<br>
-        δ : Q × Γ → Q × Γ × {L, R}<br>
-        q₀ = initial state<br>
-        shift k = 3<br><br>
-        L(M) = Σ* [Recursive]<br>
-        Time: O(n) | Space: O(n)
+      <div class="pulse-box text-mono uppercase animate-on-scroll">RECURSIVE · TOTAL DECIDER</div>
+      
+      <div class="def-row animate-on-scroll" style="border:none; margin-top: 40px; grid-template-columns: 1fr;">
+        <div class="def-val text-dim" style="text-align:center;">Time: O(n)  ·  Space: O(n)  ·  Transitions: 676</div>
       </div>
     </div>
   </section>
 
-  <!-- STATS BAR -->
-  <section class="stats-bar">
-    <div class="stat-item">
-      <span class="stat-val">6</span>
-      <span class="stat-label">TM States</span>
+  <!-- CHOMSKY -->
+  <section class="chomsky">
+    <div class="container" style="text-align: center;">
+      <div class="uppercase text-accent animate-on-scroll">Classification</div>
+      <h2 style="font-size: 32px; margin-top: 12px;" class="animate-on-scroll">Where does TM Crypt sit?</h2>
+      
+      <div class="rings-container">
+        <div class="ring r4 animate-ring" data-label="Type 0 — Recursively Enumerable">
+          <div class="ring r3 animate-ring" data-label="Type 1 — Context Sensitive">
+            <div class="ring r2 animate-ring" data-label="Type 2 — Context Free">
+              <div class="ring r1 animate-ring" data-label="Type 3 — Regular">
+                <div class="tm-dot"></div>
+                <div class="dot-label text-mono uppercase">TM Crypt Caesar<br><span style="font-size: 10px;">Total Decider</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="stat-item">
-      <span class="stat-val">O(n)</span>
-      <span class="stat-label">Complexity</span>
+  </section>
+
+  <!-- SYLLABUS -->
+  <section>
+    <div class="container">
+      <div class="uppercase text-accent animate-on-scroll">Syllabus Alignment</div>
+      <h2 style="font-size: 32px; margin: 12px 0 40px;" class="animate-on-scroll">Unit 5 — Complete Coverage</h2>
+      <p class="text-muted animate-on-scroll">Every TOC concept from the syllabus, simulated.</p>
+
+      <div class="syllabus-list">
+        <div class="syllabus-item animate-on-scroll">
+          <div class="check">✓</div>
+          <div class="text-muted"><b>Basic TM Model</b> — 7-tuple, state transitions, tape mechanics</div>
+        </div>
+        <div class="syllabus-item animate-on-scroll">
+          <div class="check">✓</div>
+          <div class="text-muted"><b>Instantaneous Descriptions</b> — α[q]β notation, full history</div>
+        </div>
+        <div class="syllabus-item animate-on-scroll">
+          <div class="check">✓</div>
+          <div class="text-muted"><b>TM as Computer of Functions</b> — f(w) = Caesar(w,k), total functions</div>
+        </div>
+        <div class="syllabus-item animate-on-scroll">
+          <div class="check">✓</div>
+          <div class="text-muted"><b>Non-deterministic TM</b> — 26 branches, NTM→DTM equivalence</div>
+        </div>
+        <div class="syllabus-item animate-on-scroll">
+          <div class="check">✓</div>
+          <div class="text-muted"><b>Recursive Languages</b> — total decider, L(M) = Σ*</div>
+        </div>
+        <div class="syllabus-item animate-on-scroll">
+          <div class="check">✓</div>
+          <div class="text-muted"><b>The Halting Problem</b> — undecidability proof, Rice's Theorem</div>
+        </div>
+      </div>
     </div>
-    <div class="stat-item">
-      <span class="stat-val">676</span>
-      <span class="stat-label">Transitions</span>
-    </div>
-    <div class="stat-item">
-      <span class="stat-val">∞</span>
-      <span class="stat-label">Tape Length</span>
-    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="final-cta">
+    <h2 class="animate-on-scroll">
+      <span>Ready to see a</span>
+      <span>Turing Machine</span>
+      <span>think?</span>
+    </h2>
+    <p class="text-muted animate-on-scroll" style="margin: 32px 0 48px; max-width: 500px;">
+      Open the simulator. Watch every state transition. See computation live.
+    </p>
+    <a href="app.html" class="btn btn-primary btn-lg animate-on-scroll">→ Open TM Crypt Simulator</a>
   </section>
 
   <!-- FOOTER -->
-  <footer class="footer">
-    <div class="footer-top">
-      <div class="nav-brand">
-        <svg class="nav-logo" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="8" width="20" height="8" rx="2"/><circle cx="7" cy="12" r="1.5"/><circle cx="17" cy="12" r="1.5"/><path d="M12 8v8"/></svg>
-        <span class="nav-title">TM Crypt</span>
+  <footer>
+    <div class="scan-line"></div>
+    <div class="container">
+      <div class="footer-content">
+        <div class="f-left">TM Crypt · M = (Q, Σ, Γ, δ, q₀, q_acc, q_rej)</div>
+        <div class="f-center">
+          <a href="app.html" style="color:inherit; text-decoration:none; margin:0 10px;">Simulator</a> · 
+          <a href="learn.html" style="color:inherit; text-decoration:none; margin:0 10px;">Learn</a> · 
+          <a href="https://github.com/vinod24256/TOC_CP" style="color:inherit; text-decoration:none; margin:0 10px;">GitHub</a>
+        </div>
+        <div class="f-right">Vinod Katevarapu — S20240010256</div>
       </div>
-      <div class="nav-links">
-        <a href="https://github.com" class="nav-link">GitHub</a>
-        <a href="app.html" class="nav-link">Simulator</a>
-        <a href="learn.html" class="nav-link">Learn TOC</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <div style="font-family: var(--font-mono);">M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject)</div>
-      <div>Theory of Computation · Unit 5 · Turing Machines</div>
     </div>
   </footer>
 
-  <!-- SCRIPTS -->
   <script src="assets/tm-engine.js"></script>
   <script>
-    // HERO TAPE SIMULATOR LOGIC
+    // --- WEBGL SHADER BACKGROUND ---
+    const canvas = document.getElementById('gl-canvas');
+    const gl = canvas.getContext('webgl');
+
+    if (!gl) {
+      document.body.style.background = 'radial-gradient(circle at center, #0a0a14 0%, #08080f 100%)';
+    } else {
+      const vsSource = `
+        attribute vec4 a_position;
+        void main() { gl_Position = a_position; }
+      `;
+
+      const fsSource = `
+        precision highp float;
+        uniform float u_time;
+        uniform vec2 u_resolution;
+
+        vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec2 mod289(vec2 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+        vec3 permute(vec3 x) { return mod289(((x*34.0)+1.0)*x); }
+
+        float snoise(vec2 v) {
+          const vec4 C = vec4(0.211324865405187, 0.366025403784439, -0.577350269189626, 0.024390243902439);
+          vec2 i  = floor(v + dot(v, C.yy));
+          vec2 x0 = v -   i + dot(i, C.xx);
+          vec2 i1; i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+          vec4 x12 = x0.xyxy + C.xxzz;
+          x12.xy -= i1;
+          i = mod289(i);
+          vec3 p = permute(permute(i.y + vec3(0.0, i1.y, 1.0)) + i.x + vec3(0.0, i1.x, 1.0));
+          vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy), dot(x12.zw,x12.zw)), 0.0);
+          m = m*m; m = m*m;
+          vec3 x = 2.0 * fract(p * C.www) - 1.0;
+          vec3 h = abs(x) - 0.5;
+          vec3 ox = floor(x + 0.5);
+          vec3 a0 = x - ox;
+          m *= 1.79284291400159 - 0.85373472095314 * (a0*a0 + h*h);
+          vec3 g;
+          g.x  = a0.x  * x0.x  + h.x  * x0.y;
+          g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+          return 130.0 * dot(m, g);
+        }
+
+        void main() {
+          vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+          float t = u_time * 0.0003;
+          
+          float n = snoise(uv * 3.0 + t);
+          n += 0.5 * snoise(uv * 6.0 - t * 1.5);
+          
+          vec3 color1 = vec3(0.0, 1.0, 0.53); // #00ff88
+          vec3 color2 = vec3(0.0, 0.83, 1.0); // #00d4ff
+          vec3 base = vec3(0.031, 0.031, 0.059); // #08080f
+          
+          vec3 finalColor = mix(base, color1, clamp(n * 0.06, 0.0, 1.0));
+          finalColor = mix(finalColor, color2, clamp(snoise(uv * 2.0 - t) * 0.04, 0.0, 1.0));
+          
+          // Vignette
+          float dist = distance(uv, vec2(0.5));
+          finalColor *= smoothstep(0.8, 0.2, dist * 0.7);
+          
+          gl_FragColor = vec4(finalColor, 1.0);
+        }
+      `;
+
+      function createShader(gl, type, source) {
+        const shader = gl.createShader(type);
+        gl.shaderSource(shader, source);
+        gl.compileShader(shader);
+        return shader;
+      }
+
+      const program = gl.createProgram();
+      gl.attachShader(program, createShader(gl, gl.VERTEX_SHADER, vsSource));
+      gl.attachShader(program, createShader(gl, gl.FRAGMENT_SHADER, fsSource));
+      gl.linkProgram(program);
+      gl.useProgram(program);
+
+      const positionBuffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, -1,1, 1,-1, 1,1]), gl.STATIC_DRAW);
+
+      const positionLocation = gl.getAttribLocation(program, 'a_position');
+      gl.enableVertexAttribArray(positionLocation);
+      gl.vertexAttribPointer(positionLocation, 2, gl.FLOAT, false, 0, 0);
+
+      const timeLocation = gl.getUniformLocation(program, 'u_time');
+      const resolutionLocation = gl.getUniformLocation(program, 'u_resolution');
+
+      function render(time) {
+        if (canvas.width !== window.innerWidth || canvas.height !== window.innerHeight) {
+          canvas.width = window.innerWidth;
+          canvas.height = window.innerHeight;
+          gl.viewport(0, 0, canvas.width, canvas.height);
+        }
+        gl.uniform1f(timeLocation, time);
+        gl.uniform2f(resolutionLocation, canvas.width, canvas.height);
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
+        requestAnimationFrame(render);
+      }
+      requestAnimationFrame(render);
+    }
+
+    // --- INTERSECTION OBSERVER FOR ANIMATIONS ---
+    const observerOptions = { threshold: 0.15 };
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-visible');
+          if (entry.target.classList.contains('rings-container')) {
+            entry.target.querySelectorAll('.ring').forEach(r => r.classList.add('active'));
+          }
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.animate-on-scroll, .hero-title, .hero-sub, .hero-ctas, .rings-container, .syllabus-item, .def-row, .m-title, .final-cta h2, .hero-label').forEach(el => observer.observe(el));
+
+    // Stagger helper for syllabus and rows
+    document.querySelectorAll('.syllabus-list, .def-grid').forEach(list => {
+      Array.from(list.children).forEach((item, i) => {
+        item.style.transitionDelay = (i * 100) + 'ms';
+      });
+    });
+
+    // --- LIVE TAPE LOGIC ---
+    const TAPE_STRINGS = ["hello vijay  ", "toc project  ", "turing machine  "];
+    let currentTapeIdx = 0;
+    const viz = document.getElementById('tape-viz');
+    const status = document.getElementById('tape-status');
     const tm = TMEngine.createCaesarTM(3);
-    const tapeScroll = document.getElementById('hero-tape');
-    const inputField = document.getElementById('hero-input');
-    const encryptBtn = document.getElementById('hero-btn');
-    
-    let isRunning = false;
-    let timer = null;
 
-    function renderTape() {
+    function rebuildTapeUI() {
       const tape = tm.getTape();
-      const head = tm.head;
-      tapeScroll.innerHTML = '';
-      
-      // Compute range to show
-      const VISIBLE = 9;
-      const start = Math.max(0, head - 4);
-      
-      for (let i = 0; i < VISIBLE; i++) {
-          const idx = start + i;
-          const sym = tape[idx] || '□';
-          const cell = document.createElement('div');
-          cell.className = 'mini-cell';
-          if (idx === head) cell.classList.add('active');
-          if (idx < head && sym !== '□') cell.classList.add('written');
-          cell.textContent = sym;
-          tapeScroll.appendChild(cell);
+      viz.innerHTML = '';
+      const start = Math.max(0, tm.head - 5);
+      for(let i=0; i<11; i++) {
+        const idx = start + i;
+        const cell = document.createElement('div');
+        cell.className = 'tape-cell' + (idx === tm.head ? ' active head-pos' : '');
+        cell.textContent = tape[idx] || '□';
+        viz.appendChild(cell);
       }
+      status.innerHTML = `STATE: <span class="text-accent">${tm.state}</span>  ·  READING: <span class="text-accent">'${tm.tape[tm.head] || '□'}'</span>  ·  MOVE: <span class="text-accent">${tm.isHalted() ? 'HALT' : 'R →'}</span>`;
+    }
+
+    function runTapeLoop() {
+      tm.loadInput(TAPE_STRINGS[currentTapeIdx]);
+      const intv = setInterval(() => {
+        if (tm.isHalted()) {
+          clearInterval(intv);
+          currentTapeIdx = (currentTapeIdx + 1) % TAPE_STRINGS.length;
+          setTimeout(runTapeLoop, 2000);
+        } else {
+          tm.step();
+          rebuildTapeUI();
+        }
+      }, 300);
+    }
+    runTapeLoop();
+
+    // --- SCROLL LOGIC ---
+    window.addEventListener('scroll', () => {
+      const prog = document.getElementById('timeline-progress');
+      const timeline = document.querySelector('.timeline');
+      const rect = timeline.getBoundingClientRect();
+      const winH = window.innerHeight;
       
-      document.getElementById('hero-pos').textContent = `Head: ${head}`;
-      document.getElementById('hero-state').textContent = `State: ${tm.state}`;
-      document.getElementById('hero-step').textContent = `Step: ${tm.steps}`;
-    }
-
-    function runStep() {
-      if (tm.isHalted()) {
-        isRunning = false;
-        clearInterval(timer);
-        return;
+      if (rect.top < winH && rect.bottom > 0) {
+        const scrollPercent = Math.min(1, Math.max(0, (winH - rect.top) / rect.height));
+        prog.style.height = (scrollPercent * 100) + '%';
       }
-      tm.step();
-      renderTape();
-    }
 
-    function startSimulation(text) {
-      if (timer) clearInterval(timer);
-      tm.loadInput(text);
-      isRunning = true;
-      renderTape();
-      timer = setInterval(runStep, 400);
-    }
-
-    encryptBtn.onclick = () => {
-      startSimulation(inputField.value);
-    };
-
-    inputField.onkeydown = (e) => {
-      if (e.key === 'Enter') startSimulation(inputField.value);
-    };
-
-    // Initial Auto-play
-    window.onload = () => {
-      setTimeout(() => startSimulation("Hello Vijay"), 800);
-    };
+      if (window.scrollY > 100) {
+        document.getElementById('scroll-hint').classList.add('hidden');
+      } else {
+        document.getElementById('scroll-hint').classList.remove('hidden');
+      }
+    });
   </script>
 </body>
 </html>
