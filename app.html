@@ -1173,9 +1173,27 @@
         }
 
         wrap.innerHTML = content;
+        wrap.title = "Click to copy text";
+        wrap.style.cursor = "pointer";
+        wrap.onclick = () => {
+          navigator.clipboard.writeText(m.text);
+          showCopyToast();
+        };
         chatMessages.appendChild(wrap);
       });
       chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showCopyToast() {
+      let t = document.getElementById('copy-toast');
+      if (!t) {
+        t = document.createElement('div'); t.id = 'copy-toast';
+        t.className = 'export-toast';
+        t.style.bottom = '80px';
+        document.body.appendChild(t);
+      }
+      t.textContent = '✓ Copied to clipboard';
+      setTimeout(() => t.remove(), 2000);
     }
 
     // INPUT
@@ -1975,6 +1993,29 @@
     }
 
     window.onload = init;
+
+    // KEYBOARD SHORTCUTS
+    window.addEventListener('keydown', (e) => {
+      // Don't trigger shortcuts if user is typing in chat or search
+      if (document.activeElement.tagName === 'INPUT') return;
+
+      switch(e.code) {
+        case 'Space':
+          e.preventDefault();
+          document.getElementById('global-play').click();
+          break;
+        case 'ArrowRight':
+          document.getElementById('global-step').click();
+          break;
+        case 'ArrowLeft':
+          document.getElementById('global-prev').click();
+          break;
+        case 'KeyR':
+          document.getElementById('global-reset').click();
+          break;
+      }
+    });
+
   </script>
 </body>
 
