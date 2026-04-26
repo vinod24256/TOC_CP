@@ -1,13 +1,13 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TM Crypt — Simulator Workspace</title>
-  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2">
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=2" />
 
-  <link rel="stylesheet" href="assets/style.css">
+  <link rel="stylesheet" href="assets/style.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
@@ -190,8 +190,12 @@
       background-color: #0b141a;
       background-image:
         radial-gradient(rgba(34, 197, 94, 0.015) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(11, 20, 26, 0) 0%, rgba(6, 11, 15, 0.4) 100%);
-      background-size: 22px 22px, 100% 100%;
+        linear-gradient(180deg,
+          rgba(11, 20, 26, 0) 0%,
+          rgba(6, 11, 15, 0.4) 100%);
+      background-size:
+        22px 22px,
+        100% 100%;
     }
 
     .chat-header {
@@ -259,7 +263,9 @@
     }
 
     #chat-input:focus {
-      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.15), 0 0 15px rgba(34, 197, 94, 0.1);
+      box-shadow:
+        0 0 0 2px rgba(34, 197, 94, 0.15),
+        0 0 15px rgba(34, 197, 94, 0.1);
       border-color: var(--accent);
     }
 
@@ -288,7 +294,9 @@
       background: linear-gradient(135deg, #0a5741 0%, #064531 100%);
       color: var(--text);
       border: 1px solid rgba(34, 197, 94, 0.15);
-      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.15), 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow:
+        inset 0 1px 1px rgba(255, 255, 255, 0.15),
+        0 4px 12px rgba(0, 0, 0, 0.1);
       border-bottom-right-radius: 6px;
     }
 
@@ -373,7 +381,9 @@
       margin-bottom: 20px;
       overflow: hidden;
       position: relative;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 4px 24px rgba(0, 0, 0, 0.3);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 4px 24px rgba(0, 0, 0, 0.3);
     }
 
     .tape-row {
@@ -504,7 +514,9 @@
 
     /* HALTING PROOF */
     .proof-card {
-      background: linear-gradient(135deg, rgba(18, 18, 22, 0.9) 0%, rgba(10, 13, 16, 0.9) 100%);
+      background: linear-gradient(135deg,
+          rgba(18, 18, 22, 0.9) 0%,
+          rgba(10, 13, 16, 0.9) 100%);
       border: 1px solid rgba(255, 255, 255, 0.05);
       border-radius: 10px;
       padding: 24px;
@@ -544,7 +556,10 @@
       border-radius: 16px;
       padding: 32px 28px;
       min-width: 300px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.05), 0 0 0 1px rgba(34, 197, 94, 0.05);
+      box-shadow:
+        0 24px 64px rgba(0, 0, 0, 0.7),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05),
+        0 0 0 1px rgba(34, 197, 94, 0.05);
       transform: translateY(20px);
       transition: transform 0.2s;
       display: flex;
@@ -585,9 +600,13 @@
 
     /* CHARTS */
     .chart-container {
-      background: linear-gradient(135deg, rgba(11, 20, 26, 0.9) 0%, rgba(6, 10, 13, 0.95) 100%);
+      background: linear-gradient(135deg,
+          rgba(11, 20, 26, 0.9) 0%,
+          rgba(6, 10, 13, 0.95) 100%);
       border: 1px solid rgba(34, 197, 94, 0.08);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.03), 0 8px 32px rgba(0, 0, 0, 0.4);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.03),
+        0 8px 32px rgba(0, 0, 0, 0.4);
       border-radius: 10px;
       padding: 20px;
       height: 260px;
@@ -598,13 +617,16 @@
     }
 
     .chart-container::before {
-      content: '';
+      content: "";
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.2), transparent);
+      background: linear-gradient(90deg,
+          transparent,
+          rgba(34, 197, 94, 0.2),
+          transparent);
     }
 
     .chart-header {
@@ -617,16 +639,15 @@
 </head>
 
 <body>
-
   <!-- TOP BAR -->
   <header class="top-bar">
     <div class="top-left">
-      <a href="index.html" class="btn btn-ghost" style="height: 28px; font-size: 12px;">← Home</a>
-      <div style="width: 1px; height: 16px; background: var(--border-subtle);"></div>
-      <span class="nav-title" style="font-size: 14px;">TM Crypt / <span class="text-dim">app</span></span>
+      <a href="index.html" class="btn btn-ghost" style="height: 28px; font-size: 12px">← Home</a>
+      <div style="width: 1px; height: 16px; background: var(--border-subtle)"></div>
+      <span class="nav-title" style="font-size: 14px">TM Crypt / <span class="text-dim">app</span></span>
     </div>
     <div class="top-center">
-      <div id="central-status" style="display: flex; align-items: center; gap: 8px;">
+      <div id="central-status" style="display: flex; align-items: center; gap: 8px">
         <div class="status-dot" id="status-dot"></div>
         <span id="status-text" class="text-mono text-xs text-dim uppercase">IDLE</span>
       </div>
@@ -634,13 +655,23 @@
     </div>
     <div class="top-right">
       <span class="text-xs text-dim">Shift k:</span>
-      <input type="range" id="shift-range" min="1" max="25" value="3" style="width: 100px; height: 2px;">
-      <span id="shift-val" class="badge badge-amber" style="width: 20px; justify-content: center;">3</span>
-      <button class="btn btn-secondary" id="global-reset" title="Reset Simulation">⏮</button>
-      <button class="btn btn-secondary" id="global-prev" title="Step Backward">⏪</button>
-      <button class="btn btn-primary" id="global-play" title="Play/Pause">▶</button>
-      <button class="btn btn-secondary" id="global-step" title="Step Forward">⏩</button>
-      <button class="btn btn-secondary" id="global-run" title="Run All">⏭</button>
+      <input type="range" id="shift-range" min="1" max="25" value="3" style="width: 100px; height: 2px" />
+      <span id="shift-val" class="badge badge-amber" style="width: 20px; justify-content: center">3</span>
+      <button class="btn btn-secondary" id="global-reset" title="Reset Simulation">
+        ⏮
+      </button>
+      <button class="btn btn-secondary" id="global-prev" title="Step Backward">
+        ⏪
+      </button>
+      <button class="btn btn-primary" id="global-play" title="Play/Pause">
+        ▶
+      </button>
+      <button class="btn btn-secondary" id="global-step" title="Step Forward">
+        ⏩
+      </button>
+      <button class="btn btn-secondary" id="global-run" title="Run All">
+        ⏭
+      </button>
     </div>
   </header>
 
@@ -648,7 +679,7 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-search">
-        <input type="text" class="input input-mono" placeholder="Search chats..." id="contact-search">
+        <input type="text" class="input input-mono" placeholder="Search chats..." id="contact-search" />
       </div>
       <div class="contact-list" id="contact-list">
         <!-- Contacts will be injected here -->
@@ -658,33 +689,39 @@
     <!-- CHAT PANEL -->
     <section class="chat-panel">
       <header class="chat-header">
-        <div class="avatar" id="active-avatar" style="background: var(--accent);">VK</div>
+        <div class="avatar" id="active-avatar" style="background: var(--accent)">
+          VK
+        </div>
         <div class="contact-info">
           <span class="contact-name" id="active-name">Vijay Kumar</span>
           <span class="text-xs text-accent" id="active-status">online</span>
         </div>
-        <div style="display: flex; gap: 16px; color: var(--text-dim);">
-          <button id="btn-vid" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20" viewBox="0 0 24 24"
-              fill="none" stroke="currentColor" stroke-width="2">
+        <div style="display: flex; gap: 16px; color: var(--text-dim)">
+          <button id="btn-vid" class="btn btn-ghost" style="padding: 4px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="23 7 16 12 23 17 23 7" />
               <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-            </svg></button>
-          <button id="btn-call" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            </svg>
+          </button>
+          <button id="btn-call" class="btn btn-ghost" style="padding: 4px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path
                 d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" />
-            </svg></button>
-          <button id="btn-info" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            </svg>
+          </button>
+          <button id="btn-info" class="btn btn-ghost" style="padding: 4px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="11" cy="11" r="8" />
               <line x1="21" y1="21" x2="16.65" y2="16.65" />
-            </svg></button>
-          <button id="btn-more" class="btn btn-ghost" style="padding:4px"><svg width="20" height="20"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            </svg>
+          </button>
+          <button id="btn-more" class="btn btn-ghost" style="padding: 4px">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="12" r="1" />
               <circle cx="12" cy="5" r="1" />
               <circle cx="12" cy="19" r="1" />
-            </svg></button>
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -695,9 +732,20 @@
       <div class="chat-input-row">
         <button id="btn-emoji" class="btn btn-ghost">😊</button>
         <button id="btn-attach" class="btn btn-ghost">📎</button>
-        <input type="text" id="chat-input" class="input" placeholder="Type a message to encrypt...">
-        <button id="send-btn" class="send-btn"
-          style="width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: transparent; border: none; transition: all 0.3s; padding: 0; flex-shrink: 0;">
+        <input type="text" id="chat-input" class="input" placeholder="Type a message to encrypt..." />
+        <button id="send-btn" class="send-btn" style="
+              width: 40px;
+              height: 40px;
+              border-radius: 50%;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              background: transparent;
+              border: none;
+              transition: all 0.3s;
+              padding: 0;
+              flex-shrink: 0;
+            ">
           <svg id="mic-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)"
             stroke-width="2">
             <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
@@ -711,9 +759,18 @@
 
     <!-- TM PANEL -->
     <aside class="tm-panel">
-      <div id="phase-banner"
-        style="display:none; padding:12px; text-align:center; font-family:var(--font-mono); font-size:16px; font-weight:bold; border-bottom:1px solid var(--border-subtle); z-index:100; transition:all 0.3s; letter-spacing:1px;">
-      </div>
+      <div id="phase-banner" style="
+            display: none;
+            padding: 12px;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            font-weight: bold;
+            border-bottom: 1px solid var(--border-subtle);
+            z-index: 100;
+            transition: all 0.3s;
+            letter-spacing: 1px;
+          "></div>
       <nav class="tm-tabs">
         <div class="tab active" data-tab="tape">Tape</div>
         <div class="tab" data-tab="states">States</div>
@@ -727,49 +784,102 @@
       <div class="tm-content" id="tm-content">
         <!-- TAPE TAB -->
         <div class="tab-pane active" id="pane-tape">
-          <div
-            style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); margin-bottom: 12px; cursor: pointer;"
-            onclick="toggleFormalDef()">M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject) ▾</div>
-          <div id="formal-def-content"
-            style="display: none; background: var(--surface); padding: 12px; border-radius: 6px; margin-bottom: 12px; font-family: var(--font-mono); font-size: 10px; line-height: 1.6;">
-            Q = {q₀, q_upper, q_lower, q_skip, q_accept, q_reject}<br>
+          <div style="
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: var(--text-dim);
+                margin-bottom: 12px;
+                cursor: pointer;
+              " onclick="toggleFormalDef()">
+            M = (Q, Σ, Γ, δ, q₀, q_accept, q_reject) ▾
+          </div>
+          <div id="formal-def-content" style="
+                display: none;
+                background: var(--surface);
+                padding: 12px;
+                border-radius: 6px;
+                margin-bottom: 12px;
+                font-family: var(--font-mono);
+                font-size: 10px;
+                line-height: 1.6;
+              ">
+            Q = {q₀, q_upper, q_lower, q_skip, q_accept, q_reject}<br />
             Σ = ASCII, Γ = Σ ∪ {□}, δ: Q×Γ→Q×Γ×{L,R}
           </div>
 
-          <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 20px;">
-            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+          <div style="
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+                margin-bottom: 20px;
+              ">
+            <div class="card" style="
+                  padding: 10px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 4px;
+                ">
               <span class="text-xs text-dim uppercase">State</span>
               <span id="card-state" class="text-mono text-accent">q0</span>
             </div>
-            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+            <div class="card" style="
+                  padding: 10px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 4px;
+                ">
               <span class="text-xs text-dim uppercase">Reading</span>
               <span id="card-read" class="text-mono">□</span>
             </div>
-            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+            <div class="card" style="
+                  padding: 10px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 4px;
+                ">
               <span class="text-xs text-dim uppercase">Writing</span>
               <span id="card-write" class="text-mono text-accent">□</span>
             </div>
-            <div class="card" style="padding: 10px; display: flex; flex-direction: column; gap: 4px;">
+            <div class="card" style="
+                  padding: 10px;
+                  display: flex;
+                  flex-direction: column;
+                  gap: 4px;
+                ">
               <span class="text-xs text-dim uppercase">Moving</span>
               <span id="card-move" class="text-mono text-amber">R →</span>
             </div>
           </div>
 
           <div class="tape-viz">
-            <div
-              style="font-family: var(--font-mono); font-size: 10px; color: rgba(255,255,255,0.1); margin-bottom: 4px;"
-              id="tape-indices"></div>
+            <div style="
+                  font-family: var(--font-mono);
+                  font-size: 10px;
+                  color: rgba(255, 255, 255, 0.1);
+                  margin-bottom: 4px;
+                " id="tape-indices"></div>
             <div class="tape-row" id="tape-row"></div>
-            <div
-              style="position: absolute; top: 0; left: 50%; height: 100%; width: 2px; border-left: 1px dashed rgba(245, 158, 11, 0.3); pointer-events: none;">
-            </div>
+            <div style="
+                  position: absolute;
+                  top: 0;
+                  left: 50%;
+                  height: 100%;
+                  width: 2px;
+                  border-left: 1px dashed rgba(245, 158, 11, 0.3);
+                  pointer-events: none;
+                "></div>
           </div>
 
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              ">
             <span class="text-mono text-xs text-dim uppercase">Computation Log</span>
-            <div style="display: flex; align-items: center; gap: 8px;">
+            <div style="display: flex; align-items: center; gap: 8px">
               <span class="text-xs text-dim">Speed:</span>
-              <input type="range" id="sim-speed" min="1" max="10" value="5" style="width: 80px;">
+              <input type="range" id="sim-speed" min="1" max="10" value="5" style="width: 80px" />
             </div>
           </div>
           <div class="log-box" id="log-box"></div>
@@ -777,39 +887,96 @@
 
         <!-- STATES TAB -->
         <div class="tab-pane" id="pane-states">
-          <div id="computation-path"
-            style="min-height: 28px; overflow: visible; white-space: nowrap; text-overflow: ellipsis; font-family: var(--font-mono); font-size: 11px; color: #22c55e; padding: 4px 8px; background: #18181b; border-radius: 4px; border: 1px solid var(--border-subtle); margin-bottom: 8px;">
-            Path: q₀</div>
-          <div style="height: 100%; position: relative;">
-            <svg id="state-graph"
-              style="width: 100%; min-height: 420px; background: #0d0d0f; border-radius: 8px; border: 1px solid var(--border-subtle);"></svg>
-            <div style="position: absolute; bottom: 12px; left: 12px; display: flex; gap: 12px;">
-              <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px;">
-                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--blue);"></div> Active
+          <div id="computation-path" style="
+                min-height: 28px;
+                overflow: visible;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                font-family: var(--font-mono);
+                font-size: 11px;
+                color: #22c55e;
+                padding: 4px 8px;
+                background: #18181b;
+                border-radius: 4px;
+                border: 1px solid var(--border-subtle);
+                margin-bottom: 8px;
+              ">
+            Path: q₀
+          </div>
+          <div style="height: 100%; position: relative">
+            <svg id="state-graph" style="
+                  width: 100%;
+                  min-height: 420px;
+                  background: #0d0d0f;
+                  border-radius: 8px;
+                  border: 1px solid var(--border-subtle);
+                "></svg>
+            <div style="
+                  position: absolute;
+                  bottom: 12px;
+                  left: 12px;
+                  display: flex;
+                  gap: 12px;
+                ">
+              <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px">
+                <div style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background: var(--blue);
+                    "></div>
+                Active
               </div>
-              <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px;">
-                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--accent);"></div> Accept
+              <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px">
+                <div style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background: var(--accent);
+                    "></div>
+                Accept
               </div>
-              <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px;">
-                <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--red);"></div> Reject
+              <div class="text-xs text-dim" style="display: flex; align-items: center; gap: 4px">
+                <div style="
+                      width: 8px;
+                      height: 8px;
+                      border-radius: 50%;
+                      background: var(--red);
+                    "></div>
+                Reject
               </div>
             </div>
           </div>
-          <div class="card" style="margin-top: 20px;">
-            <h4 class="card-title" style="font-size: 14px;">Interactive Logic</h4>
-            <p class="card-desc" style="font-size: 12px;">The TM transitions based on input type: q_upper for caps,
-              q_lower for small letters, q_skip for non-alpha symbols. Drag nodes to explore the layout.</p>
+          <div class="card" style="margin-top: 20px">
+            <h4 class="card-title" style="font-size: 14px">
+              Interactive Logic
+            </h4>
+            <p class="card-desc" style="font-size: 12px">
+              The TM transitions based on input type: q_upper for caps,
+              q_lower for small letters, q_skip for non-alpha symbols. Drag
+              nodes to explore the layout.
+            </p>
           </div>
         </div>
 
         <!-- TRANSITIONS TAB -->
         <div class="tab-pane" id="pane-transitions">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                margin-bottom: 12px;
+              ">
             <span class="text-mono text-xs text-dim uppercase">δ: Q × Γ → Q × Γ × {L, R}</span>
-            <div style="display: flex; gap: 8px;">
-              <select id="trans-filter" class="input input-mono"
-                style="padding: 4px; border-radius: 4px; font-size: 11px; height: 26px; border: 1px solid var(--border-subtle); background: var(--surface);"
-                onchange="renderTransitions()">
+            <div style="display: flex; gap: 8px">
+              <select id="trans-filter" class="input input-mono" style="
+                    padding: 4px;
+                    border-radius: 4px;
+                    font-size: 11px;
+                    height: 26px;
+                    border: 1px solid var(--border-subtle);
+                    background: var(--surface);
+                  " onchange="renderTransitions()">
                 <option value="all">All States</option>
                 <option value="q0">q0</option>
                 <option value="q_upper">q_upper</option>
@@ -817,10 +984,17 @@
                 <option value="q_skip">q_skip</option>
                 <option value="q_accept">q_accept</option>
               </select>
-              <button class="btn btn-secondary btn-xs" onclick="exportTransitions('csv')">CSV ↓</button>
+              <button class="btn btn-secondary btn-xs" onclick="exportTransitions('csv')">
+                CSV ↓
+              </button>
             </div>
           </div>
-          <div style="height: 480px; overflow-y: auto; border: 1px solid var(--border-subtle); border-radius: 8px;">
+          <div style="
+                height: 480px;
+                overflow-y: auto;
+                border: 1px solid var(--border-subtle);
+                border-radius: 8px;
+              ">
             <table class="tm-table" id="transitions-table">
               <thead>
                 <tr>
@@ -838,78 +1012,143 @@
 
         <!-- IDs TAB -->
         <div class="tab-pane" id="pane-ids">
-          <div class="text-mono text-xs text-dim uppercase" style="margin-bottom: 12px;">Computation sequence — α [q] β
-            notation</div>
-          <div id="id-list"
-            style="flex: 1; min-height: 300px; background: #0d0d0f; border: 1px solid var(--border-subtle); border-radius: 8px; padding: 12px; font-family: var(--font-mono); font-size: 13px; overflow-y: auto;">
+          <div class="text-mono text-xs text-dim uppercase" style="margin-bottom: 12px">
+            Computation sequence — α [q] β notation
           </div>
-          <div id="id-summary-card" style="margin-top: 20px; display: none;"></div>
+          <div id="id-list" style="
+                flex: 1;
+                min-height: 300px;
+                background: #0d0d0f;
+                border: 1px solid var(--border-subtle);
+                border-radius: 8px;
+                padding: 12px;
+                font-family: var(--font-mono);
+                font-size: 13px;
+                overflow-y: auto;
+              "></div>
+          <div id="id-summary-card" style="margin-top: 20px; display: none"></div>
         </div>
 
         <!-- VARIANTS TAB -->
         <div class="tab-pane" id="pane-variants">
-          <section style="display: flex; flex-direction: column; gap: 20px;">
+          <section style="display: flex; flex-direction: column; gap: 20px">
             <div class="card">
-              <span class="badge badge-accent" style="margin-bottom: 8px;">Multi-Tape model</span>
-              <h4 class="card-title" style="font-size: 16px;">Step Equivalence</h4>
-              <p class="card-desc" style="font-size: 13px; margin-bottom: 16px;">Two heads, two tapes. Runs parallel
-                O(n) scan proving k-tape reduction theorem.</p>
-              <div id="mt-viz"
-                style="background: #0d0d0f; padding: 12px; border-radius: 6px; display: flex; flex-direction: column; gap: 8px;">
+              <span class="badge badge-accent" style="margin-bottom: 8px">Multi-Tape model</span>
+              <h4 class="card-title" style="font-size: 16px">
+                Step Equivalence
+              </h4>
+              <p class="card-desc" style="font-size: 13px; margin-bottom: 16px">
+                Two heads, two tapes. Runs parallel O(n) scan proving k-tape
+                reduction theorem.
+              </p>
+              <div id="mt-viz" style="
+                    background: #0d0d0f;
+                    padding: 12px;
+                    border-radius: 6px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 8px;
+                  ">
                 <div class="tape-row" id="mt-tape1"></div>
                 <div class="tape-row" id="mt-tape2"></div>
               </div>
-              <button class="btn btn-primary" style="margin-top: 12px;" id="run-mt">Animate Multi-tape run</button>
+              <button class="btn btn-primary" style="margin-top: 12px" id="run-mt">
+                Animate Multi-tape run
+              </button>
             </div>
 
             <div class="card">
-              <span class="badge badge-amber" style="margin-bottom: 8px;">Non-deterministic TM</span>
-              <h4 class="card-title" style="font-size: 16px;">Parallel Path Exploring</h4>
-              <p class="card-desc" style="font-size: 13px; margin-bottom: 16px;">Branches into all 26 possible shift
-                values simultaneously. One path accepts.</p>
-              <div
-                style="height: 350px; overflow-y: auto; background: #0d0d0f; border-radius: 4px; border: 1px solid var(--border-subtle);">
-                <svg id="ntm-tree" style="width: 100%; height: 550px;"></svg>
+              <span class="badge badge-amber" style="margin-bottom: 8px">Non-deterministic TM</span>
+              <h4 class="card-title" style="font-size: 16px">
+                Parallel Path Exploring
+              </h4>
+              <p class="card-desc" style="font-size: 13px; margin-bottom: 16px">
+                Branches into all 26 possible shift values simultaneously. One
+                path accepts.
+              </p>
+              <div style="
+                    height: 350px;
+                    overflow-y: auto;
+                    background: #0d0d0f;
+                    border-radius: 4px;
+                    border: 1px solid var(--border-subtle);
+                  ">
+                <svg id="ntm-tree" style="width: 100%; height: 550px"></svg>
               </div>
-              <button class="btn btn-secondary" style="margin-top: 12px;" id="run-ntm">Animate NTM Branches</button>
+              <button class="btn btn-secondary" style="margin-top: 12px" id="run-ntm">
+                Animate NTM Branches
+              </button>
             </div>
 
-            <div class="card" style="border-left: 3px solid var(--purple);">
-              <h4 class="card-title" style="color: var(--purple); font-size: 15px;">Church-Turing Thesis</h4>
-              <p class="card-desc">Every effectively computable function is Turing-computable. Our Caesar cipher is
-                effectively computable, thus this TM is its ultimate physical realization.</p>
+            <div class="card" style="border-left: 3px solid var(--purple)">
+              <h4 class="card-title" style="color: var(--purple); font-size: 15px">
+                Church-Turing Thesis
+              </h4>
+              <p class="card-desc">
+                Every effectively computable function is Turing-computable.
+                Our Caesar cipher is effectively computable, thus this TM is
+                its ultimate physical realization.
+              </p>
             </div>
           </section>
         </div>
 
         <!-- HALTING TAB -->
         <div class="tab-pane" id="pane-halting">
-          <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 16px">
             <!-- Case 1 -->
-            <div class="card" style="border-left: 3px solid var(--accent); cursor: pointer;" onclick="runHaltCase(1)">
-              <h4 class="card-title" style="font-size: 14px; color: var(--accent);">✓ Case 1: Normal Halt — "Hello"</h4>
-              <p class="card-desc">Cipher runs, reaches blank symbol, enters q_accept. Decidable.</p>
+            <div class="card" style="border-left: 3px solid var(--accent); cursor: pointer" onclick="runHaltCase(1)">
+              <h4 class="card-title" style="font-size: 14px; color: var(--accent)">
+                ✓ Case 1: Normal Halt — "Hello"
+              </h4>
+              <p class="card-desc">
+                Cipher runs, reaches blank symbol, enters q_accept. Decidable.
+              </p>
             </div>
             <!-- Case 2 -->
-            <div class="card" style="border-left: 3px solid var(--red); cursor: pointer;" onclick="runHaltCase(2)">
-              <h4 class="card-title" style="font-size: 14px; color: var(--red);">∞ Case 2: Infinite Loop — Bouncing TM
+            <div class="card" style="border-left: 3px solid var(--red); cursor: pointer" onclick="runHaltCase(2)">
+              <h4 class="card-title" style="font-size: 14px; color: var(--red)">
+                ∞ Case 2: Infinite Loop — Bouncing TM
               </h4>
-              <p class="card-desc">Enters qA ↔ qB oscillation. Step count increments forever. Undecidable segment.</p>
-              <div id="loop-counter"
-                style="font-family: var(--font-mono); font-size: 18px; color: var(--red); text-align: center; margin-top: 10px; display: none;">
-                Steps: 0</div>
+              <p class="card-desc">
+                Enters qA ↔ qB oscillation. Step count increments forever.
+                Undecidable segment.
+              </p>
+              <div id="loop-counter" style="
+                    font-family: var(--font-mono);
+                    font-size: 18px;
+                    color: var(--red);
+                    text-align: center;
+                    margin-top: 10px;
+                    display: none;
+                  ">
+                Steps: 0
+              </div>
             </div>
             <!-- Case 3 -->
-            <div class="card" style="border-left: 3px solid var(--amber);">
-              <h4 class="card-title" style="font-size: 14px; color: var(--amber);">⚠ Case 3: Halting Problem Proof</h4>
-              <p class="card-desc">Interactive 6-step proof by contradiction (Turing 1936).</p>
-              <div id="proof-container" style="margin-top: 12px;">
+            <div class="card" style="border-left: 3px solid var(--amber)">
+              <h4 class="card-title" style="font-size: 14px; color: var(--amber)">
+                ⚠ Case 3: Halting Problem Proof
+              </h4>
+              <p class="card-desc">
+                Interactive 6-step proof by contradiction (Turing 1936).
+              </p>
+              <div id="proof-container" style="margin-top: 12px">
                 <!-- Proof steps -->
                 <div id="proof-step-body" class="proof-card active"></div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
-                  <button class="btn btn-secondary" id="proof-prev">← Prev</button>
+                <div style="
+                      display: flex;
+                      justify-content: space-between;
+                      align-items: center;
+                      margin-top: 12px;
+                    ">
+                  <button class="btn btn-secondary" id="proof-prev">
+                    ← Prev
+                  </button>
                   <span id="proof-indicator" class="text-mono text-xs text-dim">Step 1 / 6</span>
-                  <button class="btn btn-secondary" id="proof-next">Next →</button>
+                  <button class="btn btn-secondary" id="proof-next">
+                    Next →
+                  </button>
                 </div>
               </div>
             </div>
@@ -918,37 +1157,64 @@
 
         <!-- COMPLEXITY TAB -->
         <div class="tab-pane" id="pane-complexity">
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="chart-container"
-              style="background: radial-gradient(circle at top right, rgba(34,197,94,0.05) 0%, #0d0d0f 100%);">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px">
+            <div class="chart-container" style="
+                  background: radial-gradient(
+                    circle at top right,
+                    rgba(34, 197, 94, 0.05) 0%,
+                    #0d0d0f 100%
+                  );
+                ">
               <div class="chart-header">
                 <span class="text-xs text-accent uppercase font-semibold text-mono">Complexity Radar</span>
                 <span class="badge badge-accent">O(n)</span>
               </div>
-              <div style="flex: 1; position: relative;"><canvas id="radar-chart"></canvas></div>
+              <div style="flex: 1; position: relative">
+                <canvas id="radar-chart"></canvas>
+              </div>
             </div>
-            <div class="chart-container"
-              style="background: radial-gradient(circle at top right, rgba(59,130,246,0.05) 0%, #0d0d0f 100%);">
+            <div class="chart-container" style="
+                  background: radial-gradient(
+                    circle at top right,
+                    rgba(59, 130, 246, 0.05) 0%,
+                    #0d0d0f 100%
+                  );
+                ">
               <div class="chart-header">
                 <span class="text-xs text-blue uppercase font-semibold text-mono">State Distribution</span>
               </div>
-              <div style="flex: 1; position: relative;"><canvas id="polar-chart"></canvas></div>
+              <div style="flex: 1; position: relative">
+                <canvas id="polar-chart"></canvas>
+              </div>
             </div>
-            <div class="chart-container" style="grid-column: span 2; height: 160px; background: #09090b;">
+            <div class="chart-container" style="grid-column: span 2; height: 160px; background: #09090b">
               <div class="chart-header">
                 <span class="text-xs text-dim uppercase font-semibold text-mono">Live Tape Memory Usage</span>
               </div>
-              <div style="flex: 1; position: relative;"><canvas id="tape-usage-chart"></canvas></div>
+              <div style="flex: 1; position: relative">
+                <canvas id="tape-usage-chart"></canvas>
+              </div>
             </div>
           </div>
-          <div class="card" style="margin-top: 10px; background: rgba(0,0,0,0.5); border-color: rgba(239,68,68,0.2);">
-            <div style="display: flex; flex-direction: column; gap: 16px;">
+          <div class="card" style="
+                margin-top: 10px;
+                background: rgba(0, 0, 0, 0.5);
+                border-color: rgba(239, 68, 68, 0.2);
+              ">
+            <div style="display: flex; flex-direction: column; gap: 16px">
               <div>
-                <h4 class="card-title" style="font-size: 14px; text-shadow: 0 0 10px rgba(239,68,68,0.4);">Hierarchical
-                  Mapping — Chomsky</h4>
-                <p class="card-desc">Caesar cipher is a Type 0 (Recursive subset) language. Decidable completely.</p>
+                <h4 class="card-title" style="
+                      font-size: 14px;
+                      text-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+                    ">
+                  Hierarchical Mapping — Chomsky
+                </h4>
+                <p class="card-desc">
+                  Caesar cipher is a Type 0 (Recursive subset) language.
+                  Decidable completely.
+                </p>
               </div>
-              <svg id="chomsky-svg" style="width: 100%; min-height: 280px;"></svg>
+              <svg id="chomsky-svg" style="width: 100%; min-height: 280px"></svg>
             </div>
           </div>
         </div>
@@ -958,12 +1224,28 @@
 
   <!-- STATUS BAR -->
   <footer class="status-bar">
-    <div class="sb-section">STATE: <span id="sb-state" class="text-accent" style="margin-left: 4px;">q0</span></div>
-    <div class="sb-section">STEPS: <span id="sb-steps" style="margin-left: 4px; color: var(--text);">0</span></div>
-    <div class="sb-section">HEAD: <span id="sb-head" style="margin-left: 4px; color: var(--amber);">1</span></div>
-    <div class="sb-section" style="margin-left: auto; color: var(--text-dim); opacity: 0.7; font-size: 10px;">Vinod
-      Katevarapu — S20240010256</div>
-    <div class="sb-section">CLASS: <span class="text-accent">RECURSIVE (DECIDABLE)</span>
+    <div class="sb-section">
+      STATE:
+      <span id="sb-state" class="text-accent" style="margin-left: 4px">q0</span>
+    </div>
+    <div class="sb-section">
+      STEPS:
+      <span id="sb-steps" style="margin-left: 4px; color: var(--text)">0</span>
+    </div>
+    <div class="sb-section">
+      HEAD:
+      <span id="sb-head" style="margin-left: 4px; color: var(--amber)">1</span>
+    </div>
+    <div class="sb-section" style="
+          margin-left: auto;
+          color: var(--text-dim);
+          opacity: 0.7;
+          font-size: 10px;
+        ">
+      Vinod Katevarapu — S20240010256
+    </div>
+    <div class="sb-section">
+      CLASS: <span class="text-accent">RECURSIVE (DECIDABLE)</span>
     </div>
   </footer>
 
@@ -972,8 +1254,12 @@
     <div class="saas-modal">
       <div class="modal-pulse" id="modal-icon">📞</div>
       <h3 class="modal-title" id="modal-title">End-to-End Encrypted Call</h3>
-      <p class="modal-desc" id="modal-desc">Establishing secure cryptographic handshake...</p>
-      <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 8px; width: 100%;">Close</button>
+      <p class="modal-desc" id="modal-desc">
+        Establishing secure cryptographic handshake...
+      </p>
+      <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 8px; width: 100%">
+        Close
+      </button>
     </div>
   </div>
 
@@ -982,15 +1268,87 @@
   <script>
     // DATA
     const CONTACTS = [
-      { id: 'vk', initials: 'VK', name: 'Vijay Kumar', color: '#22c55e', time: '10:48 AM', preview: 'Machan awesome ah irukku da! Full marks kedaikum 🔥', unread: 0 },
-      { id: 'as', initials: 'AS', name: 'Ajith S', color: '#3b82f6', time: '11:42 AM', preview: 'Super da! Nalla concept', unread: 2 },
-      { id: 'mr', initials: 'MR', name: 'Mithun R', color: '#f59e0b', time: '1:22 PM', preview: 'Bro eppo hostel varuva?', unread: 0 },
-      { id: 'pn', initials: 'PN', name: 'Priya N', color: '#ec4899', time: '2:28 PM', preview: 'Sari naalai parkalam', unread: 1 },
-      { id: 'vp', initials: 'VP', name: 'Vinod P', color: '#8b5cf6', time: '3:05 PM', preview: 'TOC lab output eppadi?', unread: 0 },
-      { id: 'st', initials: 'SG', name: 'Samiksha Gautam', color: '#06b6d4', time: '4:15 PM', preview: 'hey, the project is great', unread: 0 },
-      { id: 'sm', initials: 'SM', name: 'Shweta M', color: '#f97316', time: '5:12 PM', preview: 'TM Crypt is live now!', unread: 0 },
-      { id: 'ar', initials: 'AR', name: 'Arjun Reddy', color: '#ef4444', time: 'Saturday', preview: 'Machan semma work da', unread: 0 },
-      { id: 'd', initials: 'D', name: 'Divya', color: '#a78bfa', time: 'Friday', preview: 'Chala interesting ga undi', unread: 0 }
+      {
+        id: "vk",
+        initials: "VK",
+        name: "Vijay Kumar",
+        color: "#22c55e",
+        time: "10:48 AM",
+        preview: "Machan awesome ah irukku da! Full marks kedaikum 🔥",
+        unread: 0,
+      },
+      {
+        id: "as",
+        initials: "AS",
+        name: "Ajith S",
+        color: "#3b82f6",
+        time: "11:42 AM",
+        preview: "Super da! Nalla concept",
+        unread: 2,
+      },
+      {
+        id: "mr",
+        initials: "MR",
+        name: "rajesh machan",
+        color: "#f59e0b",
+        time: "1:22 PM",
+        preview: "Bro eppo hostel varuva?",
+        unread: 0,
+      },
+      {
+        id: "pn",
+        initials: "PN",
+        name: "Prashant N",
+        color: "#ec4899",
+        time: "2:28 PM",
+        preview: "Sari naalai parkalam",
+        unread: 1,
+      },
+      {
+        id: "vp",
+        initials: "VP",
+        name: "Vinod bro",
+        color: "#8b5cf6",
+        time: "3:05 PM",
+        preview: "TOC lab output eppadi?",
+        unread: 0,
+      },
+      {
+        id: "st",
+        initials: "SG",
+        name: "Samiksha Gautam",
+        color: "#06b6d4",
+        time: "4:15 PM",
+        preview: "hey, the project is great",
+        unread: 0,
+      },
+      {
+        id: "s",
+        initials: "SM",
+        name: "Shweta",
+        color: "#f97316",
+        time: "5:12 PM",
+        preview: "TM Crypt is live now!",
+        unread: 0,
+      },
+      {
+        id: "ar",
+        initials: "AR",
+        name: "Arjun Reddy",
+        color: "#ef4444",
+        time: "Saturday",
+        preview: "Machan semma work da",
+        unread: 0,
+      },
+      {
+        id: "d",
+        initials: "D",
+        name: "Divya",
+        color: "#a78bfa",
+        time: "Friday",
+        preview: "Chala interesting ga undi",
+        unread: 0,
+      },
     ];
 
     let activeContact = CONTACTS[0];
@@ -1004,59 +1362,145 @@
     let charts = {};
 
     // UI ELEMENTS
-    const contactList = document.getElementById('contact-list');
-    const chatMessages = document.getElementById('chat-messages');
-    const chatInput = document.getElementById('chat-input');
-    const micIcon = document.getElementById('mic-icon');
-    const sendBtn = document.getElementById('send-btn');
-    const tapeRow = document.getElementById('tape-row');
-    const logBox = document.getElementById('log-box');
-    const idList = document.getElementById('id-list');
+    const contactList = document.getElementById("contact-list");
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const micIcon = document.getElementById("mic-icon");
+    const sendBtn = document.getElementById("send-btn");
+    const tapeRow = document.getElementById("tape-row");
+    const logBox = document.getElementById("log-box");
+    const idList = document.getElementById("id-list");
 
     // INIT
     function init() {
       // PRELOAD REAL CHATS
-      CONTACTS.forEach(c => chatStore[c.id] = []);
-      chatStore['vk'] = [
-        { s: 'them', text: 'Machan! Enna pandra? TOC project ready ah?', time: '9:00 AM' },
-        { s: 'them', text: 'Namma batch la evanum ithu panala da', time: '9:02 AM' },
-        { s: 'me', text: 'Da, Turing Machine encryption simulator panni irukken', time: '9:45 AM', processed: true },
-        { s: 'them', text: 'Seriously ah?? Semma da 🔥', time: '9:46 AM' },
-        { s: 'me', text: 'H→K, e→h, l→o shift by 3. Hello becomes Khoor', time: '9:49 AM', processed: true },
-        { s: 'them', text: 'Machan awesome ah irukku da! Full marks kedaikum 🔥', time: '10:48 AM' }
+      CONTACTS.forEach((c) => (chatStore[c.id] = []));
+      chatStore["vk"] = [
+        {
+          s: "them",
+          text: "Machan! Enna pandra? TOC project ready ah?",
+          time: "9:00 AM",
+        },
+        {
+          s: "them",
+          text: "Namma batch la evanum ithu panala da",
+          time: "9:02 AM",
+        },
+        {
+          s: "me",
+          text: "Da, Turing Machine encryption simulator panni irukken",
+          time: "9:45 AM",
+          processed: true,
+        },
+        { s: "them", text: "Seriously ah?? Semma da 🔥", time: "9:46 AM" },
+        {
+          s: "me",
+          text: "H→K, e→h, l→o shift by 3. Hello becomes Khoor",
+          time: "9:49 AM",
+          processed: true,
+        },
+        {
+          s: "them",
+          text: "Machan awesome ah irukku da! Full marks kedaikum 🔥",
+          time: "10:48 AM",
+        },
       ];
-      chatStore['as'] = [
-        { s: 'them', text: 'Super da! Enna concept eduthu?', time: '11:20 AM' },
-        { s: 'me', text: 'Turing Machine based encryption da', time: '11:21 AM', processed: true },
-        { s: 'them', text: 'Like Caesar cipher ah?', time: '11:22 AM' },
-        { s: 'me', text: 'Exactly! But visualized as actual TM tape with states and transitions', time: '11:23 AM', processed: true },
-        { s: 'them', text: 'NTM branching tree also iruka?', time: '11:38 AM' },
-        { s: 'them', text: 'Super da! Nalla concept', time: '11:42 AM' }
+      chatStore["as"] = [
+        {
+          s: "them",
+          text: "Super da! Enna concept eduthu?",
+          time: "11:20 AM",
+        },
+        {
+          s: "me",
+          text: "Turing Machine based encryption da",
+          time: "11:21 AM",
+          processed: true,
+        },
+        { s: "them", text: "Like Caesar cipher ah?", time: "11:22 AM" },
+        {
+          s: "me",
+          text: "Exactly! But visualized as actual TM tape with states and transitions",
+          time: "11:23 AM",
+          processed: true,
+        },
+        {
+          s: "them",
+          text: "NTM branching tree also iruka?",
+          time: "11:38 AM",
+        },
+        { s: "them", text: "Super da! Nalla concept", time: "11:42 AM" },
       ];
-      chatStore['sg'] = [
-        { s: 'them', text: 'TOC project ah? Which unit?', time: '4:30 PM' },
-        { s: 'me', text: 'Unit 5 — Turing Machines', time: '4:31 PM', processed: true },
-        { s: 'them', text: 'Church thesis and halting problem also?', time: '4:31 PM' },
-        { s: 'me', text: 'Yes! Multi-tape, NTM, halting proof — all covered with visualizations', time: '4:32 PM', processed: true },
-        { s: 'them', text: 'Marks kedaikum da', time: '4:33 PM' }
+      chatStore["sg"] = [
+        { s: "them", text: "TOC project ah? Which unit?", time: "4:30 PM" },
+        {
+          s: "me",
+          text: "Unit 5 — Turing Machines",
+          time: "4:31 PM",
+          processed: true,
+        },
+        {
+          s: "them",
+          text: "Church thesis and halting problem also?",
+          time: "4:31 PM",
+        },
+        {
+          s: "me",
+          text: "Yes! Multi-tape, NTM, halting proof — all covered with visualizations",
+          time: "4:32 PM",
+          processed: true,
+        },
+        { s: "them", text: "Marks kedaikum da", time: "4:33 PM" },
       ];
-      chatStore['goa'] = [
-        { s: 'them', sender: 'Vijay k', text: 'Macha Goa plan enna aachu?', time: '10:00 AM' },
-        { s: 'them', sender: 'Ajith Sharma', text: 'Tickets book panniyacha guys??', time: '11:00 AM' },
-        { s: 'me', text: 'Let me check the availability tonight and tell you', time: '11:05 AM', processed: false },
+      chatStore["goa"] = [
+        {
+          s: "them",
+          sender: "Vijay k",
+          text: "Macha Goa plan enna aachu?",
+          time: "10:00 AM",
+        },
+        {
+          s: "them",
+          sender: "Ajith Sharma",
+          text: "Tickets book panniyacha guys??",
+          time: "11:00 AM",
+        },
+        {
+          s: "me",
+          text: "Let me check the availability tonight and tell you",
+          time: "11:05 AM",
+          processed: false,
+        },
       ];
-      chatStore['ccn3'] = [
-        { s: 'them', sender: 'Nirmal Kumar', text: 'Guys, TOC project review eppo irukku?', time: 'Yesterday' },
-        { s: 'them', sender: 'Shweta Patel', text: 'Project submission this weekend guys.', time: 'Yesterday' }
+      chatStore["ccn3"] = [
+        {
+          s: "them",
+          sender: "Nirmal Kumar",
+          text: "Guys, TOC project review eppo irukku?",
+          time: "Yesterday",
+        },
+        {
+          s: "them",
+          sender: "Shweta Patel",
+          text: "Project submission this weekend guys.",
+          time: "Yesterday",
+        },
       ];
-      chatStore['rr'] = [
-        { s: 'them', text: 'Bro eppo free ah irukka?', time: '2:00 PM' },
-        { s: 'me', text: 'Ippo free thaan da sollu', time: '2:15 PM' },
-        { s: 'them', text: 'Romba cool aa irukku namma interface', time: '2:28 PM' }
+      chatStore["rr"] = [
+        { s: "them", text: "Bro eppo free ah irukka?", time: "2:00 PM" },
+        { s: "me", text: "Ippo free thaan da sollu", time: "2:15 PM" },
+        {
+          s: "them",
+          text: "Romba cool aa irukku namma interface",
+          time: "2:28 PM",
+        },
       ];
 
       // others default
-      CONTACTS.forEach(c => { if (chatStore[c.id].length === 0) chatStore[c.id] = [{ s: 'them', text: c.preview, time: c.time }]; });
+      CONTACTS.forEach((c) => {
+        if (chatStore[c.id].length === 0)
+          chatStore[c.id] = [{ s: "them", text: c.preview, time: c.time }];
+      });
 
       renderContacts();
       loadChat(activeContact.id);
@@ -1070,10 +1514,11 @@
 
     // CONTACTS
     function renderContacts() {
-      contactList.innerHTML = '';
-      CONTACTS.forEach(c => {
-        const item = document.createElement('div');
-        item.className = 'contact-item' + (c.id === activeContact.id ? ' active' : '');
+      contactList.innerHTML = "";
+      CONTACTS.forEach((c) => {
+        const item = document.createElement("div");
+        item.className =
+          "contact-item" + (c.id === activeContact.id ? " active" : "");
         item.onclick = () => loadChat(c.id);
         item.innerHTML = `
           <div class="avatar" style="background: ${c.color}">${c.initials}</div>
@@ -1083,7 +1528,7 @@
           </div>
           <div class="contact-meta">
             <span class="contact-time">${c.time}</span>
-            ${c.unread > 0 ? `<div class="unread-badge">${c.unread}</div>` : ''}
+            ${c.unread > 0 ? `<div class="unread-badge">${c.unread}</div>` : ""}
           </div>
         `;
         contactList.appendChild(item);
@@ -1091,38 +1536,53 @@
     }
 
     function loadChat(id) {
-      activeContact = CONTACTS.find(c => c.id === id);
-      document.getElementById('active-name').textContent = activeContact.name;
-      document.getElementById('active-avatar').textContent = activeContact.initials;
-      document.getElementById('active-avatar').style.background = activeContact.color;
-      document.getElementById('active-status').textContent = 'online';
-      document.getElementById('active-status').className = 'text-xs text-accent';
+      activeContact = CONTACTS.find((c) => c.id === id);
+      document.getElementById("active-name").textContent = activeContact.name;
+      document.getElementById("active-avatar").textContent =
+        activeContact.initials;
+      document.getElementById("active-avatar").style.background =
+        activeContact.color;
+      document.getElementById("active-status").textContent = "online";
+      document.getElementById("active-status").className =
+        "text-xs text-accent";
 
       renderContacts();
       renderMessages();
     }
 
     function renderMessages() {
-      chatMessages.innerHTML = '';
-      chatStore[activeContact.id].forEach(m => {
-        const wrap = document.createElement('div');
-        wrap.className = 'msg-bubble ' + (m.s === 'me' ? 'msg-sent' : 'msg-recv');
+      chatMessages.innerHTML = "";
+      chatStore[activeContact.id].forEach((m) => {
+        const wrap = document.createElement("div");
+        wrap.className =
+          "msg-bubble " + (m.s === "me" ? "msg-sent" : "msg-recv");
 
-        let content = '';
+        let content = "";
 
-        if (activeContact.isGroup && m.s === 'them') {
-          const colors = ['#f59e0b', '#ec4899', '#3b82f6', '#8b5cf6', '#06b6d4', '#10b981'];
-          const senderColor = m.sender ? colors[m.sender.length % colors.length] : colors[4];
-          content += `<div style="font-size: 11px; font-weight: 600; color: ${senderColor}; margin-bottom: 4px;">${m.sender || 'Group Member'}</div>`;
+        if (activeContact.isGroup && m.s === "them") {
+          const colors = [
+            "#f59e0b",
+            "#ec4899",
+            "#3b82f6",
+            "#8b5cf6",
+            "#06b6d4",
+            "#10b981",
+          ];
+          const senderColor = m.sender
+            ? colors[m.sender.length % colors.length]
+            : colors[4];
+          content += `<div style="font-size: 11px; font-weight: 600; color: ${senderColor}; margin-bottom: 4px;">${m.sender || "Group Member"}</div>`;
         }
 
-        content += `<div class="msg-text ${m.isCipher ? 'text-mono text-amber' : ''}" style="transition: color 0.5s;">${m.text}</div>`;
-        if (m.s === 'me') {
+        content += `<div class="msg-text ${m.isCipher ? "text-mono text-amber" : ""}" style="transition: color 0.5s;">${m.text}</div>`;
+        if (m.s === "me") {
           content += `<div class="msg-meta">${m.time} <span style="color:#60a5fa">✓✓</span></div>`;
-          if (m.processed) content += `<div class="msg-tm-badge" style="color:#22c55e; font-size:10px; margin-top:4px;">🔒 TM Caesar Cipher ✓</div>`;
+          if (m.processed)
+            content += `<div class="msg-tm-badge" style="color:#22c55e; font-size:10px; margin-top:4px;">🔒 TM Caesar Cipher ✓</div>`;
         } else {
           content += `<div class="msg-meta">${m.time}</div>`;
-          if (m.processed) content += `<div class="msg-tm-badge" style="color:#3b82f6; font-size:10px; margin-top:4px;">🔓 TM Decrypted</div>`;
+          if (m.processed)
+            content += `<div class="msg-tm-badge" style="color:#3b82f6; font-size:10px; margin-top:4px;">🔓 TM Decrypted</div>`;
         }
 
         wrap.innerHTML = content;
@@ -1135,14 +1595,16 @@
     chatInput.oninput = () => {
       if (chatInput.value.trim().length > 0) {
         sendBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="#fff"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>`;
-        sendBtn.style.background = 'var(--accent)';
+        sendBtn.style.background = "var(--accent)";
       } else {
         sendBtn.innerHTML = `<svg id="mic-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text-dim)" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>`;
-        sendBtn.style.background = 'transparent';
+        sendBtn.style.background = "transparent";
       }
     };
 
-    chatInput.onkeydown = (e) => { if (e.key === 'Enter') handleSend(); };
+    chatInput.onkeydown = (e) => {
+      if (e.key === "Enter") handleSend();
+    };
     sendBtn.onclick = handleSend;
 
     function handleSend() {
@@ -1150,11 +1612,17 @@
       if (!text) return;
 
       const now = new Date();
-      const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+      const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, "0")} ${now.getHours() >= 12 ? "PM" : "AM"}`;
 
-      const newMsg = { s: 'me', text: text, time: timeStr, processed: false, isCipher: false };
+      const newMsg = {
+        s: "me",
+        text: text,
+        time: timeStr,
+        processed: false,
+        isCipher: false,
+      };
       chatStore[activeContact.id].push(newMsg);
-      chatInput.value = '';
+      chatInput.value = "";
       chatInput.oninput();
       renderMessages();
 
@@ -1165,65 +1633,84 @@
     function startSimulation(text, msgObj) {
       if (tmInterval) clearInterval(tmInterval);
 
-      const shiftK = parseInt(document.getElementById('shift-range').value) || 3;
+      const shiftK =
+        parseInt(document.getElementById("shift-range").value) || 3;
 
       // Phase 1: Encrypt
-      window._currentPhase = 'encrypt';
-      if (linkLabels) linkLabels.text(d => d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `+${shiftK}`));
+      window._currentPhase = "encrypt";
+      if (linkLabels)
+        linkLabels.text((d) =>
+          d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `+${shiftK}`),
+        );
 
-      const pb = document.getElementById('phase-banner');
-      pb.style.display = 'block';
-      pb.style.background = 'rgba(245, 158, 11, 0.1)';
-      pb.style.color = 'var(--amber)';
+      const pb = document.getElementById("phase-banner");
+      pb.style.display = "block";
+      pb.style.background = "rgba(245, 158, 11, 0.1)";
+      pb.style.color = "var(--amber)";
       pb.textContent = `⚡ ENCRYPTING — Caesar +${shiftK}`;
 
-      logBox.innerHTML = '';
-      idList.innerHTML = '';
-      if (document.getElementById('id-summary-card')) document.getElementById('id-summary-card').style.display = 'none';
-      if (document.getElementById('computation-path')) document.getElementById('computation-path').textContent = `Path: q₀`;
+      logBox.innerHTML = "";
+      idList.innerHTML = "";
+      if (document.getElementById("id-summary-card"))
+        document.getElementById("id-summary-card").style.display = "none";
+      if (document.getElementById("computation-path"))
+        document.getElementById("computation-path").textContent = `Path: q₀`;
 
       const encTM = TMEngine.createCaesarTM(shiftK);
       encTM.loadInput(text);
 
-      runTMPhase('encrypt', encTM, msgObj, (cipherText) => {
+      runTMPhase("encrypt", encTM, msgObj, (cipherText) => {
         // Phase 2: Decrypt (Auto-responder simulated)
         setTimeout(() => {
           const now = new Date();
-          const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, '0')} ${now.getHours() >= 12 ? 'PM' : 'AM'}`;
+          const timeStr = `${now.getHours() % 12 || 12}:${String(now.getMinutes()).padStart(2, "0")} ${now.getHours() >= 12 ? "PM" : "AM"}`;
 
-          const repMsg = { s: 'them', text: cipherText, originalCipher: cipherText, time: timeStr, processed: false, isCipher: true };
+          const repMsg = {
+            s: "them",
+            text: cipherText,
+            originalCipher: cipherText,
+            time: timeStr,
+            processed: false,
+            isCipher: true,
+          };
           chatStore[activeContact.id].push(repMsg);
           renderMessages();
 
-          window._currentPhase = 'decrypt';
-          pb.style.background = 'rgba(59, 130, 246, 0.1)';
-          pb.style.color = 'var(--blue)';
+          window._currentPhase = "decrypt";
+          pb.style.background = "rgba(59, 130, 246, 0.1)";
+          pb.style.color = "var(--blue)";
           pb.textContent = `🔓 DECRYPTING — Caesar -${shiftK}`;
 
           logBox.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
           idList.innerHTML += `<div style="padding:8px 0; text-align:center; color:var(--blue); border-top:1px solid rgba(59,130,246,0.3); border-bottom:1px solid rgba(59,130,246,0.3); margin:8px 0; font-family:var(--font-mono);">── DECRYPT PHASE ──</div>`;
-          document.getElementById('computation-path').textContent = `Path: q₀`;
+          document.getElementById("computation-path").textContent =
+            `Path: q₀`;
 
-          if (linkLabels) linkLabels.text(d => d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `-${shiftK}`));
+          if (linkLabels)
+            linkLabels.text((d) =>
+              d.label.replace(/-[0-9k]+|\+[0-9k]+/g, `-${shiftK}`),
+            );
           const decTM = TMEngine.createDecryptTM(shiftK);
           decTM.loadInput(cipherText);
 
-          runTMPhase('decrypt', decTM, repMsg, (plainText) => {
-            setTimeout(() => { pb.style.display = 'none'; }, 2000);
+          runTMPhase("decrypt", decTM, repMsg, (plainText) => {
+            setTimeout(() => {
+              pb.style.display = "none";
+            }, 2000);
           });
-
         }, 1500);
       });
     }
 
     function triggerAcceptGlow(visitedStates) {
-      visitedStates.forEach(s => {
-        const node = d3.select('#graph-node-' + s);
+      visitedStates.forEach((s) => {
+        const node = d3.select("#graph-node-" + s);
         if (!node.empty()) {
-          node.style('animation', 'none');
-          node.attr('fill', 'rgba(34,197,94,0.3)')
-            .attr('stroke', '#22c55e')
-            .attr('stroke-width', 2.5);
+          node.style("animation", "none");
+          node
+            .attr("fill", "rgba(34,197,94,0.3)")
+            .attr("stroke", "#22c55e")
+            .attr("stroke-width", 2.5);
         }
       });
       setTimeout(() => {
@@ -1236,38 +1723,57 @@
       isPlaying = true;
       updateControlsUI();
 
-      let toast = document.getElementById('encrypt-toast');
+      let toast = document.getElementById("encrypt-toast");
       if (!toast) {
-        toast = document.createElement('div'); toast.id = 'encrypt-toast';
-        toast.style.position = 'absolute'; toast.style.top = '10px'; toast.style.left = '50%'; toast.style.transform = 'translate(-50%, -100%)'; toast.style.transition = 'transform 0.4s';
-        toast.style.padding = '8px 16px'; toast.style.background = 'var(--surface)'; toast.style.color = '#fafafa'; toast.style.borderRadius = '6px'; toast.style.fontSize = '12px'; toast.style.border = '1px solid var(--amber)'; toast.style.zIndex = '100'; toast.style.boxShadow = '0 4px 12px rgba(0,0,0,0.5)';
-        document.querySelector('.chat-panel').appendChild(toast);
+        toast = document.createElement("div");
+        toast.id = "encrypt-toast";
+        toast.style.position = "absolute";
+        toast.style.top = "10px";
+        toast.style.left = "50%";
+        toast.style.transform = "translate(-50%, -100%)";
+        toast.style.transition = "transform 0.4s";
+        toast.style.padding = "8px 16px";
+        toast.style.background = "var(--surface)";
+        toast.style.color = "#fafafa";
+        toast.style.borderRadius = "6px";
+        toast.style.fontSize = "12px";
+        toast.style.border = "1px solid var(--amber)";
+        toast.style.zIndex = "100";
+        toast.style.boxShadow = "0 4px 12px rgba(0,0,0,0.5)";
+        document.querySelector(".chat-panel").appendChild(toast);
       }
 
-      const isEnc = phaseType === 'encrypt';
+      const isEnc = phaseType === "encrypt";
       msgObj.text = isEnc ? msgObj.text : "...decrypting...";
       renderMessages();
 
       setTimeout(() => {
-        toast.innerHTML = isEnc ? '🔒 TM Encrypting...' : '🔓 TM Decrypting...';
-        toast.style.borderColor = isEnc ? 'var(--amber)' : 'var(--blue)';
-        toast.style.transform = 'translate(-50%, 10px)';
+        toast.innerHTML = isEnc
+          ? "🔒 TM Encrypting..."
+          : "🔓 TM Decrypting...";
+        toast.style.borderColor = isEnc ? "var(--amber)" : "var(--blue)";
+        toast.style.transform = "translate(-50%, 10px)";
       }, 100);
 
-      document.getElementById('status-dot').className = 'status-dot active';
-      document.getElementById('status-dot').style.background = isEnc ? 'var(--amber)' : 'var(--blue)';
-      document.getElementById('status-text').textContent = isEnc ? 'ENCRYPTING' : 'DECRYPTING';
+      document.getElementById("status-dot").className = "status-dot active";
+      document.getElementById("status-dot").style.background = isEnc
+        ? "var(--amber)"
+        : "var(--blue)";
+      document.getElementById("status-text").textContent = isEnc
+        ? "ENCRYPTING"
+        : "DECRYPTING";
 
-      curTM._visitedStates = new Set(['q0']);
+      curTM._visitedStates = new Set(["q0"]);
 
       tmInterval = setInterval(() => {
         if (curTM.isHalted()) {
           clearInterval(tmInterval);
           isPlaying = false;
           updateControlsUI();
-          document.getElementById('status-dot').className = 'status-dot done';
-          document.getElementById('status-dot').style.background = 'var(--accent)';
-          document.getElementById('status-text').textContent = 'COMPLETE';
+          document.getElementById("status-dot").className = "status-dot done";
+          document.getElementById("status-dot").style.background =
+            "var(--accent)";
+          document.getElementById("status-text").textContent = "COMPLETE";
 
           const finalOut = curTM.out();
 
@@ -1282,7 +1788,7 @@
           }
           renderMessages();
 
-          if (curTM.state === 'q_accept') {
+          if (curTM.state === "q_accept") {
             triggerAcceptGlow(curTM._visitedStates);
           }
 
@@ -1293,10 +1799,11 @@
               msgObj.processed = true;
               renderMessages();
             }
-            toast.style.transform = 'translate(-50%, -150%)';
-            document.getElementById('status-dot').className = 'status-dot';
-            document.getElementById('status-dot').style.background = '#71717a';
-            document.getElementById('status-text').textContent = 'IDLE';
+            toast.style.transform = "translate(-50%, -150%)";
+            document.getElementById("status-dot").className = "status-dot";
+            document.getElementById("status-dot").style.background =
+              "#71717a";
+            document.getElementById("status-text").textContent = "IDLE";
 
             if (onComplete) onComplete(finalOut);
           }, 1500);
@@ -1307,22 +1814,29 @@
         curTM.step();
         curTM._visitedStates.add(curTM.state);
 
-        const cp = document.getElementById('computation-path');
+        const cp = document.getElementById("computation-path");
         if (cp) {
           const logLen = curTM.log.length;
           if (logLen > 0) {
-            cp.textContent = `Path: q₀ ` + curTM.log.map(l => `→ ${l.ns}`).join(' ');
+            cp.textContent =
+              `Path: q₀ ` + curTM.log.map((l) => `→ ${l.ns}`).join(" ");
             cp.scrollLeft = cp.scrollWidth;
           }
         }
 
-        const outStr = curTM.getTape().join('').replace(/□/g, '').trim();
+        const outStr = curTM.getTape().join("").replace(/□/g, "").trim();
         const originalTarget = curTM.getInputText();
-        const partial = originalTarget.substring(Math.min(outStr.length, originalTarget.length));
+        const partial = originalTarget.substring(
+          Math.min(outStr.length, originalTarget.length),
+        );
 
         if (!isEnc) {
-          const currentTape = curTM.getTape().join('').replace(/□/g, '');
-          msgObj.text = currentTape + (msgObj.originalCipher ? msgObj.originalCipher.substring(currentTape.length) : "");
+          const currentTape = curTM.getTape().join("").replace(/□/g, "");
+          msgObj.text =
+            currentTape +
+            (msgObj.originalCipher
+              ? msgObj.originalCipher.substring(currentTape.length)
+              : "");
         }
         renderMessages();
         updateUI();
@@ -1335,33 +1849,42 @@
       updateIDList();
       updateStatus();
       updateGraph();
-      if (document.getElementById('pane-complexity').classList.contains('active')) updateCharts();
+      if (
+        document
+          .getElementById("pane-complexity")
+          .classList.contains("active")
+      )
+        updateCharts();
     }
 
     function renderTape() {
       const tape = curTM.getTape();
       const head = curTM.head;
-      tapeRow.innerHTML = '';
+      tapeRow.innerHTML = "";
 
       const range = 15;
       const start = Math.max(0, head - 7);
 
       for (let i = 0; i < range; i++) {
         const idx = start + i;
-        const sym = tape[idx] || '□';
-        const cell = document.createElement('div');
-        cell.className = 'cell' + (idx === head ? ' head' : '') + (idx < head && sym !== '□' ? ' written' : '');
+        const sym = tape[idx] || "□";
+        const cell = document.createElement("div");
+        cell.className =
+          "cell" +
+          (idx === head ? " head" : "") +
+          (idx < head && sym !== "□" ? " written" : "");
         cell.textContent = sym;
         tapeRow.appendChild(cell);
       }
 
-      document.getElementById('card-state').textContent = curTM.state;
-      document.getElementById('card-read').textContent = tape[head] || '□';
+      document.getElementById("card-state").textContent = curTM.state;
+      document.getElementById("card-read").textContent = tape[head] || "□";
 
       const latest = curTM.log[curTM.log.length - 1];
       if (latest) {
-        document.getElementById('card-write').textContent = latest.write;
-        document.getElementById('card-move').textContent = latest.dir + (latest.dir === 'R' ? ' →' : ' ←');
+        document.getElementById("card-write").textContent = latest.write;
+        document.getElementById("card-move").textContent =
+          latest.dir + (latest.dir === "R" ? " →" : " ←");
       }
     }
 
@@ -1369,128 +1892,221 @@
       const l = curTM.log[curTM.log.length - 1];
       if (!l) return;
 
-      Array.from(logBox.children).forEach(c => c.classList.remove('active'));
+      Array.from(logBox.children).forEach((c) =>
+        c.classList.remove("active"),
+      );
 
-      const div = document.createElement('div');
-      div.className = 'log-entry active';
+      const div = document.createElement("div");
+      div.className = "log-entry active";
       div.innerHTML = `<span style="border-left: 2px solid var(--accent); padding-left: 8px;">Step ${l.step} | δ(${l.state}, '${l.read}') = (${l.ns}, '${l.write}', ${l.dir})</span>`;
       logBox.appendChild(div);
       logBox.scrollTop = logBox.scrollHeight;
 
-      document.getElementById('card-state').textContent = curTM.state;
-      document.getElementById('card-read').textContent = curTM.getTape()[curTM.head] || '□';
-      document.getElementById('card-write').textContent = l.write;
-      document.getElementById('card-move').textContent = l.dir + (l.dir === 'R' ? ' →' : ' ←');
+      document.getElementById("card-state").textContent = curTM.state;
+      document.getElementById("card-read").textContent =
+        curTM.getTape()[curTM.head] || "□";
+      document.getElementById("card-write").textContent = l.write;
+      document.getElementById("card-move").textContent =
+        l.dir + (l.dir === "R" ? " →" : " ←");
     }
 
     function updateIDList() {
-      if (curTM.getStepCount() === 0 && document.getElementById('id-summary-card')) {
-        document.getElementById('id-summary-card').style.display = 'none';
+      if (
+        curTM.getStepCount() === 0 &&
+        document.getElementById("id-summary-card")
+      ) {
+        document.getElementById("id-summary-card").style.display = "none";
       }
       const idStr = curTM.getID();
 
-      const headIdx = idStr.indexOf('[');
-      const rightIdx = idStr.indexOf(']') + 1;
+      const headIdx = idStr.indexOf("[");
+      const rightIdx = idStr.indexOf("]") + 1;
       const alpha = idStr.substring(0, headIdx);
       const q = idStr.substring(headIdx, rightIdx);
       const beta = idStr.substring(rightIdx);
 
-      const div = document.createElement('div');
-      div.className = 'id-step-row';
-      div.innerHTML = `⊢ Step ${String(curTM.getStepCount()).padStart(2, ' ')}: ${alpha}<span style="color:#3b82f6;">${q}</span>${beta}`;
+      const div = document.createElement("div");
+      div.className = "id-step-row";
+      div.innerHTML = `⊢ Step ${String(curTM.getStepCount()).padStart(2, " ")}: ${alpha}<span style="color:#3b82f6;">${q}</span>${beta}`;
       idList.appendChild(div);
       idList.scrollTop = idList.scrollHeight;
 
-      if (curTM.isHalted() && curTM.state === 'q_accept') {
-        const sum = document.getElementById('id-summary-card');
-        sum.style.display = 'block';
-        sum.style.background = '#18181b'; sum.style.border = '1px solid #27272a'; sum.style.borderRadius = '8px'; sum.style.padding = '16px'; sum.style.fontFamily = 'monospace'; sum.style.fontSize = '13px';
-        sum.innerHTML = `┌─────────────────────────────────────────┐<br>│  Input:   "${curTM.getInputText()}"<br>│  Output:  <span style="color:var(--accent)">"${curTM.out()}"</span><br>│  Steps:   ${curTM.getStepCount()}<br>│  Result:  <span style="color:var(--accent)">ACCEPTED ✓</span><br>│<br>│  L(M) = Σ* — Recursive Language<br>│  This TM is a Total Decider: halts on<br>│  ALL inputs. Caesar cipher language is<br>│  decidable.<br>└─────────────────────────────────────────┘`.replace(/ /g, '&nbsp;');
+      if (curTM.isHalted() && curTM.state === "q_accept") {
+        const sum = document.getElementById("id-summary-card");
+        sum.style.display = "block";
+        sum.style.background = "#18181b";
+        sum.style.border = "1px solid #27272a";
+        sum.style.borderRadius = "8px";
+        sum.style.padding = "16px";
+        sum.style.fontFamily = "monospace";
+        sum.style.fontSize = "13px";
+        sum.innerHTML =
+          `┌─────────────────────────────────────────┐<br>│  Input:   "${curTM.getInputText()}"<br>│  Output:  <span style="color:var(--accent)">"${curTM.out()}"</span><br>│  Steps:   ${curTM.getStepCount()}<br>│  Result:  <span style="color:var(--accent)">ACCEPTED ✓</span><br>│<br>│  L(M) = Σ* — Recursive Language<br>│  This TM is a Total Decider: halts on<br>│  ALL inputs. Caesar cipher language is<br>│  decidable.<br>└─────────────────────────────────────────┘`.replace(
+            / /g,
+            "&nbsp;",
+          );
       }
     }
 
     function updateStatus() {
-      document.getElementById('sb-state').textContent = curTM.state;
-      document.getElementById('sb-steps').textContent = curTM.getStepCount();
-      document.getElementById('sb-head').textContent = curTM.head;
+      document.getElementById("sb-state").textContent = curTM.state;
+      document.getElementById("sb-steps").textContent = curTM.getStepCount();
+      document.getElementById("sb-head").textContent = curTM.head;
     }
 
     // GRAPH (D3)
     let d3Node, d3Link, d3Svg, d3Sim, linkLabels;
     const STATES = [
-      { id: 'q0', label: 'q₀', type: 'start' },
-      { id: 'q_upper', label: 'q_upper', type: 'normal' },
-      { id: 'q_lower', label: 'q_lower', type: 'normal' },
-      { id: 'q_skip', label: 'q_skip', type: 'normal' },
-      { id: 'q_accept', label: 'q_accept', type: 'accept' },
-      { id: 'q_reject', label: 'q_reject', type: 'reject' }
+      { id: "q0", label: "q₀", type: "start" },
+      { id: "q_upper", label: "q_upper", type: "normal" },
+      { id: "q_lower", label: "q_lower", type: "normal" },
+      { id: "q_skip", label: "q_skip", type: "normal" },
+      { id: "q_accept", label: "q_accept", type: "accept" },
+      { id: "q_reject", label: "q_reject", type: "reject" },
     ];
     const LINKS = [
-      { source: 'q0', target: 'q_upper', label: 'A-Z / write+k, R' },
-      { source: 'q0', target: 'q_lower', label: 'a-z / write+k, R' },
-      { source: 'q0', target: 'q_skip', label: 'other / same, R' },
-      { source: 'q0', target: 'q_accept', label: '□ / □, R' },
-      { source: 'q_upper', target: 'q0', label: '→ next char' },
-      { source: 'q_lower', target: 'q0', label: '→ next char' },
-      { source: 'q_skip', target: 'q0', label: '→ next char' },
+      { source: "q0", target: "q_upper", label: "A-Z / write+k, R" },
+      { source: "q0", target: "q_lower", label: "a-z / write+k, R" },
+      { source: "q0", target: "q_skip", label: "other / same, R" },
+      { source: "q0", target: "q_accept", label: "□ / □, R" },
+      { source: "q_upper", target: "q0", label: "→ next char" },
+      { source: "q_lower", target: "q0", label: "→ next char" },
+      { source: "q_skip", target: "q0", label: "→ next char" },
     ];
 
     function initGraph() {
-      document.getElementById('state-graph').innerHTML = '';
-      d3Svg = d3.select('#state-graph');
-      const width = document.getElementById('state-graph').clientWidth || 640;
+      document.getElementById("state-graph").innerHTML = "";
+      d3Svg = d3.select("#state-graph");
+      const width = document.getElementById("state-graph").clientWidth || 640;
       const height = 420;
 
-      d3Sim = d3.forceSimulation(STATES)
-        .force('link', d3.forceLink(LINKS).id(d => d.id).distance(140).strength(0.8))
-        .force('charge', d3.forceManyBody().strength(-600))
-        .force('center', d3.forceCenter(width / 2, height / 2))
-        .force('collision', d3.forceCollide(60));
+      d3Sim = d3
+        .forceSimulation(STATES)
+        .force(
+          "link",
+          d3
+            .forceLink(LINKS)
+            .id((d) => d.id)
+            .distance(140)
+            .strength(0.8),
+        )
+        .force("charge", d3.forceManyBody().strength(-600))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide(60));
 
-      d3Link = d3Svg.append('g').selectAll('line').data(LINKS).enter().append('g');
+      d3Link = d3Svg
+        .append("g")
+        .selectAll("line")
+        .data(LINKS)
+        .enter()
+        .append("g");
 
-      const lines = d3Link.append('line')
-        .attr('stroke', '#27272a').attr('stroke-width', 1.5);
+      const lines = d3Link
+        .append("line")
+        .attr("stroke", "#27272a")
+        .attr("stroke-width", 1.5);
 
-      linkLabels = d3Link.append('text')
-        .text(d => d.label)
-        .attr('font-size', '9px')
-        .attr('font-family', 'monospace')
-        .attr('fill', '#71717a')
-        .attr('text-anchor', 'middle')
-        .attr('dy', -4);
+      linkLabels = d3Link
+        .append("text")
+        .text((d) => d.label)
+        .attr("font-size", "9px")
+        .attr("font-family", "monospace")
+        .attr("fill", "#71717a")
+        .attr("text-anchor", "middle")
+        .attr("dy", -4);
 
-      d3Node = d3Svg.append('g').selectAll('g').data(STATES).enter().append('g')
-        .call(d3.drag().on('start', dragStarted).on('drag', dragged).on('end', dragEnded));
+      d3Node = d3Svg
+        .append("g")
+        .selectAll("g")
+        .data(STATES)
+        .enter()
+        .append("g")
+        .call(
+          d3
+            .drag()
+            .on("start", dragStarted)
+            .on("drag", dragged)
+            .on("end", dragEnded),
+        );
 
-      d3Node.append('circle').attr('r', 24).attr('fill', '#18181b').attr('stroke', '#3f3f46').attr('id', d => 'graph-node-' + d.id).attr('class', 'state-node');
-      d3Node.append('text').text(d => d.label).attr('fill', '#fafafa').attr('font-size', '10px').attr('text-anchor', 'middle').attr('dy', '.35em');
+      d3Node
+        .append("circle")
+        .attr("r", 24)
+        .attr("fill", "#18181b")
+        .attr("stroke", "#3f3f46")
+        .attr("id", (d) => "graph-node-" + d.id)
+        .attr("class", "state-node");
+      d3Node
+        .append("text")
+        .text((d) => d.label)
+        .attr("fill", "#fafafa")
+        .attr("font-size", "10px")
+        .attr("text-anchor", "middle")
+        .attr("dy", ".35em");
 
-      d3Sim.on('tick', () => {
-        d3Node.attr('cx', d => d.x = Math.max(40, Math.min(width - 40, d.x)))
-          .attr('cy', d => d.y = Math.max(40, Math.min(height - 40, d.y)));
+      d3Sim.on("tick", () => {
+        d3Node
+          .attr("cx", (d) => (d.x = Math.max(40, Math.min(width - 40, d.x))))
+          .attr(
+            "cy",
+            (d) => (d.y = Math.max(40, Math.min(height - 40, d.y))),
+          );
 
-        lines.attr('x1', d => d.source.x).attr('y1', d => d.source.y).attr('x2', d => d.target.x).attr('y2', d => d.target.y);
-        linkLabels.attr('x', d => (d.source.x + d.target.x) / 2).attr('y', d => (d.source.y + d.target.y) / 2);
-        d3Node.attr('transform', d => `translate(${d.x},${d.y})`);
+        lines
+          .attr("x1", (d) => d.source.x)
+          .attr("y1", (d) => d.source.y)
+          .attr("x2", (d) => d.target.x)
+          .attr("y2", (d) => d.target.y);
+        linkLabels
+          .attr("x", (d) => (d.source.x + d.target.x) / 2)
+          .attr("y", (d) => (d.source.y + d.target.y) / 2);
+        d3Node.attr("transform", (d) => `translate(${d.x},${d.y})`);
       });
     }
 
-    function dragStarted(e, d) { if (!e.active) d3Sim.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; }
-    function dragged(e, d) { d.fx = e.x; d.fy = e.y; }
-    function dragEnded(e, d) { if (!e.active) d3Sim.alphaTarget(0); d.fx = null; d.fy = null; }
+    function dragStarted(e, d) {
+      if (!e.active) d3Sim.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    function dragged(e, d) {
+      d.fx = e.x;
+      d.fy = e.y;
+    }
+    function dragEnded(e, d) {
+      if (!e.active) d3Sim.alphaTarget(0);
+      d.fx = null;
+      d.fy = null;
+    }
 
     function updateStateHighlight(stateName) {
       if (!curTM) return;
-      const nodes = d3.selectAll('.state-node');
-      nodes.attr('fill', '#18181b').attr('stroke', '#3f3f46').attr('stroke-width', 1.5).style('animation', 'none');
+      const nodes = d3.selectAll(".state-node");
+      nodes
+        .attr("fill", "#18181b")
+        .attr("stroke", "#3f3f46")
+        .attr("stroke-width", 1.5)
+        .style("animation", "none");
 
-      const active = d3.select('#graph-node-' + stateName);
+      const active = d3.select("#graph-node-" + stateName);
       if (!active.empty()) {
-        active.style('animation', 'statePulse 0.6s infinite');
-        if (stateName === 'q_accept') { active.attr('fill', 'rgba(34,197,94,0.2)').attr('stroke', '#22c55e').attr('stroke-width', 2.5); }
-        else if (stateName === 'q_reject') { active.attr('fill', 'rgba(239,68,68,0.1)').attr('stroke', '#ef4444').attr('stroke-width', 2.5); }
-        else { active.attr('fill', 'rgba(59,130,246,0.2)').attr('stroke', '#3b82f6').attr('stroke-width', 2.5); }
+        active.style("animation", "statePulse 0.6s infinite");
+        if (stateName === "q_accept") {
+          active
+            .attr("fill", "rgba(34,197,94,0.2)")
+            .attr("stroke", "#22c55e")
+            .attr("stroke-width", 2.5);
+        } else if (stateName === "q_reject") {
+          active
+            .attr("fill", "rgba(239,68,68,0.1)")
+            .attr("stroke", "#ef4444")
+            .attr("stroke-width", 2.5);
+        } else {
+          active
+            .attr("fill", "rgba(59,130,246,0.2)")
+            .attr("stroke", "#3b82f6")
+            .attr("stroke-width", 2.5);
+        }
       }
     }
 
@@ -1501,67 +2117,116 @@
     // CHARTS
     function initCharts() {
       // 1. Radar Chart (Complexity Mapping)
-      const radarCtx = document.getElementById('radar-chart').getContext('2d');
+      const radarCtx = document
+        .getElementById("radar-chart")
+        .getContext("2d");
       charts.radar = new Chart(radarCtx, {
-        type: 'radar',
+        type: "radar",
         data: {
-          labels: ['Time O(n)', 'Space O(n)', 'Determinism', 'Alphabet', 'States'],
-          datasets: [{
-            label: ' TM Execution',
-            data: [20, 20, 90, 80, 50],
-            backgroundColor: 'rgba(34,197,94,0.15)',
-            borderColor: '#22c55e',
-            borderWidth: 1.5,
-            pointBackgroundColor: '#18181b',
-            pointBorderColor: '#22c55e',
-          }]
+          labels: [
+            "Time O(n)",
+            "Space O(n)",
+            "Determinism",
+            "Alphabet",
+            "States",
+          ],
+          datasets: [
+            {
+              label: " TM Execution",
+              data: [20, 20, 90, 80, 50],
+              backgroundColor: "rgba(34,197,94,0.15)",
+              borderColor: "#22c55e",
+              borderWidth: 1.5,
+              pointBackgroundColor: "#18181b",
+              pointBorderColor: "#22c55e",
+            },
+          ],
         },
         options: {
-          responsive: true, maintainAspectRatio: false,
+          responsive: true,
+          maintainAspectRatio: false,
           scales: {
             r: {
-              angleLines: { color: 'rgba(255,255,255,0.05)' },
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              pointLabels: { color: '#a1a1aa', font: { family: 'monospace', size: 10 } },
-              ticks: { display: false, min: 0, max: 100 }
-            }
+              angleLines: { color: "rgba(255,255,255,0.05)" },
+              grid: { color: "rgba(255,255,255,0.05)" },
+              pointLabels: {
+                color: "#a1a1aa",
+                font: { family: "monospace", size: 10 },
+              },
+              ticks: { display: false, min: 0, max: 100 },
+            },
           },
-          plugins: { legend: { display: false } }
-        }
+          plugins: { legend: { display: false } },
+        },
       });
 
       // 2. Polar Area Chart (State Visits)
-      const polarCtx = document.getElementById('polar-chart').getContext('2d');
+      const polarCtx = document
+        .getElementById("polar-chart")
+        .getContext("2d");
       charts.visits = new Chart(polarCtx, {
-        type: 'polarArea',
+        type: "polarArea",
         data: {
-          labels: ['Start (q0)', 'Upper', 'Lower', 'Skip'],
-          datasets: [{
-            data: [5, 1, 1, 1],
-            backgroundColor: ['rgba(59,130,246,0.5)', 'rgba(34,197,94,0.5)', 'rgba(245,158,11,0.5)', 'rgba(167,139,250,0.5)'],
-            borderColor: '#18181b', borderWidth: 2
-          }]
+          labels: ["Start (q0)", "Upper", "Lower", "Skip"],
+          datasets: [
+            {
+              data: [5, 1, 1, 1],
+              backgroundColor: [
+                "rgba(59,130,246,0.5)",
+                "rgba(34,197,94,0.5)",
+                "rgba(245,158,11,0.5)",
+                "rgba(167,139,250,0.5)",
+              ],
+              borderColor: "#18181b",
+              borderWidth: 2,
+            },
+          ],
         },
         options: {
-          responsive: true, maintainAspectRatio: false,
-          scales: { r: { ticks: { display: false }, grid: { color: 'rgba(255,255,255,0.05)' } } },
-          plugins: { legend: { display: false } }
-        }
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              ticks: { display: false },
+              grid: { color: "rgba(255,255,255,0.05)" },
+            },
+          },
+          plugins: { legend: { display: false } },
+        },
       });
 
       // 3. Live Tape Usage (Line Area)
-      const tapeCtx = document.getElementById('tape-usage-chart').getContext('2d');
+      const tapeCtx = document
+        .getElementById("tape-usage-chart")
+        .getContext("2d");
       charts.tape = new Chart(tapeCtx, {
-        type: 'line',
-        data: { labels: [0], datasets: [{ label: 'Cells Used', data: [0], borderColor: '#f59e0b', fill: true, backgroundColor: 'rgba(245,158,11,0.1)', tension: 0.3 }] },
+        type: "line",
+        data: {
+          labels: [0],
+          datasets: [
+            {
+              label: "Cells Used",
+              data: [0],
+              borderColor: "#f59e0b",
+              fill: true,
+              backgroundColor: "rgba(245,158,11,0.1)",
+              tension: 0.3,
+            },
+          ],
+        },
         options: {
-          responsive: true, maintainAspectRatio: false,
+          responsive: true,
+          maintainAspectRatio: false,
           scales: {
             x: { display: false },
-            y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#71717a', stepSize: 2 } }
+            y: {
+              beginAtZero: true,
+              grid: { color: "rgba(255,255,255,0.05)" },
+              ticks: { color: "#71717a", stepSize: 2 },
+            },
           },
-          plugins: { legend: { display: false } }
-        }
+          plugins: { legend: { display: false } },
+        },
       });
     }
 
@@ -1574,128 +2239,176 @@
       // Update Tape Usage
       charts.tape.data.labels.push(step);
       charts.tape.data.datasets[0].data.push(maxLen);
-      if (charts.tape.data.labels.length > 30) { charts.tape.data.labels.shift(); charts.tape.data.datasets[0].data.shift(); }
-      charts.tape.update('none');
+      if (charts.tape.data.labels.length > 30) {
+        charts.tape.data.labels.shift();
+        charts.tape.data.datasets[0].data.shift();
+      }
+      charts.tape.update("none");
 
       // Tally for state visits
       const visits = [0, 0, 0, 0];
-      curTM.log.forEach(l => {
-        if (l.state === 'q0') visits[0]++;
-        if (l.state === 'q_upper') visits[1]++;
-        if (l.state === 'q_lower') visits[2]++;
-        if (l.state === 'q_skip') visits[3]++;
+      curTM.log.forEach((l) => {
+        if (l.state === "q0") visits[0]++;
+        if (l.state === "q_upper") visits[1]++;
+        if (l.state === "q_lower") visits[2]++;
+        if (l.state === "q_skip") visits[3]++;
       });
 
       // Normalize states for polar display nicely if zeros
-      charts.visits.data.datasets[0].data = visits.map(v => v === 0 ? 0.2 : v);
-      charts.visits.update('none');
+      charts.visits.data.datasets[0].data = visits.map((v) =>
+        v === 0 ? 0.2 : v,
+      );
+      charts.visits.update("none");
 
       // Radar chart pulse based on runtime (simulate dynamic complexity mapping O(N) mapping)
       charts.radar.data.datasets[0].data[0] = Math.min(100, step * 2); // Time
       charts.radar.data.datasets[0].data[1] = Math.min(100, maxLen * 3); // Space
-      charts.radar.update('none');
+      charts.radar.update("none");
     }
 
     // TABS
     function setupTabs() {
-      document.querySelectorAll('.tab').forEach(t => {
+      document.querySelectorAll(".tab").forEach((t) => {
         t.onclick = () => {
-          document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-          document.querySelectorAll('.tab-pane').forEach(x => x.classList.remove('active'));
-          t.classList.add('active');
-          document.getElementById('pane-' + t.dataset.tab).classList.add('active');
-          if (t.dataset.tab === 'transitions') renderTransitions();
+          document
+            .querySelectorAll(".tab")
+            .forEach((x) => x.classList.remove("active"));
+          document
+            .querySelectorAll(".tab-pane")
+            .forEach((x) => x.classList.remove("active"));
+          t.classList.add("active");
+          document
+            .getElementById("pane-" + t.dataset.tab)
+            .classList.add("active");
+          if (t.dataset.tab === "transitions") renderTransitions();
         };
       });
     }
 
     function setupControls() {
-      document.getElementById('global-play').onclick = () => {
+      document.getElementById("global-play").onclick = () => {
         if (!curTM) return;
         isPlaying = !isPlaying;
         updateControlsUI();
         if (isPlaying) {
           tmInterval = setInterval(() => {
-            if (curTM.isHalted()) { clearInterval(tmInterval); isPlaying = false; updateControlsUI(); return; }
-            curTM.step(); updateUI();
+            if (curTM.isHalted()) {
+              clearInterval(tmInterval);
+              isPlaying = false;
+              updateControlsUI();
+              return;
+            }
+            curTM.step();
+            updateUI();
           }, tmSpeed);
         } else {
           clearInterval(tmInterval);
         }
       };
 
-      document.getElementById('global-reset').onclick = () => {
+      document.getElementById("global-reset").onclick = () => {
         if (curTM) curTM.reset();
-        idList.innerHTML = '';
+        idList.innerHTML = "";
         updateUI();
       };
 
-      document.getElementById('global-step').onclick = () => {
-        if (curTM) { curTM.step(); updateUI(); }
+      document.getElementById("global-step").onclick = () => {
+        if (curTM) {
+          curTM.step();
+          updateUI();
+        }
       };
 
-      document.getElementById('shift-range').oninput = (e) => {
+      document.getElementById("shift-range").oninput = (e) => {
         const val = e.target.value;
-        document.getElementById('shift-val').textContent = val;
+        document.getElementById("shift-val").textContent = val;
         // Optionally recreate TMs if k changes
       };
     }
 
     function updateControlsUI() {
-      document.getElementById('global-play').textContent = isPlaying ? '⏸' : '▶';
+      document.getElementById("global-play").textContent = isPlaying
+        ? "⏸"
+        : "▶";
     }
 
     // MODALS & BUTTONS BINDING
-    const modalBackdrop = document.getElementById('modal-backdrop');
+    const modalBackdrop = document.getElementById("modal-backdrop");
     function openModal(title, desc, icon) {
-      document.querySelector('.saas-modal').innerHTML = `
+      document.querySelector(".saas-modal").innerHTML = `
       <div class="modal-pulse" id="modal-icon">${icon}</div>
       <h3 class="modal-title" id="modal-title">${title}</h3>
       <p class="modal-desc" id="modal-desc">${desc}</p>
       <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 8px; width: 100%;">Close</button>
       `;
-      modalBackdrop.classList.add('active');
+      modalBackdrop.classList.add("active");
     }
     window.closeModal = function () {
-      modalBackdrop.classList.remove('active');
-    }
+      modalBackdrop.classList.remove("active");
+    };
 
-    document.getElementById('btn-vid').onclick = () => openModal(`📹 Starting E2E Encrypted Video Call with ${activeContact.name}...`, 'All calls secured by Turing Machine encryption protocol', '📹');
-    document.getElementById('btn-call').onclick = () => openModal('📞 Encrypted Voice Call...', 'All calls secured by Turing Machine encryption protocol', '📞');
-    document.getElementById('btn-info').onclick = () => openModal('Contact Info', 'Fetching verified public key identities...', '👤');
-    document.getElementById('btn-more').onclick = () => openModal('More Options', 'Loading contextual operations...', '⚙️');
+    document.getElementById("btn-vid").onclick = () =>
+      openModal(
+        `📹 Starting E2E Encrypted Video Call with ${activeContact.name}...`,
+        "All calls secured by Turing Machine encryption protocol",
+        "📹",
+      );
+    document.getElementById("btn-call").onclick = () =>
+      openModal(
+        "📞 Encrypted Voice Call...",
+        "All calls secured by Turing Machine encryption protocol",
+        "📞",
+      );
+    document.getElementById("btn-info").onclick = () =>
+      openModal(
+        "Contact Info",
+        "Fetching verified public key identities...",
+        "👤",
+      );
+    document.getElementById("btn-more").onclick = () =>
+      openModal("More Options", "Loading contextual operations...", "⚙️");
 
-    document.getElementById('btn-emoji').onclick = () => {
-      const modal = document.querySelector('.saas-modal');
+    document.getElementById("btn-emoji").onclick = () => {
+      const modal = document.querySelector(".saas-modal");
       modal.innerHTML = `
             <div class="modal-pulse" id="modal-icon" style="animation:none; margin-bottom:0; width:40px; height:40px;">😊</div>
             <h3 class="modal-title">Emoji Picker</h3>
             <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; max-width:260px; margin-top:10px;">
-                ${['😀', '😂', '🥰', '😎', '🤔', '🙄', '😭', '😤', '🔥', '👍', '🎉', '❤️', '✨', '🙏', '👀', '💯', '💀', '👽', '🤖', '👻'].map(e => `<button class="btn btn-ghost" style="font-size:24px; padding:4px;" onclick="chatInput.value+='${e}'; closeModal(); chatInput.oninput();">${e}</button>`).join('')}
+                ${["😀", "😂", "🥰", "😎", "🤔", "🙄", "😭", "😤", "🔥", "👍", "🎉", "❤️", "✨", "🙏", "👀", "💯", "💀", "👽", "🤖", "👻"].map((e) => `<button class="btn btn-ghost" style="font-size:24px; padding:4px;" onclick="chatInput.value+='${e}'; closeModal(); chatInput.oninput();">${e}</button>`).join("")}
             </div>
             <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 16px; width: 100%;">Close</button>
         `;
-      modalBackdrop.classList.add('active');
+      modalBackdrop.classList.add("active");
     };
 
-    document.getElementById('btn-attach').onclick = () => openModal('📎 File Attachment', 'All files encrypted with TM Caesar Cipher before transmission', '📎');
+    document.getElementById("btn-attach").onclick = () =>
+      openModal(
+        "📎 File Attachment",
+        "All files encrypted with TM Caesar Cipher before transmission",
+        "📎",
+      );
 
     // TRANSITIONS
     function renderTransitions() {
-      const body = document.getElementById('transitions-body');
-      body.innerHTML = '';
+      const body = document.getElementById("transitions-body");
+      body.innerHTML = "";
       if (!curTM) return;
 
-      const filter = document.getElementById('trans-filter').value;
+      const filter = document.getElementById("trans-filter").value;
 
       Object.entries(curTM.transitions).forEach(([k, v]) => {
-        const [st, sym] = k.split('|||');
-        if (filter !== 'all' && st !== filter) return;
+        const [st, sym] = k.split("|||");
+        if (filter !== "all" && st !== filter) return;
 
-        const row = document.createElement('tr');
-        if (curTM.state === st && (curTM.getTape()[curTM.head] || '□') === sym) {
-          row.className = 'firing';
-          setTimeout(() => { if (row) row.classList.remove('firing'); }, 800);
+        const row = document.createElement("tr");
+        if (
+          curTM.state === st &&
+          (curTM.getTape()[curTM.head] || "□") === sym
+        ) {
+          row.className = "firing";
+          setTimeout(() => {
+            if (row) row.classList.remove("firing");
+          }, 800);
         }
 
         row.innerHTML = `<td style="color:#a78bfa">${st}</td><td style="color:#fafafa">${sym}</td><td style="color:#22c55e">${v.write}</td><td style="color:#f59e0b">${v.dir}</td><td style="color:#a78bfa">${v.newState}</td>`;
@@ -1704,76 +2417,158 @@
     }
 
     // VARIANTS
-    document.getElementById('run-mt').onclick = () => {
-      const t1 = document.getElementById('mt-tape1');
-      const t2 = document.getElementById('mt-tape2');
-      t1.innerHTML = ''; t2.innerHTML = '';
+    document.getElementById("run-mt").onclick = () => {
+      const t1 = document.getElementById("mt-tape1");
+      const t2 = document.getElementById("mt-tape2");
+      t1.innerHTML = "";
+      t2.innerHTML = "";
       const text = "HELLO";
       const shift = 3;
 
       for (let i = 0; i < 10; i++) {
-        const c1 = document.createElement('div'); c1.className = 'cell'; c1.textContent = text[i] || '□';
-        const c2 = document.createElement('div'); c2.className = 'cell'; c2.textContent = '□';
-        t1.appendChild(c1); t2.appendChild(c2);
+        const c1 = document.createElement("div");
+        c1.className = "cell";
+        c1.textContent = text[i] || "□";
+        const c2 = document.createElement("div");
+        c2.className = "cell";
+        c2.textContent = "□";
+        t1.appendChild(c1);
+        t2.appendChild(c2);
       }
 
       let h = 0;
       const iv = setInterval(() => {
-        if (h >= text.length) { clearInterval(iv); return; }
-        t1.children[h].className = 'cell head';
-        t2.children[h].className = 'cell head written';
+        if (h >= text.length) {
+          clearInterval(iv);
+          return;
+        }
+        t1.children[h].className = "cell head";
+        t2.children[h].className = "cell head written";
         const char = text[h];
-        const enc = String.fromCharCode(65 + (char.charCodeAt(0) - 65 + shift) % 26);
+        const enc = String.fromCharCode(
+          65 + ((char.charCodeAt(0) - 65 + shift) % 26),
+        );
         t2.children[h].textContent = enc;
         h++;
       }, 300);
     };
 
-    document.getElementById('run-ntm').onclick = () => {
-      const svg = d3.select('#ntm-tree');
-      svg.selectAll('*').remove();
+    document.getElementById("run-ntm").onclick = () => {
+      const svg = d3.select("#ntm-tree");
+      svg.selectAll("*").remove();
 
-      svg.append('circle').attr('cx', 20).attr('cy', 275).attr('r', 15).attr('fill', '#3b82f6');
-      svg.append('text').text('q0').attr('x', 20).attr('y', 278).attr('fill', '#fff').attr('font-size', '10px').attr('text-anchor', 'middle');
+      svg
+        .append("circle")
+        .attr("cx", 20)
+        .attr("cy", 275)
+        .attr("r", 15)
+        .attr("fill", "#3b82f6");
+      svg
+        .append("text")
+        .text("q0")
+        .attr("x", 20)
+        .attr("y", 278)
+        .attr("fill", "#fff")
+        .attr("font-size", "10px")
+        .attr("text-anchor", "middle");
 
       const shifts = Array.from({ length: 26 }, (_, i) => i + 1);
-      const targetK = parseInt(document.getElementById('shift-range').value) % 26 || 3;
+      const targetK =
+        parseInt(document.getElementById("shift-range").value) % 26 || 3;
 
-      const nodes = svg.selectAll('g.branch').data(shifts).enter().append('g')
-        .attr('class', 'branch')
-        .attr('transform', (d, i) => `translate(140, ${20 + i * 20})`);
+      const nodes = svg
+        .selectAll("g.branch")
+        .data(shifts)
+        .enter()
+        .append("g")
+        .attr("class", "branch")
+        .attr("transform", (d, i) => `translate(140, ${20 + i * 20})`);
 
-      svg.selectAll('path.link').data(shifts).enter().append('path')
-        .attr('class', 'link')
-        .attr('d', (d, i) => `M 35 275 C 80 275, 80 ${20 + i * 20}, 140 ${20 + i * 20}`)
-        .attr('fill', 'none').attr('stroke', '#27272a').attr('stroke-width', 1);
+      svg
+        .selectAll("path.link")
+        .data(shifts)
+        .enter()
+        .append("path")
+        .attr("class", "link")
+        .attr(
+          "d",
+          (d, i) =>
+            `M 35 275 C 80 275, 80 ${20 + i * 20}, 140 ${20 + i * 20}`,
+        )
+        .attr("fill", "none")
+        .attr("stroke", "#27272a")
+        .attr("stroke-width", 1);
 
-      nodes.append('circle').attr('r', 6).attr('fill', '#27272a');
-      nodes.append('text').text(d => '+' + d).attr('x', 10).attr('y', 3).attr('fill', '#71717a').attr('font-size', '9px').attr('font-family', 'monospace');
+      nodes.append("circle").attr("r", 6).attr("fill", "#27272a");
+      nodes
+        .append("text")
+        .text((d) => "+" + d)
+        .attr("x", 10)
+        .attr("y", 3)
+        .attr("fill", "#71717a")
+        .attr("font-size", "9px")
+        .attr("font-family", "monospace");
 
-      nodes.append('rect').attr('x', 30).attr('y', -6).attr('width', 60).attr('height', 12).attr('rx', 2).attr('fill', '#18181b').attr('stroke', '#27272a').attr('stroke-width', 1);
-      nodes.append('text').attr('class', 'term-text').text('Processing...').attr('x', 60).attr('y', 3).attr('fill', '#71717a').attr('font-size', '8px').attr('text-anchor', 'middle');
+      nodes
+        .append("rect")
+        .attr("x", 30)
+        .attr("y", -6)
+        .attr("width", 60)
+        .attr("height", 12)
+        .attr("rx", 2)
+        .attr("fill", "#18181b")
+        .attr("stroke", "#27272a")
+        .attr("stroke-width", 1);
+      nodes
+        .append("text")
+        .attr("class", "term-text")
+        .text("Processing...")
+        .attr("x", 60)
+        .attr("y", 3)
+        .attr("fill", "#71717a")
+        .attr("font-size", "8px")
+        .attr("text-anchor", "middle");
 
       setTimeout(() => {
-        svg.selectAll('.branch circle').attr('fill', 'rgba(59,130,246,0.2)').attr('stroke', '#3b82f6');
-        svg.selectAll('path.link').attr('stroke', '#3b82f6').attr('opacity', 0.4);
+        svg
+          .selectAll(".branch circle")
+          .attr("fill", "rgba(59,130,246,0.2)")
+          .attr("stroke", "#3b82f6");
+        svg
+          .selectAll("path.link")
+          .attr("stroke", "#3b82f6")
+          .attr("opacity", 0.4);
       }, 200);
 
       setTimeout(() => {
         nodes.each(function (d, i) {
           const g = d3.select(this);
-          const path = svg.selectAll('path.link').filter(p => p === d);
+          const path = svg.selectAll("path.link").filter((p) => p === d);
           setTimeout(() => {
             if (d === targetK) {
-              g.select('circle').attr('fill', 'rgba(34,197,94,0.3)').attr('stroke', '#22c55e');
-              path.attr('stroke', '#22c55e').attr('stroke-width', 2).attr('opacity', 1);
-              g.select('rect').attr('stroke', '#22c55e').attr('fill', 'rgba(34,197,94,0.1)');
-              g.select('.term-text').text('✓ ACCEPT').attr('fill', '#22c55e');
+              g.select("circle")
+                .attr("fill", "rgba(34,197,94,0.3)")
+                .attr("stroke", "#22c55e");
+              path
+                .attr("stroke", "#22c55e")
+                .attr("stroke-width", 2)
+                .attr("opacity", 1);
+              g.select("rect")
+                .attr("stroke", "#22c55e")
+                .attr("fill", "rgba(34,197,94,0.1)");
+              g.select(".term-text").text("✓ ACCEPT").attr("fill", "#22c55e");
             } else {
-              g.select('circle').attr('fill', 'rgba(239,68,68,0.1)').attr('stroke', '#ef4444');
-              path.attr('stroke', '#ef4444').attr('stroke-width', 1).attr('opacity', 0.2);
-              g.select('rect').attr('stroke', '#ef4444').attr('fill', 'rgba(239,68,68,0.05)');
-              g.select('.term-text').text('✗ REJECT').attr('fill', '#ef4444');
+              g.select("circle")
+                .attr("fill", "rgba(239,68,68,0.1)")
+                .attr("stroke", "#ef4444");
+              path
+                .attr("stroke", "#ef4444")
+                .attr("stroke-width", 1)
+                .attr("opacity", 0.2);
+              g.select("rect")
+                .attr("stroke", "#ef4444")
+                .attr("fill", "rgba(239,68,68,0.05)");
+              g.select(".term-text").text("✗ REJECT").attr("fill", "#ef4444");
             }
           }, i * 30);
         });
@@ -1785,44 +2580,54 @@
       {
         t: "Assumption",
         b: "Assume a Halting Detector H exists. It takes a program M and input w, and guarantees an output of HALT or LOOP.",
-        viz: `<svg width="100%" height="80"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#71717a"/></marker></defs><path d="M 10 40 L 90 40" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="50" y="32" fill="#a1a1aa" font-family="monospace" font-size="10" text-anchor="middle">Input ⟨M, w⟩</text><rect x="100" y="20" width="160" height="40" rx="4" fill="#18181b" stroke="#3b82f6" stroke-width="2"/><text x="180" y="44" fill="#fafafa" font-family="monospace" font-size="12" text-anchor="middle">H = HALT_DETECTOR</text><path d="M 270 40 L 320 20" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="330" y="24" fill="#22c55e" font-family="monospace" font-size="12">HALTS</text><path d="M 270 40 L 320 60" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="330" y="64" fill="#ef4444" font-family="monospace" font-size="12">LOOPS</text></svg>`
+        viz: `<svg width="100%" height="80"><defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#71717a"/></marker></defs><path d="M 10 40 L 90 40" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="50" y="32" fill="#a1a1aa" font-family="monospace" font-size="10" text-anchor="middle">Input ⟨M, w⟩</text><rect x="100" y="20" width="160" height="40" rx="4" fill="#18181b" stroke="#3b82f6" stroke-width="2"/><text x="180" y="44" fill="#fafafa" font-family="monospace" font-size="12" text-anchor="middle">H = HALT_DETECTOR</text><path d="M 270 40 L 320 20" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="330" y="24" fill="#22c55e" font-family="monospace" font-size="12">HALTS</text><path d="M 270 40 L 320 60" stroke="#71717a" stroke-width="2" marker-end="url(#arr)"/><text x="330" y="64" fill="#ef4444" font-family="monospace" font-size="12">LOOPS</text></svg>`,
       },
       {
         t: "The Paradox TM",
         b: "Build a new TM D that uses H as a subroutine. If H predicts HALT, D intentionally loops forever. If H predicts LOOP, D halts.",
-        viz: `<svg width="100%" height="90"><rect x="10" y="5" width="280" height="80" rx="4" fill="none" stroke="#a78bfa" stroke-width="2"/><text x="20" y="20" fill="#a78bfa" font-family="monospace" font-size="12">D = PARADOX_TM</text><rect x="50" y="30" width="120" height="30" rx="2" fill="#18181b" stroke="#3b82f6" stroke-width="1"/><text x="110" y="49" fill="#fafafa" font-family="monospace" font-size="10" text-anchor="middle">H(M, M)</text><text x="190" y="40" fill="#a1a1aa" font-family="monospace" font-size="10">if HALTS → Loop</text><text x="190" y="55" fill="#a1a1aa" font-family="monospace" font-size="10">if LOOPS → Halt</text></svg>`
+        viz: `<svg width="100%" height="90"><rect x="10" y="5" width="280" height="80" rx="4" fill="none" stroke="#a78bfa" stroke-width="2"/><text x="20" y="20" fill="#a78bfa" font-family="monospace" font-size="12">D = PARADOX_TM</text><rect x="50" y="30" width="120" height="30" rx="2" fill="#18181b" stroke="#3b82f6" stroke-width="1"/><text x="110" y="49" fill="#fafafa" font-family="monospace" font-size="10" text-anchor="middle">H(M, M)</text><text x="190" y="40" fill="#a1a1aa" font-family="monospace" font-size="10">if HALTS → Loop</text><text x="190" y="55" fill="#a1a1aa" font-family="monospace" font-size="10">if LOOPS → Halt</text></svg>`,
       },
       {
         t: "The Conflict",
         b: "What happens when we execute D(D)? We feed the paradox machine its own description as input.",
-        viz: `<svg width="100%" height="80"><rect x="100" y="20" width="100" height="40" rx="4" fill="#18181b" stroke="#a78bfa" stroke-width="2"/><text x="150" y="44" fill="#fafafa" font-family="monospace" font-size="12" text-anchor="middle">Execute D(D)</text><path d="M 80 40 Q 50 10 100 10 Q 150 10 150 20" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arr)"/><text x="100" y="10" fill="#f59e0b" font-family="monospace" font-size="10" text-anchor="middle">⟨D⟩ self-reference input</text></svg>`
+        viz: `<svg width="100%" height="80"><rect x="100" y="20" width="100" height="40" rx="4" fill="#18181b" stroke="#a78bfa" stroke-width="2"/><text x="150" y="44" fill="#fafafa" font-family="monospace" font-size="12" text-anchor="middle">Execute D(D)</text><path d="M 80 40 Q 50 10 100 10 Q 150 10 150 20" stroke="#f59e0b" stroke-width="2" fill="none" marker-end="url(#arr)"/><text x="100" y="10" fill="#f59e0b" font-family="monospace" font-size="10" text-anchor="middle">⟨D⟩ self-reference input</text></svg>`,
       },
       {
         t: "Case A",
         b: "If D(D) halts, then H(D, D) must have predicted it loops. But we observed it halts! Contradiction.",
-        viz: `<div style="padding:12px; border:1px solid #ef4444; background:rgba(239,68,68,0.1); border-radius:4px;"><span style="color:#ef4444; font-family:monospace; font-size:12px;">⚡ CONTRADICTION: Cannot Halt and Loop simultaneously.</span></div>`
+        viz: `<div style="padding:12px; border:1px solid #ef4444; background:rgba(239,68,68,0.1); border-radius:4px;"><span style="color:#ef4444; font-family:monospace; font-size:12px;">⚡ CONTRADICTION: Cannot Halt and Loop simultaneously.</span></div>`,
       },
       {
         t: "Case B",
         b: "If D(D) loops, then H(D, D) must have predicted it halts. But we observe it loops! Contradiction.",
-        viz: `<div style="padding:12px; border:1px solid #ef4444; background:rgba(239,68,68,0.1); border-radius:4px;"><span style="color:#ef4444; font-family:monospace; font-size:12px;">⚡ CONTRADICTION: Cannot Halt and Loop simultaneously.</span></div>`
+        viz: `<div style="padding:12px; border:1px solid #ef4444; background:rgba(239,68,68,0.1); border-radius:4px;"><span style="color:#ef4444; font-family:monospace; font-size:12px;">⚡ CONTRADICTION: Cannot Halt and Loop simultaneously.</span></div>`,
       },
       {
         t: "Conclusion",
         b: "H cannot physically exist. Thus, the Halting Problem is UNDECIDABLE. Logic breaks under self-reference.",
-        viz: `<div style="padding:16px; border:1px solid #22c55e; background:rgba(34,197,94,0.05); border-radius:8px;"><span style="color:#22c55e; font-family:monospace; font-size:13px; line-height:1.5; display:block;">∴ The Halting Detector Algorithm H cannot exist.<br><br>Formal: ATM = {⟨M,w⟩ | M accepts w} is undecidable.<br>Proved by Alan Turing, 1936.</span></div>`
-      }
+        viz: `<div style="padding:16px; border:1px solid #22c55e; background:rgba(34,197,94,0.05); border-radius:8px;"><span style="color:#22c55e; font-family:monospace; font-size:13px; line-height:1.5; display:block;">∴ The Halting Detector Algorithm H cannot exist.<br><br>Formal: ATM = {⟨M,w⟩ | M accepts w} is undecidable.<br>Proved by Alan Turing, 1936.</span></div>`,
+      },
     ];
     let curProof = 0;
     function initProof() {
       renderProof();
-      document.getElementById('proof-next').onclick = () => { if (curProof < 5) { curProof++; renderProof(); } };
-      document.getElementById('proof-prev').onclick = () => { if (curProof > 0) { curProof--; renderProof(); } };
+      document.getElementById("proof-next").onclick = () => {
+        if (curProof < 5) {
+          curProof++;
+          renderProof();
+        }
+      };
+      document.getElementById("proof-prev").onclick = () => {
+        if (curProof > 0) {
+          curProof--;
+          renderProof();
+        }
+      };
     }
     function renderProof() {
       const step = PROOF_STEPS[curProof];
-      const target = document.getElementById('proof-step-body');
-      target.style.opacity = '0';
+      const target = document.getElementById("proof-step-body");
+      target.style.opacity = "0";
       setTimeout(() => {
         target.innerHTML = `
           <span class="text-xs text-accent uppercase">Step ${curProof + 1}</span>
@@ -1830,15 +2635,16 @@
           <p class="text-muted" style="font-size: 13px;">${step.b}</p>
           <div style="margin-top: 16px;">${step.viz}</div>
         `;
-        target.style.opacity = '1';
-        target.style.transition = 'opacity 0.3s';
+        target.style.opacity = "1";
+        target.style.transition = "opacity 0.3s";
       }, 150);
-      document.getElementById('proof-indicator').textContent = `Step ${curProof + 1} / 6`;
+      document.getElementById("proof-indicator").textContent =
+        `Step ${curProof + 1} / 6`;
     }
 
     function initChomsky() {
-      const svg = document.getElementById('chomsky-svg');
-      svg.setAttribute('viewBox', '0 0 600 320');
+      const svg = document.getElementById("chomsky-svg");
+      svg.setAttribute("viewBox", "0 0 600 320");
       svg.innerHTML = `
          <rect x="10" y="10" width="580" height="300" rx="4" fill="#18181b" stroke="#ef4444" stroke-width="2"/>
          <text x="30" y="40" fill="#fafafa" font-family="monospace" font-size="11">Type 0 — Recursively Enumerable (Turing Machine)</text>
@@ -1858,15 +2664,19 @@
 
     // UTILS
     function toggleFormalDef() {
-      const c = document.getElementById('formal-def-content');
-      c.style.display = c.style.display === 'none' ? 'block' : 'none';
+      const c = document.getElementById("formal-def-content");
+      c.style.display = c.style.display === "none" ? "block" : "none";
     }
 
     function runHaltCase(n) {
       if (n === 2) {
-        document.getElementById('loop-counter').style.display = 'block';
+        document.getElementById("loop-counter").style.display = "block";
         let c = 0;
-        setInterval(() => { c += 17; document.getElementById('loop-counter').textContent = `Steps: ${c.toLocaleString()}`; }, 50);
+        setInterval(() => {
+          c += 17;
+          document.getElementById("loop-counter").textContent =
+            `Steps: ${c.toLocaleString()}`;
+        }, 50);
       } else {
         alert("Case 1: Standard TM run as demonstrated in chat logic.");
       }
